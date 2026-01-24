@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Neon - Menú Corregido</title>
+    <title>Snake Neon - Music & Menu Fixed</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -28,8 +28,9 @@
         .play-btn {
             background: #33ff00; color: #000; border: none; padding: 15px 40px;
             font-size: 24px; font-family: 'Courier New'; cursor: pointer; font-weight: bold;
+            transition: 0.2s;
         }
-        .play-btn:hover { background: #fff; box-shadow: 0 0 20px #33ff00; }
+        .play-btn:hover { background: #fff; box-shadow: 0 0 20px #33ff00; transform: scale(1.1); }
         button.diff-btn {
             background: #222; border: 1px solid #33ff00; color: #33ff00;
             padding: 5px 10px; cursor: pointer; font-size: 11px;
@@ -53,7 +54,7 @@
         <div id="start-menu">
             <h1>SNAKE NEON</h1>
             <button class="play-btn" onclick="startGame()">JUGAR</button>
-            <p style="color: #888; margin-top: 20px;">Usa las flechas del teclado</p>
+            <p style="color: #888; margin-top: 20px;">Música activa al comenzar</p>
         </div>
 
         <div id="phaser-app"></div>
@@ -62,11 +63,12 @@
 <script>
     let gameSpeed = parseInt(localStorage.getItem('snakeSpeed')) || 120;
     let gameStarted = false;
-    let audioCtx, appleCount = 0, highScore = localStorage.getItem('snakeHighScore') || 0;
+    let audioCtx;
+    let appleCount = 0, highScore = localStorage.getItem('snakeHighScore') || 0;
     let snake = [], food, cursors, moveTime = 0, direction = { x: 16, y: 0 }, nextDirection = { x: 16, y: 0 };
 
     const config = {
-        type: Phaser.CANVAS, // Forzamos modo Canvas para evitar errores de WebGL
+        type: Phaser.CANVAS,
         width: 640, height: 480, parent: 'phaser-app',
         backgroundColor: '#050505',
         scene: { preload: preload, create: create, update: update }
@@ -105,6 +107,7 @@
         direction = nextDirection;
         let x = snake[0].x + direction.x, y = snake[0].y + direction.y;
         if (x === food.x && y === food.y) {
+            playNote(600, 0.05, 'sine', 0.1); // Sonido de comer
             appleCount++;
             if (appleCount > highScore) { highScore = appleCount; localStorage.setItem('snakeHighScore', highScore); }
             document.getElementById('score-display').innerText = `${appleCount} | ${highScore}`;
@@ -122,10 +125,37 @@
         food.setPosition(Math.floor(Math.random() * 40) * 16, Math.floor(Math.random() * 30) * 16);
     }
 
+    // --- SISTEMA DE AUDIO REINSTALADO ---
+    function playNote(freq, dur, type, vol) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + dur);
+    }
+
     window.startGame = function() {
         gameStarted = true;
         document.getElementById('start-menu').style.display = 'none';
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Iniciar el contexto de audio
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Secuenciador de música
+            const melody = [261.63, 0, 329.63, 392.00, 261.63, 0, 349.23, 329.63];
+            let step = 0;
+            setInterval(() => {
+                if (gameStarted && melody[step] > 0) {
+                    playNote(melody[step], 0.15, 'triangle', 0.02);
+                }
+                step = (step + 1) % melody.length;
+            }, 250);
+        }
     }
 
     function highlightButton() {
@@ -142,6 +172,7 @@
     }
 
     function gameOver() {
+        gameStarted = false;
         alert("GAME OVER\nManzanas: " + appleCount);
         location.reload();
     }
