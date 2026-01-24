@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Juego de la Serpiente</title>
+    <title>Juego de la Serpiente - Récord</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         body { margin: 0; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -25,8 +25,10 @@
     let moveTime = 0;
     let direction = { x: 16, y: 0 };
     let nextDirection = { x: 16, y: 0 };
-    let appleCount = 0; // Nuevo contador de manzanas
+    let appleCount = 0;
+    let highScore = 0; // Variable para el récord
     let scoreText;
+    let highScoreText;
     let audioCtx;
 
     const game = new Phaser.Game(config);
@@ -44,27 +46,27 @@
     }
 
     function create() {
-        // Inicializar audio al hacer clic
+        // Cargar récord guardado de la memoria del navegador
+        const savedHighScore = localStorage.getItem('snakeHighScore');
+        if (savedHighScore !== null) {
+            highScore = parseInt(savedHighScore);
+        }
+
         this.input.once('pointerdown', () => {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         });
 
-        // Crear serpiente inicial
         for (let i = 0; i < 3; i++) {
             snake.push(this.add.image(160 - (i * 16), 160, 'block'));
         }
 
         food = this.add.image(320, 240, 'food');
         
-        // Texto del contador de manzanas
-        scoreText = this.add.text(16, 16, 'Manzanas: 0', { 
-            fontSize: '24px', 
-            fill: '#fff', 
-            fontFamily: 'Arial Black' 
-        });
+        // Textos de puntuación
+        scoreText = this.add.text(16, 16, 'Manzanas: 0', { fontSize: '24px', fill: '#fff', fontFamily: 'Arial Black' });
+        highScoreText = this.add.text(16, 45, 'Récord: ' + highScore, { fontSize: '18px', fill: '#ffcc00', fontFamily: 'Arial' });
         
         cursors = this.input.keyboard.createCursorKeys();
-
         this.add.text(200, 450, 'Haz clic para activar el sonido', { fontSize: '14px', fill: '#888' });
     }
 
@@ -87,8 +89,15 @@
 
         if (x === food.x && y === food.y) {
             playEatSound();
-            appleCount++; // Aumentamos el contador de manzanas
+            appleCount++;
             scoreText.setText('Manzanas: ' + appleCount);
+            
+            // Actualizar récord si es necesario
+            if (appleCount > highScore) {
+                highScore = appleCount;
+                highScoreText.setText('Récord: ' + highScore);
+                localStorage.setItem('snakeHighScore', highScore); // Guardar en memoria
+            }
             
             let newPart = game.scene.scenes[0].add.image(food.x, food.y, 'block');
             snake.unshift(newPart);
@@ -101,7 +110,6 @@
         }
 
         if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver("¡Chocaste!");
-
         for (let i = 1; i < snake.length; i++) {
             if (x === snake[i].x && y === snake[i].y) gameOver("¡Te mordiste!");
         }
@@ -118,7 +126,7 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // Nota Do
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
@@ -129,9 +137,5 @@
     }
 
     function gameOver(msg) {
-        alert(msg + " Has comido " + appleCount + " manzanas.");
-        location.reload();
-    }
-</script>
-</body>
-</html>
+        alert(msg + "\nManzanas hoy: " + appleCount + "\nMejor récord: " + highScore);
+        location
