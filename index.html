@@ -2,10 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Snake Donostia Edition</title>
+    <title>Juego de la Serpiente</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { margin: 0; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        body { margin: 0; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        canvas { border: 5px solid #444; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
@@ -14,91 +15,95 @@
         type: Phaser.AUTO,
         width: 640,
         height: 480,
-        backgroundColor: '#2d2d2d',
-        parent: 'phaser-example',
+        backgroundColor: '#1d1d1d',
         scene: { preload: preload, create: create, update: update }
     };
 
-    let snake;
+    let snake = [];
     let food;
     let cursors;
     let moveTime = 0;
-    let direction = { x: 16, y: 0 }; // Empieza moviéndose a la derecha
+    let direction = { x: 16, y: 0 };
     let nextDirection = { x: 16, y: 0 };
+    let score = 0;
+    let scoreText;
+    let audioCtx; // Contexto de audio para el sonido
 
     const game = new Phaser.Game(config);
 
     function preload() {
-        // Creamos rectángulos simples directamente con código para no cargar imágenes externas
+        // Generamos texturas simples para la serpiente y comida
         let graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        graphics.fillStyle(0xffffff, 1);
+        graphics.fillStyle(0x00ff00, 1); // Serpiente Verde
         graphics.fillRect(0, 0, 16, 16);
         graphics.generateTexture('block', 16, 16);
 
         graphics.clear();
-        graphics.fillStyle(0xff0000, 1);
+        graphics.fillStyle(0xff0000, 1); // Manzana Roja
         graphics.fillRect(0, 0, 16, 16);
         graphics.generateTexture('food', 16, 16);
     }
 
     function create() {
-        // Creamos la serpiente como un grupo de imágenes
-        snake = [];
+        // Inicializar contexto de audio al primer clic (requisito de navegadores)
+        this.input.once('pointerdown', () => {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        });
+
+        // Crear serpiente inicial (3 bloques)
         for (let i = 0; i < 3; i++) {
             snake.push(this.add.image(160 - (i * 16), 160, 'block'));
         }
 
         food = this.add.image(320, 240, 'food');
-
+        
+        scoreText = this.add.text(16, 16, 'Puntos: 0', { fontSize: '20px', fill: '#fff', fontFamily: 'Arial' });
+        
         cursors = this.input.keyboard.createCursorKeys();
+
+        // Instrucción visual para activar el sonido
+        this.add.text(200, 450, 'Haz clic para activar el sonido', { fontSize: '14px', fill: '#888' });
     }
 
     function update(time) {
-        // Control de dirección (evita que la serpiente se gire sobre sí misma)
         if (cursors.left.isDown && direction.x === 0) nextDirection = { x: -16, y: 0 };
         else if (cursors.right.isDown && direction.x === 0) nextDirection = { x: 16, y: 0 };
         else if (cursors.up.isDown && direction.y === 0) nextDirection = { x: 0, y: -16 };
         else if (cursors.down.isDown && direction.y === 0) nextDirection = { x: 0, y: 16 };
 
-        // Actualizamos la posición cada 100 milisegundos (velocidad del juego)
         if (time >= moveTime) {
-            moveTime = time + 100;
+            moveTime = time + 120; // Velocidad de la serpiente
             moveSnake();
         }
     }
 
     function moveSnake() {
         direction = nextDirection;
-
-        // Calculamos la nueva posición de la cabeza
         let x = snake[0].x + direction.x;
         let y = snake[0].y + direction.y;
 
-        // Comprobar colisión con comida
+        // Si come manzana
         if (x === food.x && y === food.y) {
+            playEatSound();
+            score += 10;
+            scoreText.setText('Puntos: ' + score);
+            
             let newPart = game.scene.scenes[0].add.image(food.x, food.y, 'block');
-            snake.unshift(newPart); // Añadir al principio
+            snake.unshift(newPart);
             repositionFood();
         } else {
-            // Mover el cuerpo: la última parte pasa a ser la primera
             let part = snake.pop();
             part.x = x;
             part.y = y;
             snake.unshift(part);
         }
 
-        // Comprobar derrota (Paredes)
-        if (x < 0 || x >= 640 || y < 0 || y >= 480) {
-            alert("¡Game Over!");
-            location.reload();
-        }
+        // Colisión con paredes
+        if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver("¡Chocaste contra el muro!");
 
-        // Comprobar derrota (Cuerpo)
+        // Colisión con el propio cuerpo
         for (let i = 1; i < snake.length; i++) {
-            if (x === snake[i].x && y === snake[i].y) {
-                alert("¡Te has chocado contigo mismo!");
-                location.reload();
-            }
+            if (x === snake[i].x && y === snake[i].y) gameOver("¡Te mordiste la cola!");
         }
     }
 
@@ -106,6 +111,26 @@
         let x = Math.floor(Math.random() * (640 / 16)) * 16;
         let y = Math.floor(Math.random() * (480 / 16)) * 16;
         food.setPosition(x, y);
+    }
+
+    function playEatSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime); // Nota La
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    function gameOver(msg) {
+        alert(msg + " Puntos totales: " + score);
+        location.reload();
     }
 </script>
 </body>
