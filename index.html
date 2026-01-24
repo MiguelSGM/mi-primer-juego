@@ -25,43 +25,46 @@
     let moveTime = 0;
     let direction = { x: 16, y: 0 };
     let nextDirection = { x: 16, y: 0 };
-    let score = 0;
+    let appleCount = 0; // Nuevo contador de manzanas
     let scoreText;
-    let audioCtx; // Contexto de audio para el sonido
+    let audioCtx;
 
     const game = new Phaser.Game(config);
 
     function preload() {
-        // Generamos texturas simples para la serpiente y comida
         let graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        graphics.fillStyle(0x00ff00, 1); // Serpiente Verde
+        graphics.fillStyle(0x00ff00, 1); 
         graphics.fillRect(0, 0, 16, 16);
         graphics.generateTexture('block', 16, 16);
 
         graphics.clear();
-        graphics.fillStyle(0xff0000, 1); // Manzana Roja
+        graphics.fillStyle(0xff0000, 1); 
         graphics.fillRect(0, 0, 16, 16);
         graphics.generateTexture('food', 16, 16);
     }
 
     function create() {
-        // Inicializar contexto de audio al primer clic (requisito de navegadores)
+        // Inicializar audio al hacer clic
         this.input.once('pointerdown', () => {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         });
 
-        // Crear serpiente inicial (3 bloques)
+        // Crear serpiente inicial
         for (let i = 0; i < 3; i++) {
             snake.push(this.add.image(160 - (i * 16), 160, 'block'));
         }
 
         food = this.add.image(320, 240, 'food');
         
-        scoreText = this.add.text(16, 16, 'Puntos: 0', { fontSize: '20px', fill: '#fff', fontFamily: 'Arial' });
+        // Texto del contador de manzanas
+        scoreText = this.add.text(16, 16, 'Manzanas: 0', { 
+            fontSize: '24px', 
+            fill: '#fff', 
+            fontFamily: 'Arial Black' 
+        });
         
         cursors = this.input.keyboard.createCursorKeys();
 
-        // Instrucción visual para activar el sonido
         this.add.text(200, 450, 'Haz clic para activar el sonido', { fontSize: '14px', fill: '#888' });
     }
 
@@ -72,7 +75,7 @@
         else if (cursors.down.isDown && direction.y === 0) nextDirection = { x: 0, y: 16 };
 
         if (time >= moveTime) {
-            moveTime = time + 120; // Velocidad de la serpiente
+            moveTime = time + 120; 
             moveSnake();
         }
     }
@@ -82,11 +85,10 @@
         let x = snake[0].x + direction.x;
         let y = snake[0].y + direction.y;
 
-        // Si come manzana
         if (x === food.x && y === food.y) {
             playEatSound();
-            score += 10;
-            scoreText.setText('Puntos: ' + score);
+            appleCount++; // Aumentamos el contador de manzanas
+            scoreText.setText('Manzanas: ' + appleCount);
             
             let newPart = game.scene.scenes[0].add.image(food.x, food.y, 'block');
             snake.unshift(newPart);
@@ -98,12 +100,10 @@
             snake.unshift(part);
         }
 
-        // Colisión con paredes
-        if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver("¡Chocaste contra el muro!");
+        if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver("¡Chocaste!");
 
-        // Colisión con el propio cuerpo
         for (let i = 1; i < snake.length; i++) {
-            if (x === snake[i].x && y === snake[i].y) gameOver("¡Te mordiste la cola!");
+            if (x === snake[i].x && y === snake[i].y) gameOver("¡Te mordiste!");
         }
     }
 
@@ -117,9 +117,9 @@
         if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime); // Nota La
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // Nota Do
+        osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
         osc.connect(gain);
@@ -129,7 +129,7 @@
     }
 
     function gameOver(msg) {
-        alert(msg + " Puntos totales: " + score);
+        alert(msg + " Has comido " + appleCount + " manzanas.");
         location.reload();
     }
 </script>
