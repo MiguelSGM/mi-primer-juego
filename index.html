@@ -2,18 +2,60 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Snake Neon Edition</title>
+    <title>Snake Neon - Clean UI</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { margin: 0; background: #0a0a0a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        /* Estilo general y tipografía */
+        body { 
+            margin: 0; 
+            background: #0a0a0a; 
+            display: flex; 
+            flex-direction: column; /* Apila el marcador arriba y el juego abajo */
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Panel de puntuación fuera del canvas */
+        #ui-panel {
+            width: 640px;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: #151515;
+            border: 2px solid #33ff00;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            box-sizing: border-box;
+            box-shadow: 0 -5px 15px rgba(51, 255, 0, 0.1);
+        }
+
+        .stat-box { text-align: center; }
+        .label { font-size: 12px; color: #888; display: block; }
+        .value { font-size: 24px; font-weight: bold; }
+
         canvas { 
             border: 2px solid #33ff00; 
-            box-shadow: 0 0 30px rgba(51, 255, 0, 0.2); 
-            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            border-radius: 0 0 10px 10px;
         }
     </style>
 </head>
 <body>
+
+    <div id="ui-panel">
+        <div class="stat-box">
+            <span class="label">MANZANAS</span>
+            <span id="apple-count" class="value">0</span>
+        </div>
+        <div class="stat-box">
+            <span class="label">MEJOR RÉCORD</span>
+            <span id="best-score" class="value">0</span>
+        </div>
+    </div>
+
 <script>
     const config = {
         type: Phaser.AUTO,
@@ -31,29 +73,32 @@
     let nextDirection = { x: 16, y: 0 };
     let appleCount = 0;
     let highScore = localStorage.getItem('snakeHighScore') || 0;
-    let scoreText, highScoreText, audioCtx, particles;
+    let audioCtx, particles;
+
+    // Referencias a los elementos HTML
+    const appleDisplay = document.getElementById('apple-count');
+    const bestDisplay = document.getElementById('best-score');
 
     const game = new Phaser.Game(config);
 
     function preload() {
         let graphics = this.make.graphics({ x: 0, y: 0, add: false });
         
-        // Cabeza/Cuerpo Neón (Verde con borde)
+        // Cuerpo de la serpiente
         graphics.lineStyle(2, 0x00ff00, 1);
         graphics.fillStyle(0x004400, 1);
         graphics.fillRoundedRect(1, 1, 14, 14, 4);
         graphics.strokeRoundedRect(1, 1, 14, 14, 4);
         graphics.generateTexture('block', 16, 16);
 
-        // Manzana Neón (Roja brillante)
+        // Manzana
         graphics.clear();
         graphics.fillStyle(0xff0000, 1);
         graphics.fillCircle(8, 8, 7);
-        graphics.fillStyle(0xffffff, 0.5); // Brillo superior
+        graphics.fillStyle(0xffffff, 0.5);
         graphics.fillCircle(5, 5, 2);
         graphics.generateTexture('food', 16, 16);
 
-        // Partícula para la explosión
         graphics.clear();
         graphics.fillStyle(0xff0000, 1);
         graphics.fillRect(0, 0, 4, 4);
@@ -61,20 +106,19 @@
     }
 
     function create() {
-        // Dibujar cuadrícula de fondo sutil
+        // Inicializar marcador de récord en la UI
+        bestDisplay.innerText = highScore;
+
         let grid = this.add.graphics();
-        grid.lineStyle(1, 0x1a1a1a, 1);
+        grid.lineStyle(1, 0x111111, 1);
         for (let i = 0; i < 640; i += 16) {
-            grid.moveTo(i, 0);
-            grid.lineTo(i, 480);
+            grid.moveTo(i, 0); grid.lineTo(i, 480);
         }
         for (let j = 0; j < 480; j += 16) {
-            grid.moveTo(0, j);
-            grid.lineTo(640, j);
+            grid.moveTo(0, j); grid.lineTo(640, j);
         }
         grid.strokePath();
 
-        // Sistema de partículas para cuando come
         particles = this.add.particles(0, 0, 'flare', {
             speed: { min: 50, max: 150 },
             scale: { start: 1, end: 0 },
@@ -82,17 +126,11 @@
             emitting: false
         });
 
-        // Inicializar serpiente
         for (let i = 0; i < 3; i++) {
             snake.push(this.add.image(160 - (i * 16), 160, 'block'));
         }
 
         food = this.add.image(320, 240, 'food');
-        
-        // Interfaz de usuario elegante
-        scoreText = this.add.text(20, 20, 'APPLES: 0', { fontSize: '24px', fill: '#00ff00', fontFamily: 'Courier New', fontWeight: 'bold' });
-        highScoreText = this.add.text(20, 50, 'BEST: ' + highScore, { fontSize: '16px', fill: '#888', fontFamily: 'Courier New' });
-        
         cursors = this.input.keyboard.createCursorKeys();
 
         this.input.once('pointerdown', () => {
@@ -118,15 +156,16 @@
         let y = snake[0].y + direction.y;
 
         if (x === food.x && y === food.y) {
-            // Efectos al comer
             particles.emitParticleAt(food.x, food.y, 10);
             playEatSound();
             appleCount++;
-            scoreText.setText('APPLES: ' + appleCount);
+            
+            // ACTUALIZACIÓN DE UI EXTERNA
+            appleDisplay.innerText = appleCount;
             
             if (appleCount > highScore) {
                 highScore = appleCount;
-                highScoreText.setText('BEST: ' + highScore);
+                bestDisplay.innerText = highScore;
                 localStorage.setItem('snakeHighScore', highScore);
             }
             
@@ -168,7 +207,7 @@
     }
 
     function gameOver() {
-        alert("GAME OVER\nManzanas: " + appleCount);
+        alert("¡FIN DE LA PARTIDA!\nHas comido " + appleCount + " manzanas.");
         location.reload();
     }
 </script>
