@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Neon - Minimal Edition</title>
+    <title>Snake Neon - Music & Menu Fixed</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -15,24 +15,27 @@
         #game-wrapper { position: relative; width: 640px; }
         #ui-panel {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; background: #000; border-bottom: 1px solid #222;
+            padding: 10px; background: #111; border: 2px solid #33ff00; border-bottom: none;
+            border-radius: 10px 10px 0 0;
         }
         #start-menu {
-            position: absolute; top: 45px; left: 0; width: 640px; height: 480px;
-            background: #000; display: flex; flex-direction: column;
+            position: absolute; top: 46px; left: 0; width: 640px; height: 480px;
+            background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 100;
+            border: 2px solid #33ff00; border-radius: 0 0 10px 10px;
         }
-        h1 { font-size: 40px; margin-bottom: 30px; letter-spacing: 5px; }
+        h1 { font-size: 50px; text-shadow: 0 0 15px #33ff00; margin-bottom: 30px; }
         .play-btn {
-            background: transparent; color: #33ff00; border: 1px solid #33ff00; 
-            padding: 10px 30px; font-size: 20px; font-family: 'Courier New'; cursor: pointer;
+            background: #33ff00; color: #000; border: none; padding: 15px 40px;
+            font-size: 24px; font-family: 'Courier New'; cursor: pointer; font-weight: bold;
+            transition: 0.2s;
         }
-        .play-btn:hover { background: #33ff00; color: #000; }
+        .play-btn:hover { background: #fff; box-shadow: 0 0 20px #33ff00; transform: scale(1.1); }
         button.diff-btn {
-            background: #000; border: 1px solid #333; color: #666;
+            background: #222; border: 1px solid #33ff00; color: #33ff00;
             padding: 5px 10px; cursor: pointer; font-size: 11px;
         }
-        button.active { border-color: #33ff00; color: #33ff00; }
+        button.active { background: #33ff00; color: #000; }
         #phaser-app { width: 640px; height: 480px; }
     </style>
 </head>
@@ -49,8 +52,9 @@
         </div>
 
         <div id="start-menu">
-            <h1>SNAKE</h1>
+            <h1>SNAKE NEON</h1>
             <button class="play-btn" onclick="startGame()">JUGAR</button>
+            <p style="color: #888; margin-top: 20px;">Música activa al comenzar</p>
         </div>
 
         <div id="phaser-app"></div>
@@ -66,7 +70,7 @@
     const config = {
         type: Phaser.CANVAS,
         width: 640, height: 480, parent: 'phaser-app',
-        backgroundColor: '#000000',
+        backgroundColor: '#050505',
         scene: { preload: preload, create: create, update: update }
     };
 
@@ -74,10 +78,9 @@
 
     function preload() {
         let graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        graphics.fillStyle(0x33ff00).fillRect(0, 0, 16, 16);
+        graphics.lineStyle(2, 0x33ff00).fillStyle(0x004400).fillRoundedRect(1, 1, 14, 14, 4).strokeRoundedRect(1, 1, 14, 14, 4);
         graphics.generateTexture('block', 16, 16);
-        graphics.clear().fillStyle(0xff0000).fillRect(0, 0, 16, 16);
-        graphics.generateTexture('food', 16, 16);
+        graphics.clear().fillStyle(0xff0000).fillCircle(8, 8, 7).generateTexture('food', 16, 16);
     }
 
     function create() {
@@ -94,7 +97,6 @@
         else if (cursors.right.isDown && direction.x === 0) nextDirection = { x: 16, y: 0 };
         else if (cursors.up.isDown && direction.y === 0) nextDirection = { x: 0, y: -16 };
         else if (cursors.down.isDown && direction.y === 0) nextDirection = { x: 0, y: 16 };
-        
         if (time >= moveTime) {
             moveTime = time + gameSpeed; 
             moveSnake();
@@ -104,9 +106,8 @@
     function moveSnake() {
         direction = nextDirection;
         let x = snake[0].x + direction.x, y = snake[0].y + direction.y;
-        
         if (x === food.x && y === food.y) {
-            playNote(600, 0.05, 'sine', 0.1);
+            playNote(600, 0.05, 'sine', 0.1); // Sonido de comer
             appleCount++;
             if (appleCount > highScore) { highScore = appleCount; localStorage.setItem('snakeHighScore', highScore); }
             document.getElementById('score-display').innerText = `${appleCount} | ${highScore}`;
@@ -116,7 +117,6 @@
         } else {
             let part = snake.pop(); part.x = x; part.y = y; snake.unshift(part);
         }
-        
         if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver();
         for (let i = 1; i < snake.length; i++) if (x === snake[i].x && y === snake[i].y) gameOver();
     }
@@ -125,6 +125,7 @@
         food.setPosition(Math.floor(Math.random() * 40) * 16, Math.floor(Math.random() * 30) * 16);
     }
 
+    // --- SISTEMA DE AUDIO REINSTALADO ---
     function playNote(freq, dur, type, vol) {
         if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
@@ -140,12 +141,18 @@
     window.startGame = function() {
         gameStarted = true;
         document.getElementById('start-menu').style.display = 'none';
+        
+        // Iniciar el contexto de audio
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Secuenciador de música
             const melody = [261.63, 0, 329.63, 392.00, 261.63, 0, 349.23, 329.63];
             let step = 0;
             setInterval(() => {
-                if (gameStarted && melody[step] > 0) playNote(melody[step], 0.15, 'triangle', 0.02);
+                if (gameStarted && melody[step] > 0) {
+                    playNote(melody[step], 0.15, 'triangle', 0.02);
+                }
                 step = (step + 1) % melody.length;
             }, 250);
         }
@@ -166,7 +173,7 @@
 
     function gameOver() {
         gameStarted = false;
-        alert("PUNTUACIÓN: " + appleCount);
+        alert("GAME OVER\nManzanas: " + appleCount);
         location.reload();
     }
 </script>
