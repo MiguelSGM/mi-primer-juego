@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Neon - Bordes Arcade</title>
+    <title>Snake Neon - Minimal Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -15,34 +15,25 @@
         #game-wrapper { position: relative; width: 640px; }
         #ui-panel {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; background: #111; border: 3px solid #33ff00; border-bottom: none;
-            border-radius: 15px 15px 0 0; box-shadow: 0 0 15px #33ff0055;
+            padding: 10px; background: #000; border-bottom: 1px solid #222;
         }
         #start-menu {
-            position: absolute; top: 51px; left: 0; width: 640px; height: 480px;
-            background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column;
+            position: absolute; top: 45px; left: 0; width: 640px; height: 480px;
+            background: #000; display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 100;
-            border: 3px solid #33ff00; border-radius: 0 0 15px 15px;
         }
-        h1 { font-size: 50px; text-shadow: 0 0 20px #33ff00; margin-bottom: 30px; }
+        h1 { font-size: 40px; margin-bottom: 30px; letter-spacing: 5px; }
         .play-btn {
-            background: #33ff00; color: #000; border: none; padding: 15px 40px;
-            font-size: 24px; font-family: 'Courier New'; cursor: pointer; font-weight: bold;
+            background: transparent; color: #33ff00; border: 1px solid #33ff00; 
+            padding: 10px 30px; font-size: 20px; font-family: 'Courier New'; cursor: pointer;
         }
-        .play-btn:hover { background: #fff; box-shadow: 0 0 25px #33ff00; }
+        .play-btn:hover { background: #33ff00; color: #000; }
         button.diff-btn {
-            background: #222; border: 1px solid #33ff00; color: #33ff00;
+            background: #000; border: 1px solid #333; color: #666;
             padding: 5px 10px; cursor: pointer; font-size: 11px;
         }
-        button.active { background: #33ff00; color: #000; }
-
-        /* BORDE DE NEÓN PARA LA PANTALLA */
-        #phaser-app { 
-            width: 640px; height: 480px; 
-            border: 3px solid #33ff00; 
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 0 20px #33ff0044;
-        }
+        button.active { border-color: #33ff00; color: #33ff00; }
+        #phaser-app { width: 640px; height: 480px; }
     </style>
 </head>
 <body>
@@ -58,7 +49,7 @@
         </div>
 
         <div id="start-menu">
-            <h1>SNAKE NEON</h1>
+            <h1>SNAKE</h1>
             <button class="play-btn" onclick="startGame()">JUGAR</button>
         </div>
 
@@ -75,7 +66,7 @@
     const config = {
         type: Phaser.CANVAS,
         width: 640, height: 480, parent: 'phaser-app',
-        backgroundColor: '#050505',
+        backgroundColor: '#000000',
         scene: { preload: preload, create: create, update: update }
     };
 
@@ -83,24 +74,15 @@
 
     function preload() {
         let graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        // Cuerpo de serpiente con estilo bloque
-        graphics.lineStyle(2, 0x33ff00).fillStyle(0x004400).fillRoundedRect(1, 1, 14, 14, 4).strokeRoundedRect(1, 1, 14, 14, 4);
+        graphics.fillStyle(0x33ff00).fillRect(0, 0, 16, 16);
         graphics.generateTexture('block', 16, 16);
-        // Manzana circular
-        graphics.clear().fillStyle(0xff0000).fillCircle(8, 8, 7).generateTexture('food', 16, 16);
+        graphics.clear().fillStyle(0xff0000).fillRect(0, 0, 16, 16);
+        graphics.generateTexture('food', 16, 16);
     }
 
     function create() {
         document.getElementById('score-display').innerText = `${appleCount} | ${highScore}`;
         highlightButton();
-
-        // DIBUJAR REJILLA SUTIL Y LÍMITE INTERIOR
-        let grid = this.add.graphics();
-        grid.lineStyle(1, 0x111111, 0.5);
-        for (let i = 0; i < 640; i += 16) { grid.moveTo(i, 0); grid.lineTo(i, 480); }
-        for (let j = 0; j < 480; j += 16) { grid.moveTo(0, j); grid.lineTo(640, j); }
-        grid.strokePath();
-
         for (let i = 0; i < 3; i++) snake.push(this.add.image(160 - (i * 16), 160, 'block'));
         food = this.add.image(320, 240, 'food');
         cursors = this.input.keyboard.createCursorKeys();
@@ -135,7 +117,6 @@
             let part = snake.pop(); part.x = x; part.y = y; snake.unshift(part);
         }
         
-        // COMPROBACIÓN DE COLISIÓN CON LOS BORDES
         if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver();
         for (let i = 1; i < snake.length; i++) if (x === snake[i].x && y === snake[i].y) gameOver();
     }
@@ -185,7 +166,7 @@
 
     function gameOver() {
         gameStarted = false;
-        alert("GAME OVER\nManzanas: " + appleCount);
+        alert("PUNTUACIÓN: " + appleCount);
         location.reload();
     }
 </script>
