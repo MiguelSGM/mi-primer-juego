@@ -2,15 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Snake Neon - Clean UI</title>
+    <title>Snake Neon - Dificultad</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        /* Estilo general y tipografía */
         body { 
             margin: 0; 
             background: #0a0a0a; 
             display: flex; 
-            flex-direction: column; /* Apila el marcador arriba y el juego abajo */
+            flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             height: 100vh; 
@@ -18,27 +17,40 @@
             font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Panel de puntuación fuera del canvas */
         #ui-panel {
             width: 640px;
             display: flex;
             justify-content: space-between;
-            padding: 10px 20px;
+            align-items: center;
+            padding: 15px;
             background: #151515;
             border: 2px solid #33ff00;
             border-bottom: none;
             border-radius: 10px 10px 0 0;
             box-sizing: border-box;
-            box-shadow: 0 -5px 15px rgba(51, 255, 0, 0.1);
         }
 
-        .stat-box { text-align: center; }
-        .label { font-size: 12px; color: #888; display: block; }
-        .value { font-size: 24px; font-weight: bold; }
+        .difficulty-controls button {
+            background: #222;
+            border: 1px solid #33ff00;
+            color: #33ff00;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Courier New';
+            transition: 0.3s;
+        }
+
+        .difficulty-controls button.active {
+            background: #33ff00;
+            color: #000;
+        }
+
+        .stat-box { text-align: right; }
+        .label { font-size: 10px; color: #888; display: block; }
+        .value { font-size: 20px; font-weight: bold; }
 
         canvas { 
             border: 2px solid #33ff00; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
             border-radius: 0 0 10px 10px;
         }
     </style>
@@ -46,170 +58,22 @@
 <body>
 
     <div id="ui-panel">
-        <div class="stat-box">
-            <span class="label">MANZANAS</span>
-            <span id="apple-count" class="value">0</span>
+        <div class="difficulty-controls">
+            <button onclick="setDifficulty(200, this)">FÁCIL</button>
+            <button onclick="setDifficulty(120, this)" class="active">MEDIO</button>
+            <button onclick="setDifficulty(70, this)">DIFÍCIL</button>
         </div>
         <div class="stat-box">
-            <span class="label">MEJOR RÉCORD</span>
-            <span id="best-score" class="value">0</span>
+            <span class="label">MANZANAS | RÉCORD</span>
+            <span id="score-display">0 | 0</span>
         </div>
     </div>
 
 <script>
+    // Recuperamos la velocidad guardada o usamos la estándar (120ms)
+    let gameSpeed = parseInt(localStorage.getItem('snakeSpeed')) || 120;
+
     const config = {
         type: Phaser.AUTO,
         width: 640,
-        height: 480,
-        backgroundColor: '#050505',
-        scene: { preload: preload, create: create, update: update }
-    };
-
-    let snake = [];
-    let food;
-    let cursors;
-    let moveTime = 0;
-    let direction = { x: 16, y: 0 };
-    let nextDirection = { x: 16, y: 0 };
-    let appleCount = 0;
-    let highScore = localStorage.getItem('snakeHighScore') || 0;
-    let audioCtx, particles;
-
-    // Referencias a los elementos HTML
-    const appleDisplay = document.getElementById('apple-count');
-    const bestDisplay = document.getElementById('best-score');
-
-    const game = new Phaser.Game(config);
-
-    function preload() {
-        let graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        
-        // Cuerpo de la serpiente
-        graphics.lineStyle(2, 0x00ff00, 1);
-        graphics.fillStyle(0x004400, 1);
-        graphics.fillRoundedRect(1, 1, 14, 14, 4);
-        graphics.strokeRoundedRect(1, 1, 14, 14, 4);
-        graphics.generateTexture('block', 16, 16);
-
-        // Manzana
-        graphics.clear();
-        graphics.fillStyle(0xff0000, 1);
-        graphics.fillCircle(8, 8, 7);
-        graphics.fillStyle(0xffffff, 0.5);
-        graphics.fillCircle(5, 5, 2);
-        graphics.generateTexture('food', 16, 16);
-
-        graphics.clear();
-        graphics.fillStyle(0xff0000, 1);
-        graphics.fillRect(0, 0, 4, 4);
-        graphics.generateTexture('flare', 4, 4);
-    }
-
-    function create() {
-        // Inicializar marcador de récord en la UI
-        bestDisplay.innerText = highScore;
-
-        let grid = this.add.graphics();
-        grid.lineStyle(1, 0x111111, 1);
-        for (let i = 0; i < 640; i += 16) {
-            grid.moveTo(i, 0); grid.lineTo(i, 480);
-        }
-        for (let j = 0; j < 480; j += 16) {
-            grid.moveTo(0, j); grid.lineTo(640, j);
-        }
-        grid.strokePath();
-
-        particles = this.add.particles(0, 0, 'flare', {
-            speed: { min: 50, max: 150 },
-            scale: { start: 1, end: 0 },
-            lifespan: 400,
-            emitting: false
-        });
-
-        for (let i = 0; i < 3; i++) {
-            snake.push(this.add.image(160 - (i * 16), 160, 'block'));
-        }
-
-        food = this.add.image(320, 240, 'food');
-        cursors = this.input.keyboard.createCursorKeys();
-
-        this.input.once('pointerdown', () => {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        });
-    }
-
-    function update(time) {
-        if (cursors.left.isDown && direction.x === 0) nextDirection = { x: -16, y: 0 };
-        else if (cursors.right.isDown && direction.x === 0) nextDirection = { x: 16, y: 0 };
-        else if (cursors.up.isDown && direction.y === 0) nextDirection = { x: 0, y: -16 };
-        else if (cursors.down.isDown && direction.y === 0) nextDirection = { x: 0, y: 16 };
-
-        if (time >= moveTime) {
-            moveTime = time + 110; 
-            moveSnake();
-        }
-    }
-
-    function moveSnake() {
-        direction = nextDirection;
-        let x = snake[0].x + direction.x;
-        let y = snake[0].y + direction.y;
-
-        if (x === food.x && y === food.y) {
-            particles.emitParticleAt(food.x, food.y, 10);
-            playEatSound();
-            appleCount++;
-            
-            // ACTUALIZACIÓN DE UI EXTERNA
-            appleDisplay.innerText = appleCount;
-            
-            if (appleCount > highScore) {
-                highScore = appleCount;
-                bestDisplay.innerText = highScore;
-                localStorage.setItem('snakeHighScore', highScore);
-            }
-            
-            let newPart = game.scene.scenes[0].add.image(food.x, food.y, 'block');
-            snake.unshift(newPart);
-            repositionFood();
-        } else {
-            let part = snake.pop();
-            part.x = x;
-            part.y = y;
-            snake.unshift(part);
-        }
-
-        if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver();
-        for (let i = 1; i < snake.length; i++) {
-            if (x === snake[i].x && y === snake[i].y) gameOver();
-        }
-    }
-
-    function repositionFood() {
-        let x = Math.floor(Math.random() * (640 / 16)) * 16;
-        let y = Math.floor(Math.random() * (480 / 16)) * 16;
-        food.setPosition(x, y);
-    }
-
-    function playEatSound() {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
-    }
-
-    function gameOver() {
-        alert("¡FIN DE LA PARTIDA!\nHas comido " + appleCount + " manzanas.");
-        location.reload();
-    }
-</script>
-</body>
-</html>
+        height:
