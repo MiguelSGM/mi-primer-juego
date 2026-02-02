@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEP App</title>
+    <title>DEEP</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg-color: #0a0f1a;
-            --accent-color: #38bdf8;
-            --nav-bg: #111827;
-            --text-dim: #64748b;
+            --bg: #05070a;
+            --accent: #38bdf8;
+            --text-dim: #4b5563;
+            --nav-bg: #0f172a;
         }
 
         body, html {
@@ -18,121 +18,122 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            font-family: 'Inter', system-ui, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg);
             color: white;
+            font-family: 'Inter', -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
         /* --- PANTALLA 1: BIENVENIDA --- */
-        #screen-welcome {
+        #welcome-screen {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            width: 100%;
+            text-align: center;
         }
 
-        #screen-welcome h1 {
-            font-size: 5rem;
-            letter-spacing: 1.2rem;
+        #welcome-screen h1 {
+            font-size: 6rem;
+            letter-spacing: 1.5rem;
             font-weight: 200;
-            margin: 0 0 2rem 0;
-        }
-
-        .btn-start {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            border: none;
-            padding: 1.2rem 3.5rem;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.1rem;
-            transition: transform 0.2s;
-        }
-
-        .btn-start:active {
-            transform: scale(0.95);
-        }
-
-        /* --- PANTALLA 2: INTERFAZ PRINCIPAL (Oculta al inicio) --- */
-        #screen-main {
-            display: none; /* Se activa con JS */
-            height: 100vh;
-            width: 100%;
-            flex-direction: column;
-        }
-
-        /* 2. DEEP en la esquina superior derecha */
-        .header-app {
-            display: flex;
-            justify-content: flex-end;
-            padding: 30px;
-        }
-
-        .header-app h2 {
-            font-size: 1.8rem;
-            letter-spacing: 0.4rem;
-            font-weight: 300;
             margin: 0;
         }
 
-        /* 3. Navegación inferior (Iconos medianos, separados 2cm) */
+        #welcome-screen .slogan {
+            font-size: 1rem;
+            color: var(--accent);
+            letter-spacing: 0.3rem;
+            margin: 1rem 0 3rem 0;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .btn-start {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 1rem 3rem;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .btn-start:hover {
+            background: white;
+            color: var(--bg);
+        }
+
+        /* --- PANTALLA 2: APP PRINCIPAL --- */
+        #main-app {
+            display: none; /* Oculto hasta pulsar el botón */
+            flex: 1;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Logo en esquina superior izquierda */
+        .corner-logo {
+            font-size: 1.5rem;
+            letter-spacing: 0.4rem;
+            font-weight: 300;
+            margin: 10px 0 0 10px;
+        }
+
+        /* Barra de navegación inferior */
         .nav-bar {
             position: fixed;
             bottom: 0;
+            left: 0;
             width: 100%;
             background-color: var(--nav-bg);
-            border-top: 1px solid #1f2937;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 25px 0;
-            padding-bottom: calc(25px + env(safe-area-inset-bottom));
-            /* Gap de 80px equivale aproximadamente a 2cm en pantallas estándar */
+            padding: 30px 0;
+            padding-bottom: calc(30px + env(safe-area-inset-bottom));
+            border-top: 1px solid #1e293b;
+            /* Gap de 80px = aprox 2cm de separación */
             gap: 80px;
         }
 
         .nav-item {
             color: var(--text-dim);
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: color 0.3s;
         }
 
         .nav-item.active {
-            color: var(--accent-color);
-        }
-
-        .nav-item:hover {
             color: white;
         }
     </style>
 </head>
 <body>
 
-    <div id="screen-welcome">
+    <div id="welcome-screen">
         <h1>DEEP</h1>
-        <button class="btn-start" onclick="goToMain()">¡Empecemos!</button>
+        <div class="slogan">Focus beyond the surface</div>
+        <button class="btn-start" onclick="enterApp()">Empecemos</button>
     </div>
 
-    <main id="screen-main">
-        <header class="header-app">
-            <h2>DEEP</h2>
-        </header>
+    <main id="main-app">
+        <div class="corner-logo">DEEP</div>
 
         <nav class="nav-bar">
             <div class="nav-item active" onclick="setTab(this)">
                 <i data-lucide="home" size="32"></i>
             </div>
             <div class="nav-item" onclick="setTab(this)">
-                <i data-lucide="plus-circle" size="32"></i>
+                <i data-lucide="plus" size="32"></i>
             </div>
             <div class="nav-item" onclick="setTab(this)">
-                <i data-lucide="bar-chart-3" size="32"></i>
+                <i data-lucide="bar-chart-2" size="32"></i>
             </div>
         </nav>
     </main>
@@ -141,18 +142,16 @@
         // Inicializar iconos
         lucide.createIcons();
 
-        function goToMain() {
-            // 1. Ocultar y eliminar rastro de la primera pantalla
-            const welcome = document.getElementById('screen-welcome');
-            welcome.style.display = 'none';
+        function enterApp() {
+            // 1. Eliminar visualmente la primera pantalla
+            document.getElementById('welcome-screen').style.display = 'none';
             
-            // 2. Mostrar la segunda pantalla
-            const mainApp = document.getElementById('screen-main');
-            mainApp.style.display = 'flex';
+            // 2. Mostrar la interfaz de la segunda pantalla
+            document.getElementById('main-app').style.display = 'flex';
         }
 
         function setTab(element) {
-            // Gestión de estado activo de los iconos
+            // Cambiar estado activo de los botones
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
