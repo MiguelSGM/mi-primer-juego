@@ -58,7 +58,7 @@
 
         /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
         #home-welcome-content {
-            font-size: 2.7rem; font-weight: 800; line-height: 1.1;
+            font-size: 2.6rem; font-weight: 800; line-height: 1.1;
             text-align: justify; text-justify: inter-word;
         }
 
@@ -199,19 +199,23 @@
         }
 
         function startTimer() {
-            if (timerInterval) return;
+            if (timerInterval) return; // Ya está corriendo
             timerInterval = setInterval(() => {
                 totalSeconds++;
-                const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-                const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-                const s = (totalSeconds % 60).toString().padStart(2, '0');
-                document.getElementById('display').innerText = `${h}:${m}:${s}`;
+                updateClockDisplay();
             }, 1000);
         }
 
         function pauseTimer() {
             clearInterval(timerInterval);
             timerInterval = null;
+        }
+
+        function updateClockDisplay() {
+            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('display').innerText = `${h}:${m}:${s}`;
         }
 
         function openSummary() {
@@ -225,7 +229,6 @@
             const timeStr = document.getElementById('display').innerText;
             const dateStr = new Date().toLocaleDateString();
 
-            // Actualizar lógica de Home
             if (!hasAnySession) {
                 document.getElementById('home-welcome-content').style.display = 'none';
                 document.getElementById('sessions-history').style.display = 'flex';
@@ -235,17 +238,19 @@
             const card = document.createElement('div');
             card.className = 'session-card';
             card.innerHTML = `<div><h4>${name}</h4><span>📅 ${dateStr}</span></div><div class="time-val">${timeStr}</div>`;
+            
+            // Lógica de apilado: Al usar column-reverse en el CSS, appendChild lo pone abajo visualmente
             document.getElementById('sessions-history').appendChild(card);
 
             // Actualizar Estadísticas
             sessionCount++;
             document.getElementById('total-sessions').innerText = sessionCount;
 
-            // Reset
+            // Reset total
             document.getElementById('modal-overlay').style.display = 'none';
             document.getElementById('session-name-input').value = "";
             totalSeconds = 0; 
-            document.getElementById('display').innerText = "00:00:00";
+            updateClockDisplay();
             navTo('home', document.querySelector('.nav-trigger:first-child'));
         }
     </script>
