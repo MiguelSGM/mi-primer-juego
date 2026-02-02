@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEP - Study Focus</title>
+    <title>DEEP - Focus Studio</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg: #030712;
+            --bg: #020617;
             --accent: #38bdf8;
             --nav-bg: #0f172a;
             --text-main: #f8fafc;
@@ -27,8 +27,7 @@
         #screen-welcome {
             position: fixed; inset: 0; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
-            text-align: center;
+            background: radial-gradient(circle at center, #111827 0%, #020617 100%);
         }
         .hero-title {
             font-size: 9rem; letter-spacing: 2rem; font-weight: 900; margin: 0;
@@ -46,49 +45,51 @@
 
         .content-area { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: flex-end; /* Alineación inferior sobre nav */
+            justify-content: flex-end; 
             margin-bottom: 120px; overflow: hidden;
         }
 
-        .view { display: none; width: 100%; max-width: 1400px; margin: 0 auto; }
-        .view.active { display: flex; flex-direction: column; }
+        .view { display: none; width: 100%; max-width: 1400px; margin: 0 auto; height: 100%; }
+        .view.active { display: flex; flex-direction: column; justify-content: flex-end; }
 
-        /* HOME: TEXTO GIGANTE RECTO */
+        /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
         #home-welcome-content {
-            font-size: 2.7rem; font-weight: 800; line-height: 1.1;
+            font-size: 2.6rem; font-weight: 800; line-height: 1.1;
             text-align: justify; text-justify: inter-word;
+            padding-bottom: 20px;
         }
-        .lema-home { font-style: italic; font-size: 3.5rem; display: block; margin-bottom: 2rem; color: var(--accent); text-align: left; }
+        .lema-home { font-style: italic; font-size: 3.5rem; display: block; margin-bottom: 1.5rem; color: var(--accent); text-align: left; }
         .para { margin-top: 1.5rem; display: block; }
-        .hl-blue { color: var(--accent); }
-        .hl-purp { color: #c084fc; }
 
-        /* HISTORIAL: ÚLTIMA SESIÓN ABAJO */
-        #sessions-history { display: none; flex-direction: column-reverse; gap: 20px; overflow-y: auto; width: 100%; }
+        /* HISTORIAL: SCROLL HACIA ARRIBA */
+        #sessions-history { 
+            display: none; flex-direction: column; gap: 20px; 
+            overflow-y: auto; width: 100%; padding: 20px 0;
+        }
         .session-card {
             background: var(--card-bg); padding: 30px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); animation: slideIn 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
         }
         .session-card h4 { margin: 0; font-size: 2.5rem; color: var(--accent); }
-        .session-card span { color: var(--text-dim); font-size: 1.1rem; }
-        .session-card .time-val { font-size: 3.5rem; font-weight: 100; font-family: monospace; }
+        .session-card .time-val { font-size: 3rem; font-weight: 100; font-family: monospace; }
 
         /* CRONÓMETRO */
-        #view-add { align-items: center; justify-content: center; height: 100%; }
-        .timer-header { display: flex; justify-content: space-between; align-items: center; width: 85%; }
-        .subject-select { background: #1e293b; color: white; border: 1px solid var(--accent); padding: 12px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; }
+        #view-add { align-items: center; justify-content: center; }
+        .timer-header { display: flex; justify-content: space-between; align-items: center; width: 90%; margin-bottom: 20px; }
+        .subject-controls { display: flex; flex-direction: column; gap: 10px; }
+        .subject-select { background: #1e293b; color: white; border: 1px solid var(--accent); padding: 12px; border-radius: 8px; font-size: 1.2rem; }
+        #custom-subject-input { display: none; background: #0f172a; border: 1px solid var(--accent); color: white; padding: 10px; border-radius: 8px; }
         .btn-stop { background: #ef4444; color: white; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 900; cursor: pointer; }
         .clock-display { font-size: 15rem; font-weight: 100; font-family: 'Courier New', monospace; margin: 20px 0; }
-        .clock-controls { display: flex; justify-content: center; }
-        .btn-toggle-timer { background: none; border: none; color: var(--text-dim); cursor: pointer; transition: 0.3s; }
-        .btn-toggle-timer:hover { color: white; transform: scale(1.1); }
+        .clk-btn { color: var(--text-dim); cursor: pointer; transition: 0.3s; background: none; border: none; }
+        .clk-btn:hover { color: white; transform: scale(1.1); }
 
         /* ESTADÍSTICAS */
-        .stats-grid { display: flex; width: 100%; justify-content: space-around; align-items: center; gap: 100px; }
-        .stat-box { text-align: center; }
+        .stats-grid { display: flex; width: 100%; justify-content: space-around; align-items: center; margin-bottom: 50px; }
         .stat-val { font-size: 10rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-        .stat-label { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.4rem; color: var(--text-dim); margin-top: 15px; }
+        .stat-label { font-size: 1.5rem; color: var(--text-dim); text-transform: uppercase; margin-top: 10px; }
+        .top-subject-display { font-size: 4rem; color: #4ade80; font-weight: 800; margin-top: 20px; }
 
         /* MODAL */
         #modal-overlay {
@@ -108,8 +109,6 @@
         }
         .nav-trigger { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
         .nav-trigger.active { color: var(--accent); transform: scale(1.2); }
-
-        @keyframes slideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -127,9 +126,9 @@
             <section id="view-home" class="view active">
                 <div id="home-welcome-content">
                     <span class="lema-home">Focus that goes beneath the surface</span>
-                    🚀 Bienvenido a <span class="hl-blue">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span class="hl-purp">sesiones de estudio</span> que añadas de ahora en adelante. 
-                    <span class="para">➕ Si clicas a <span class="hl-blue">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.</span>
-                    <span class="para">📊 En <span class="hl-blue">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
+                    🚀 Bienvenido a <span style="color:var(--accent)">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span style="color:#c084fc">sesiones de estudio</span> que añadas de ahora en adelante. 
+                    <span class="para">➕ Si clicas a <span style="color:var(--accent)">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.</span>
+                    <span class="para">📊 En <span style="color:var(--accent)">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
                     <span class="para">✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!</span>
                 </div>
                 <div id="sessions-history"></div>
@@ -137,15 +136,20 @@
 
             <section id="view-add" class="view">
                 <div class="timer-header">
-                    <select id="subject-selector" class="subject-select">
-                        <option value="Matemáticas➕">Matemáticas➕</option>
-                        <option value="Inglés🇺🇸">Inglés🇺🇸</option>
-                    </select>
+                    <div class="subject-controls">
+                        <select id="subject-selector" class="subject-select" onchange="checkSubject(this)">
+                            <option value="Matemáticas➕">Matemáticas➕</option>
+                            <option value="Inglés🇺🇸">Inglés🇺🇸</option>
+                            <option value="Lengua Castellana y Literatura 🇪🇸">Lengua Castellana y Literatura 🇪🇸</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+                        <input type="text" id="custom-subject-input" placeholder="Nombre de asignatura...">
+                    </div>
                     <button class="btn-stop" onclick="openFinishModal()">Terminar sesión</button>
                 </div>
                 <div class="clock-display" id="display">00:00:00</div>
                 <div class="clock-controls">
-                    <button class="btn-toggle-timer" id="toggle-btn" onclick="toggleTimer()">
+                    <button class="clk-btn" id="toggle-timer-btn" onclick="toggleTimer()">
                         <i data-lucide="pause-circle" size="100"></i>
                     </button>
                 </div>
@@ -154,21 +158,21 @@
             <section id="view-stats" class="view">
                 <div class="stats-grid">
                     <div class="stat-box">
-                        <div class="stat-val" id="stat-sessions">0</div>
+                        <div class="stat-val" id="st-sessions">0</div>
                         <div class="stat-label">Sesiones</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-val" id="stat-hours">0</div>
+                        <div class="stat-val" id="st-hours">0</div>
                         <div class="stat-label">Horas</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-val" id="stat-streak">0</div>
+                        <div class="stat-val" id="st-streak">0</div>
                         <div class="stat-label">Racha 🔥</div>
                     </div>
                 </div>
-                <div style="margin-top: 50px; text-align: center; border-top: 1px solid #1e293b; padding-top: 20px;">
-                    <div class="stat-label">Más Estudiada</div>
-                    <div id="stat-top-subject" style="font-size: 4rem; color: #4ade80; font-weight: 800;">-</div>
+                <div style="margin-top: 50px; text-align: center;">
+                    <div class="stat-label">Asignatura más estudiada</div>
+                    <div id="st-top-subject" class="top-subject-display">-</div>
                 </div>
             </section>
         </div>
@@ -183,29 +187,16 @@
     <div id="modal-overlay">
         <div class="modal-body">
             <h2 style="margin:0; font-size: 2.5rem;">Sesión Finalizada 🏆</h2>
-            <div id="modal-clock" class="modal-clock">00:00:00</div>
-            <input type="text" id="input-session-name" class="modal-input" placeholder="Nombre de la sesión...">
-            <button class="btn-upload" onclick="saveAndUpload()">Subir sesión</button>
+            <div id="modal-time" class="modal-clock">00:00:00</div>
+            <input type="text" id="session-name-input" class="modal-input" placeholder="Nombre de la sesión...">
+            <button class="btn-upload" onclick="uploadSession()">Subir sesión</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-
-        let totalSeconds = 0;
-        let timerInterval = null;
-        let isPaused = false;
-        let confettiFired = false;
-        let hasData = false;
-        
-        // Datos de Stats
-        let stats = {
-            totalSessions: 0,
-            totalSeconds: 0,
-            streak: 0,
-            lastStudyDay: null,
-            subjectTimes: { "Matemáticas➕": 0, "Inglés🇺🇸": 0 }
-        };
+        let totalSeconds = 0, timerInterval = null, isPaused = false, hasAnySession = false, confettiFired = false;
+        let stats = { sessions: 0, seconds: 0, streak: 0, lastDate: null, subjects: {} };
 
         function launchApp() {
             document.getElementById('screen-welcome').style.display = 'none';
@@ -217,36 +208,32 @@
             document.getElementById('view-' + viewId).classList.add('active');
             document.querySelectorAll('.nav-trigger').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
-            // Auto-start al entrar en añadir si no está corriendo
-            if(viewId === 'add' && !timerInterval && totalSeconds === 0) startCounting();
+            if(viewId === 'add' && !timerInterval && totalSeconds === 0) startTimer();
         }
 
-        function startCounting() {
-            isPaused = false;
-            updateToggleIcon();
+        function checkSubject(sel) {
+            document.getElementById('custom-subject-input').style.display = (sel.value === 'Otra') ? 'block' : 'none';
+        }
+
+        function startTimer() {
+            isPaused = false; updateIcon();
             timerInterval = setInterval(() => {
                 totalSeconds++;
                 updateDisplay();
-                if (totalSeconds >= 1800 && !confettiFired) { // 30 mins = 1800s
-                    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+                if (totalSeconds >= 1800 && !confettiFired) {
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                     confettiFired = true;
                 }
             }, 1000);
         }
 
         function toggleTimer() {
-            if (isPaused) {
-                startCounting();
-            } else {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                isPaused = true;
-                updateToggleIcon();
-            }
+            if (isPaused) { startTimer(); } 
+            else { clearInterval(timerInterval); timerInterval = null; isPaused = true; updateIcon(); }
         }
 
-        function updateToggleIcon() {
-            const btn = document.getElementById('toggle-btn');
+        function updateIcon() {
+            const btn = document.getElementById('toggle-timer-btn');
             btn.innerHTML = isPaused ? '<i data-lucide="play-circle" size="100"></i>' : '<i data-lucide="pause-circle" size="100"></i>';
             lucide.createIcons();
         }
@@ -259,56 +246,51 @@
         }
 
         function openFinishModal() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            document.getElementById('modal-clock').innerText = document.getElementById('display').innerText;
+            clearInterval(timerInterval); timerInterval = null;
+            document.getElementById('modal-time').innerText = document.getElementById('display').innerText;
             document.getElementById('modal-overlay').style.display = 'flex';
         }
 
-        function saveAndUpload() {
-            const name = document.getElementById('input-session-name').value || "Estudio General";
-            const subject = document.getElementById('subject-selector').value;
+        function uploadSession() {
+            let subject = document.getElementById('subject-selector').value;
+            if(subject === 'Otra') subject = document.getElementById('custom-subject-input').value || 'Otra';
+            const name = document.getElementById('session-name-input').value || "Estudio";
             const timeStr = document.getElementById('display').innerText;
             const today = new Date().toLocaleDateString();
 
-            if (!hasData) {
+            if (!hasAnySession) {
                 document.getElementById('home-welcome-content').style.display = 'none';
                 document.getElementById('sessions-history').style.display = 'flex';
-                hasData = true;
+                hasAnySession = true;
             }
 
-            // Actualizar Estadísticas
-            stats.totalSessions++;
-            stats.totalSeconds += totalSeconds;
-            stats.subjectTimes[subject] += totalSeconds;
+            stats.sessions++;
+            stats.seconds += totalSeconds;
+            stats.subjects[subject] = (stats.subjects[subject] || 0) + totalSeconds;
 
-            // Racha
-            if (totalSeconds >= 1800) {
-                if (stats.lastStudyDay !== today) {
-                    stats.streak++;
-                    stats.lastStudyDay = today;
-                }
+            if (totalSeconds >= 1800 && stats.lastDate !== today) {
+                stats.streak++;
+                stats.lastDate = today;
             }
 
-            // UI Stats
-            document.getElementById('stat-sessions').innerText = stats.totalSessions;
-            document.getElementById('stat-hours').innerText = (stats.totalSeconds / 3600).toFixed(1);
-            document.getElementById('stat-streak').innerText = stats.streak;
+            document.getElementById('st-sessions').innerText = stats.sessions;
+            document.getElementById('st-hours').innerText = (stats.seconds / 3600).toFixed(1);
+            document.getElementById('st-streak').innerText = stats.streak;
+            
+            let top = Object.keys(stats.subjects).reduce((a, b) => stats.subjects[a] > stats.subjects[b] ? a : b, '-');
+            document.getElementById('st-top-subject').innerText = top;
 
-            const top = Object.keys(stats.subjectTimes).reduce((a, b) => stats.subjectTimes[a] > stats.subjectTimes[b] ? a : b);
-            document.getElementById('stat-top-subject').innerText = stats.subjectTimes[top] > 0 ? top : "-";
-
-            // Card History
             const card = document.createElement('div');
             card.className = 'session-card';
             card.innerHTML = `<div><h4>${subject} - ${name}</h4><span>📅 ${today}</span></div><div class="time-val">${timeStr}</div>`;
             document.getElementById('sessions-history').appendChild(card);
+            
+            // Scroll to bottom
+            const history = document.getElementById('sessions-history');
+            history.scrollTop = history.scrollHeight;
 
-            // Reset
             document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('input-session-name').value = "";
-            totalSeconds = 0; confettiFired = false;
-            updateDisplay();
+            totalSeconds = 0; confettiFired = false; updateDisplay();
             navTo('home', document.querySelector('.nav-trigger:first-child'));
         }
     </script>
