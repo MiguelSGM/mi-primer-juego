@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEP - Focus App</title>
+    <title>DEEP - Focus</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg: #030712;
+            --bg: #05070a;
             --accent: #38bdf8;
-            --gradient: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+            --text-main: #f8fafc;
             --nav-bg: #111827;
-            --text-dim: #64748b;
         }
 
         body, html {
@@ -20,8 +19,8 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg);
-            color: white;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
         }
 
@@ -33,7 +32,6 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: radial-gradient(circle at center, #1e293b 0%, #030712 100%);
         }
 
         .hero-title {
@@ -41,18 +39,17 @@
             letter-spacing: 1.5rem;
             font-weight: 900;
             margin: 0;
-            background: var(--gradient);
+            background: linear-gradient(to right, #38bdf8, #818cf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .slogan {
             font-size: 1.2rem;
-            color: #94a3b8;
+            color: #64748b;
             letter-spacing: 0.5rem;
-            margin: 1rem 0 4rem 0;
+            margin: 1rem 0 3rem 0;
             text-transform: uppercase;
-            font-weight: 300;
         }
 
         .btn-start {
@@ -64,124 +61,112 @@
             font-weight: 800;
             border-radius: 50px;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transition: 0.3s;
         }
 
-        .btn-start:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
-        }
-
-        /* --- PANTALLA 2: INTERFAZ APP --- */
+        /* --- PANTALLA 2: APP (CONTENEDOR) --- */
         #screen-app {
             display: none;
             height: 100vh;
             flex-direction: column;
             padding: 30px;
-            box-sizing: border-box;
         }
 
         .corner-logo {
-            font-size: 2rem;
+            font-size: 1.8rem;
             letter-spacing: 0.4rem;
             font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            color: var(--accent);
         }
 
-        /* HOME PAGE: Texto Gigante y Bonito */
-        .home-page {
+        /* VISTAS (HOME Y CRONÓMETRO) */
+        .view {
             flex: 1;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
-            padding-bottom: 120px; /* Espacio para la nav */
+            padding-bottom: 100px;
         }
 
+        .view.active { display: flex; }
+
+        /* TEXTO HOME GIGANTE */
         .main-text {
-            font-size: 2.5rem;
-            line-height: 1.3;
-            font-weight: 700;
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1.2;
+            max-width: 1000px;
             text-align: left;
-            max-width: 900px;
         }
 
-        .highlight-blue { color: #38bdf8; }
-        .highlight-purple { color: #c084fc; }
-        .highlight-green { color: #4ade80; }
+        /* CRONÓMETRO */
+        .timer-display {
+            font-size: 10rem;
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--accent);
+        }
 
-        /* NAVEGACIÓN (Botones medianos separados) */
+        /* NAVEGACIÓN */
         .nav-bar {
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(17, 24, 39, 0.8);
-            backdrop-filter: blur(10px);
+            background: var(--nav-bg);
+            padding: 20px 50px;
+            border-radius: 100px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 40px;
-            border-radius: 40px;
-            gap: 80px; /* Aproximadamente 2cm */
-            border: 1px solid rgba(255,255,255,0.1);
+            gap: 80px; /* Aprox 2cm */
+            border: 1px solid #1e293b;
         }
 
-        .nav-item {
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+        .nav-item { color: #475569; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--accent); transform: scale(1.2); }
 
-        .nav-item.active {
-            color: white;
-            transform: scale(1.2);
-        }
-
-        /* Animación suave */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate { animation: fadeInUp 0.8s ease forwards; }
+        /* Colores del texto */
+        .c-blue { color: #38bdf8; }
+        .c-purple { color: #a855f7; }
+        .c-orange { color: #fb923c; }
     </style>
 </head>
 <body>
 
     <div id="screen-welcome">
         <h1 class="hero-title">DEEP</h1>
-        <div class="slogan">Sumerge tu mente, eleva tu éxito</div>
+        <div class="slogan">Domina tu tiempo, alcanza la cima</div>
         <button class="btn-start" onclick="launchApp()">Empecemos</button>
     </div>
 
     <main id="screen-app">
         <div class="corner-logo">DEEP</div>
 
-        <section class="home-page">
-            <div class="main-text animate">
-                🚀 Bienvenido a <span class="highlight-blue">DEEP</span>, la mejor web para impulsar tus estudios. <br><br>
-                🏠 Estás en tu menú, aquí verás las <span class="highlight-purple">sesiones de estudio</span> que añadas de ahora en adelante. <br><br>
-                ➕ Si clicas a <span class="highlight-green">"añadir"</span>, podrás meter todas las sesiones que quieras. <br><br>
-                📊 En <b>"estadísticas"</b>, podrás ver tu progreso mensual y anual con gráficos increíbles. <br><br>
+        <section id="view-home" class="view active">
+            <div class="main-text">
+                🚀 Bienvenido a <span class="c-blue">DEEP</span>, la mejor web para impulsar tus estudios. <br><br>
+                🏠 Estás en tu menú, aquí verás las <span class="c-purple">sesiones de estudio</span> que añadas. <br><br>
+                ➕ Si clicas a <span class="c-orange">"añadir"</span>, podrás iniciar un cronómetro funcional. <br><br>
+                📊 En <b>"estadísticas"</b>, verás tus gráficos y detalles. <br><br>
                 ✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!
             </div>
         </section>
 
+        <section id="view-add" class="view">
+            <div class="timer-display" id="timer">00:00:00</div>
+        </section>
+
+        <section id="view-stats" class="view">
+            <h2>Próximamente: Tus estadísticas 📈</h2>
+        </section>
+
         <nav class="nav-bar">
-            <div class="nav-item active" onclick="switchTab(this)">
+            <div class="nav-item active" onclick="switchView('home', this)">
                 <i data-lucide="home" size="32"></i>
             </div>
-            <div class="nav-item" onclick="switchTab(this)">
+            <div class="nav-item" onclick="switchView('add', this)">
                 <i data-lucide="plus-circle" size="32"></i>
             </div>
-            <div class="nav-item" onclick="switchTab(this)">
+            <div class="nav-item" onclick="switchView('stats', this)">
                 <i data-lucide="bar-chart-3" size="32"></i>
             </div>
         </nav>
@@ -190,16 +175,45 @@
     <script>
         lucide.createIcons();
 
+        // Lógica de navegación
         function launchApp() {
-            // Eliminar pantalla 1
             document.getElementById('screen-welcome').style.display = 'none';
-            // Mostrar pantalla 2
             document.getElementById('screen-app').style.display = 'flex';
         }
 
-        function switchTab(el) {
+        function switchView(viewId, el) {
+            // Cambiar visibilidad de secciones
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            // Cambiar icono activo
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
+
+            // Iniciar cronómetro si se entra en "add"
+            if(viewId === 'add') { startTimer(); } 
+            else { stopTimer(); }
+        }
+
+        // Lógica del Cronómetro
+        let seconds = 0;
+        let timerInterval = null;
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                seconds++;
+                let hrs = Math.floor(seconds / 3600);
+                let mins = Math.floor((seconds % 3600) / 60);
+                let secs = seconds % 60;
+                document.getElementById('timer').innerText = 
+                    `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
         }
     </script>
 </body>
