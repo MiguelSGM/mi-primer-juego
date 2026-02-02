@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DEEP - Focus Studio</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --bg: #020617;
@@ -48,49 +49,42 @@
             margin-bottom: 120px; overflow: hidden;
         }
 
-        .view { display: none; width: 100%; max-width: 1300px; margin: 0 auto; }
+        .view { display: none; width: 100%; max-width: 1400px; margin: 0 auto; }
         .view.active { display: flex; flex-direction: column; }
 
-        /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
+        /* HOME: TEXTO GIGANTE JUSTIFICADO */
         #home-welcome-content {
-            font-size: 2.7rem; font-weight: 800; line-height: 1.1;
+            font-size: 2.4rem; font-weight: 800; line-height: 1.1;
             text-align: justify; text-justify: inter-word;
         }
-        .lema-home { font-style: italic; font-size: 3.5rem; display: block; margin-bottom: 2rem; color: var(--accent); text-align: left; }
-        .para { margin-top: 1.5rem; display: block; }
-        .hl-blue { color: var(--accent); }
-        .hl-purp { color: #c084fc; }
+        .lema-home { font-style: italic; font-size: 3.5rem; display: block; margin-bottom: 1.5rem; color: var(--accent); text-align: left; }
+        .para { margin-top: 1.2rem; display: block; }
 
-        /* HISTORIAL: ÚLTIMA SESIÓN ABAJO, EMPUJA ARRIBA */
+        /* HISTORIAL */
         #sessions-history { display: none; flex-direction: column-reverse; gap: 20px; overflow-y: auto; width: 100%; }
         .session-card {
             background: var(--card-bg); padding: 30px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); animation: slideIn 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .session-card h4 { margin: 0; font-size: 2.5rem; color: var(--accent); }
-        .session-card span { color: var(--text-dim); font-size: 1.1rem; }
-        .session-card .time-val { font-size: 3.5rem; font-weight: 100; font-family: monospace; }
+        .session-card h4 { margin: 0; font-size: 2.2rem; color: var(--accent); }
+        .session-card .time-val { font-size: 3rem; font-weight: 100; font-family: monospace; }
 
         /* CRONÓMETRO */
         #view-add { align-items: center; justify-content: center; height: 100%; }
-        .timer-ui { text-align: center; width: 100%; }
-        .timer-header { display: flex; justify-content: space-between; align-items: center; width: 85%; margin: 0 auto; }
-        .subject-select { background: #1e293b; color: white; border: 1px solid var(--accent); padding: 12px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; }
-        .btn-stop { background: #ef4444; color: white; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        .clock-display { font-size: 15rem; font-weight: 100; font-family: 'Courier New', monospace; margin: 20px 0; }
+        .timer-header { display: flex; justify-content: space-between; align-items: center; width: 90%; }
+        .subject-select { background: #1e293b; color: white; border: 1px solid var(--accent); padding: 12px; border-radius: 8px; font-size: 1.2rem; }
+        .btn-stop { background: #ef4444; color: white; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 900; cursor: pointer; }
+        .clock-display { font-size: 15rem; font-weight: 100; font-family: monospace; margin: 20px 0; }
         .clock-controls { display: flex; gap: 100px; justify-content: center; }
         .clk-btn { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
-        .clk-btn:hover { color: white; transform: scale(1.1); }
+        .clk-btn:hover { color: white; }
 
         /* ESTADÍSTICAS */
-        #view-stats { align-items: center; justify-content: center; height: 100%; text-align: center; }
-        .stats-row { display: flex; width: 100%; justify-content: space-around; align-items: center; margin-bottom: 50px; }
-        .stat-box { text-align: center; flex: 1; }
+        .stats-grid { display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 0 50px; }
+        .stat-box { text-align: center; }
         .stat-val { font-size: 10rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-        .stat-label { font-size: 1.5rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4rem; margin-top: 15px; }
-        .top-subject-box { margin-top: 40px; padding: 20px; border-top: 1px solid #1e293b; width: 80%; }
-        .top-subject-val { font-size: 4rem; color: #4ade80; font-weight: 800; }
+        .stat-label { font-size: 1.4rem; color: var(--text-dim); text-transform: uppercase; margin-top: 10px; }
 
         /* MODAL */
         #modal-overlay {
@@ -110,8 +104,6 @@
         }
         .nav-trigger { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
         .nav-trigger.active { color: var(--accent); transform: scale(1.2); }
-
-        @keyframes slideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -119,7 +111,7 @@
     <div id="screen-welcome">
         <h1 class="hero-title">DEEP</h1>
         <div class="welcome-slogan">Focus that goes beneath the surface</div>
-        <button class="btn-init" onclick="goToApp()">Empecemos</button>
+        <button class="btn-init" onclick="launchApp()">Empecemos</button>
     </div>
 
     <main id="screen-app">
@@ -129,9 +121,9 @@
             <section id="view-home" class="view active">
                 <div id="home-welcome-content">
                     <span class="lema-home">Focus that goes beneath the surface</span>
-                    🚀 Bienvenido a <span class="hl-blue">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span class="hl-purp">sesiones de estudio</span> que añadas de ahora en adelante. 
-                    <span class="para">➕ Si clicas a <span class="hl-blue">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.</span>
-                    <span class="para">📊 En <span class="hl-blue">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
+                    🚀 Bienvenido a <span style="color:var(--accent)">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span style="color:#c084fc">sesiones de estudio</span> que añadas de ahora en adelante. 
+                    <span class="para">➕ Si clicas a <span style="color:var(--accent)">"añadir"</span>, podrás meter todas las sesiones que quieras.</span>
+                    <span class="para">📊 En <span style="color:var(--accent)">"estadísticas"</span>, verás todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
                     <span class="para">✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!</span>
                 </div>
                 <div id="sessions-history"></div>
@@ -148,26 +140,30 @@
                     </div>
                     <div class="clock-display" id="display">00:00:00</div>
                     <div class="clock-controls">
-                        <div class="clk-btn" onclick="pauseTimer()"><i data-lucide="pause-circle" size="110"></i></div>
-                        <div class="clk-btn" onclick="startTimer()"><i data-lucide="play-circle" size="110"></i></div>
+                        <div class="clk-btn" onclick="pauseTimer()"><i data-lucide="pause-circle" size="100"></i></div>
+                        <div class="clk-btn" onclick="startTimer()"><i data-lucide="play-circle" size="100"></i></div>
                     </div>
                 </div>
             </section>
 
             <section id="view-stats" class="view">
-                <div class="stats-row">
+                <div class="stats-grid">
                     <div class="stat-box">
-                        <div class="stat-val" id="count-sessions">0</div>
+                        <div class="stat-val" id="st-sessions">0</div>
                         <div class="stat-label">Sesiones</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-val" id="count-hours">0</div>
+                        <div class="stat-val" id="st-hours">0</div>
                         <div class="stat-label">Horas</div>
                     </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="st-streak">0</div>
+                        <div class="stat-label">Racha 🔥</div>
+                    </div>
                 </div>
-                <div class="top-subject-box">
-                    <div class="stat-label">Más Estudiada 🔥</div>
-                    <div class="top-subject-val" id="top-subject-name">-</div>
+                <div style="margin-top: 50px; border-top: 1px solid #1e293b; padding-top: 30px; text-align: center; width: 100%;">
+                    <div class="stat-label">Asignatura más estudiada</div>
+                    <div id="st-top-subject" style="font-size: 4rem; color: #4ade80; font-weight: 800;">-</div>
                 </div>
             </section>
         </div>
@@ -181,7 +177,7 @@
 
     <div id="modal-overlay">
         <div class="modal-body">
-            <h2 style="margin:0; font-size: 2.5rem;">Sesión Finalizada 🏆</h2>
+            <h2 style="margin:0; font-size: 2.2rem;">Sesión Finalizada 🏆</h2>
             <div id="modal-time" class="modal-clock">00:00:00</div>
             <input type="text" id="session-name-input" class="modal-input" placeholder="Nombre de la sesión...">
             <button class="btn-upload" onclick="uploadSession()">Subir sesión</button>
@@ -193,12 +189,19 @@
 
         let totalSeconds = 0;
         let timerInterval = null;
-        let sessionCount = 0;
-        let totalSecondsStudied = 0;
         let hasAnySession = false;
-        let subjectStats = { "Matemáticas➕": 0, "Inglés🇺🇸": 0 };
+        let confettiTriggered = false;
+        
+        // Stats Data
+        let stats = {
+            sessions: 0,
+            seconds: 0,
+            streak: 0,
+            lastDate: null,
+            subjects: { "Matemáticas➕": 0, "Inglés🇺🇸": 0 }
+        };
 
-        function goToApp() {
+        function launchApp() {
             document.getElementById('screen-welcome').style.display = 'none';
             document.getElementById('screen-app').style.display = 'flex';
         }
@@ -215,13 +218,18 @@
             timerInterval = setInterval(() => {
                 totalSeconds++;
                 updateDisplay();
+                if (totalSeconds === 60 && !confettiTriggered) {
+                    triggerConfetti();
+                    confettiTriggered = true;
+                }
             }, 1000);
         }
 
-        function pauseTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
+        function triggerConfetti() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#38bdf8', '#818cf8', '#ffffff'] });
         }
+
+        function pauseTimer() { clearInterval(timerInterval); timerInterval = null; }
 
         function updateDisplay() {
             const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
@@ -238,9 +246,9 @@
 
         function uploadSession() {
             const subject = document.getElementById('subject-selector').value;
-            const customName = document.getElementById('session-name-input').value || "Estudio General";
+            const customName = document.getElementById('session-name-input').value || "Estudio";
             const timeStr = document.getElementById('display').innerText;
-            const dateStr = new Date().toLocaleDateString();
+            const today = new Date().toLocaleDateString();
 
             if (!hasAnySession) {
                 document.getElementById('home-welcome-content').style.display = 'none';
@@ -248,28 +256,38 @@
                 hasAnySession = true;
             }
 
-            // Guardar en historial
+            // Update Stats
+            stats.sessions++;
+            stats.seconds += totalSeconds;
+            stats.subjects[subject] += totalSeconds;
+
+            // Racha Logic
+            if (totalSeconds >= 60) {
+                if (stats.lastDate !== today) {
+                    // Si el último día fue ayer, sumar 1, si no, resetear a 1
+                    stats.streak++; 
+                    stats.lastDate = today;
+                }
+            }
+
+            // Update UI Stats
+            document.getElementById('st-sessions').innerText = stats.sessions;
+            document.getElementById('st-hours').innerText = (stats.seconds / 3600).toFixed(1);
+            document.getElementById('st-streak').innerText = stats.streak;
+            
+            let topSubject = Object.keys(stats.subjects).reduce((a, b) => stats.subjects[a] > stats.subjects[b] ? a : b);
+            document.getElementById('st-top-subject').innerText = stats.subjects[topSubject] > 0 ? topSubject : "-";
+
+            // Add Card
             const card = document.createElement('div');
             card.className = 'session-card';
-            card.innerHTML = `<div><h4>${subject} - ${customName}</h4><span>📅 ${dateStr}</span></div><div class="time-val">${timeStr}</div>`;
+            card.innerHTML = `<div><h4>${subject} - ${customName}</h4><span>📅 ${today}</span></div><div class="time-val">${timeStr}</div>`;
             document.getElementById('sessions-history').appendChild(card);
-
-            // Actualizar Estadísticas
-            sessionCount++;
-            totalSecondsStudied += totalSeconds;
-            subjectStats[subject]++;
-            
-            document.getElementById('count-sessions').innerText = sessionCount;
-            document.getElementById('count-hours').innerText = (totalSecondsStudied / 3600).toFixed(1);
-            
-            // Calcular asignatura más estudiada
-            let top = Object.keys(subjectStats).reduce((a, b) => subjectStats[a] > subjectStats[b] ? a : b);
-            document.getElementById('top-subject-name').innerText = subjectStats[top] > 0 ? top : "-";
 
             // Reset
             document.getElementById('modal-overlay').style.display = 'none';
             document.getElementById('session-name-input').value = "";
-            totalSeconds = 0; 
+            totalSeconds = 0; confettiTriggered = false;
             updateDisplay();
             navTo('home', document.querySelector('.nav-trigger:first-child'));
         }
