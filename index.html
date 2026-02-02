@@ -3,140 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEP - Focus App</title>
+    <title>DEEP App</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Estilos básicos para una estética moderna y limpia */
-        body {
+        :root {
+            --bg-color: #0a0f1a;
+            --accent-color: #38bdf8;
+            --nav-bg: #111827;
+            --text-dim: #64748b;
+        }
+
+        body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0f172a; /* Azul muy oscuro / Negro */
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: white;
             overflow: hidden;
         }
 
-        .welcome-container {
-            text-align: center;
-            animation: fadeIn 1.2s ease-out;
+        /* --- PANTALLA 1: BIENVENIDA --- */
+        #screen-welcome {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
         }
 
-        h1 {
-            font-size: 4rem;
-            letter-spacing: 0.5rem;
-            margin-bottom: 0.5rem;
+        #screen-welcome h1 {
+            font-size: 5rem;
+            letter-spacing: 1.2rem;
             font-weight: 200;
-            text-transform: uppercase;
-        }
-
-        p {
-            color: #94a3b8;
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
+            margin: 0 0 2rem 0;
         }
 
         .btn-start {
-            background-color: #38bdf8; /* Azul brillante para el botón */
-            color: #0f172a;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
             border: none;
-            padding: 1rem 2.5rem;
+            padding: 1.2rem 3.5rem;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            transition: transform 0.2s;
         }
 
-        .btn-start:hover {
-            background-color: #7dd3fc;
-            transform: scale(1.05);
+        .btn-start:active {
+            transform: scale(0.95);
         }
 
-        /* Animación suave de entrada */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- PANTALLA 2: INTERFAZ PRINCIPAL (Oculta al inicio) --- */
+        #screen-main {
+            display: none; /* Se activa con JS */
+            height: 100vh;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        /* 2. DEEP en la esquina superior derecha */
+        .header-app {
+            display: flex;
+            justify-content: flex-end;
+            padding: 30px;
+        }
+
+        .header-app h2 {
+            font-size: 1.8rem;
+            letter-spacing: 0.4rem;
+            font-weight: 300;
+            margin: 0;
+        }
+
+        /* 3. Navegación inferior (Iconos medianos, separados 2cm) */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--nav-bg);
+            border-top: 1px solid #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px 0;
+            padding-bottom: calc(25px + env(safe-area-inset-bottom));
+            /* Gap de 80px equivale aproximadamente a 2cm en pantallas estándar */
+            gap: 80px;
+        }
+
+        .nav-item {
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-item:hover {
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <div class="welcome-container">
+    <div id="screen-welcome">
         <h1>DEEP</h1>
-        <p>Tu tiempo. Tu enfoque. Tu progreso.</p>
-        <button class="btn-start" onclick="startApp()">¡Empecemos!</button>
+        <button class="btn-start" onclick="goToMain()">¡Empecemos!</button>
     </div>
 
+    <main id="screen-main">
+        <header class="header-app">
+            <h2>DEEP</h2>
+        </header>
+
+        <nav class="nav-bar">
+            <div class="nav-item active" onclick="setTab(this)">
+                <i data-lucide="home" size="32"></i>
+            </div>
+            <div class="nav-item" onclick="setTab(this)">
+                <i data-lucide="plus-circle" size="32"></i>
+            </div>
+            <div class="nav-item" onclick="setTab(this)">
+                <i data-lucide="bar-chart-3" size="32"></i>
+            </div>
+        </nav>
+    </main>
+
     <script>
-        function startApp() {
-            // Por ahora, solo lanzamos una alerta para confirmar que funciona
-            alert("¡Bienvenido a DEEP! Preparando tu espacio de estudio...");
-            // Aquí es donde luego redirigiremos al cronómetro o dashboard
+        // Inicializar iconos
+        lucide.createIcons();
+
+        function goToMain() {
+            // 1. Ocultar y eliminar rastro de la primera pantalla
+            const welcome = document.getElementById('screen-welcome');
+            welcome.style.display = 'none';
+            
+            // 2. Mostrar la segunda pantalla
+            const mainApp = document.getElementById('screen-main');
+            mainApp.style.display = 'flex';
+        }
+
+        function setTab(element) {
+            // Gestión de estado activo de los iconos
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
         }
     </script>
 </body>
 </html>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEP - Focus App</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root {
-            --bg: #0a0f1a;
-            --nav-bg: #111827;
-            --accent: #38bdf8;
-            --text-dim: #64748b;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: white;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* --- ESCENA 1: BIENVENIDA --- */
-        #welcome-scene {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            background-color: var(--bg);
-        }
-
-        .welcome-title {
-            font-size: 4rem;
-            letter-spacing: 1rem;
-            font-weight: 200;
-            margin-bottom: 2rem;
-        }
-
-        .btn-start {
-            background-color: var(--accent);
-            color: var(--bg);
-            border: none;
-            padding: 1rem 3rem;
-            font-size: 0.9rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        /* --- ESCENA 2: APP PRINCIPAL (OCULTA POR DEFECT
