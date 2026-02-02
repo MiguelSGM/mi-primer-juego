@@ -99,7 +99,7 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--bg);
             color: white;
             height: 100vh;
@@ -108,7 +108,7 @@
             overflow: hidden;
         }
 
-        /* PANTALLA DE BIENVENIDA */
+        /* 1. PANTALLA DE BIENVENIDA */
         #welcome-screen {
             position: fixed;
             inset: 0;
@@ -118,13 +118,13 @@
             align-items: center;
             z-index: 100;
             background-color: var(--bg);
-            transition: opacity 0.4s ease;
+            transition: opacity 0.5s ease;
         }
 
-        h1 { font-size: 3.5rem; letter-spacing: 0.8rem; font-weight: 200; margin: 0; }
+        .welcome-title { font-size: 3.5rem; letter-spacing: 0.8rem; font-weight: 200; }
         
         .btn-start {
-            margin-top: 2.5rem;
+            margin-top: 2rem;
             background-color: var(--accent);
             color: var(--bg);
             border: none;
@@ -133,24 +133,41 @@
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.1rem;
         }
 
-        /* CONTENIDO PRINCIPAL (Vacío por ahora) */
-        #main-app {
-            display: none;
-            flex: 1;
+        /* 2. LOGO Y LEMA (ESQUINA SUPERIOR) */
+        #brand-header {
+            display: none; /* Oculto al inicio */
+            padding: 20px;
+            text-align: left;
         }
 
-        /* BARRA DE PESTAÑAS MEJORADA */
+        #brand-header h2 {
+            font-size: 1.2rem;
+            letter-spacing: 0.3rem;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        #brand-header p {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin: 2px 0 0 0;
+            letter-spacing: 0.05rem;
+        }
+
+        /* 3. NAVEGACIÓN INFERIOR (BOTONES MEDIANOS Y SEPARADOS) */
         #tab-bar {
-            display: none;
+            display: none; /* Oculto al inicio */
+            position: fixed;
+            bottom: 0;
+            width: 100%;
             background-color: var(--nav-bg);
             border-top: 1px solid #2d3748;
-            padding: 25px 0; /* Más altura */
-            padding-bottom: calc(25px + env(safe-area-inset-bottom));
-            justify-content: space-evenly; /* Máxima separación entre iconos */
+            padding: 30px 0;
+            padding-bottom: calc(30px + env(safe-area-inset-bottom));
+            justify-content: center; /* Centramos el grupo de botones */
+            gap: 75px; /* Separación de aprox 2cm en la mayoría de pantallas */
         }
 
         .tab-item {
@@ -159,36 +176,34 @@
             transition: color 0.3s, transform 0.2s;
         }
 
-        .tab-item:active {
-            transform: scale(0.9);
-        }
-
         .tab-item.active {
             color: var(--accent);
         }
 
-        /* Animación para ocultar */
+        /* Utilidad */
         .fade-out { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="welcome-screen">
-        <h1>DEEP</h1>
+        <div class="welcome-title">DEEP</div>
         <button class="btn-start" onclick="startApp()">¡Empecemos!</button>
     </div>
 
-    <main id="main-app"></main>
+    <header id="brand-header">
+        <h2>DEEP</h2>
+        <p>Tu tiempo. Tu enfoque. Tu progreso.</p>
+    </header>
 
     <nav id="tab-bar">
         <div class="tab-item active" onclick="selectTab(this)">
-            <i data-lucide="home" size="28"></i>
+            <i data-lucide="home" size="32"></i> </div>
+        <div class="tab-item" onclick="selectTab(this)">
+            <i data-lucide="plus-circle" size="32"></i>
         </div>
         <div class="tab-item" onclick="selectTab(this)">
-            <i data-lucide="plus-circle" size="28"></i>
-        </div>
-        <div class="tab-item" onclick="selectTab(this)">
-            <i data-lucide="bar-chart-3" size="28"></i>
+            <i data-lucide="bar-chart-3" size="32"></i>
         </div>
     </nav>
 
@@ -199,12 +214,12 @@
             const welcome = document.getElementById('welcome-screen');
             welcome.classList.add('fade-out');
 
-            // Eliminamos la pantalla de bienvenida del flujo totalmente
             setTimeout(() => {
-                welcome.remove(); 
-                document.getElementById('main-app').style.display = 'block';
+                welcome.remove();
+                // Mostramos los elementos de la segunda pantalla
+                document.getElementById('brand-header').style.display = 'block';
                 document.getElementById('tab-bar').style.display = 'flex';
-            }, 400);
+            }, 500);
         }
 
         function selectTab(element) {
