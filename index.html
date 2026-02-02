@@ -9,16 +9,16 @@
         :root {
             --bg: #020617;
             --accent: #38bdf8;
+            --text: #f8fafc;
+            --dim: #64748b;
             --nav-bg: #0f172a;
-            --text-main: #f8fafc;
-            --text-dim: #64748b;
-            --card-bg: #1e293b;
+            --card: #1e293b;
             --gradient: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg); color: var(--text-main);
+            background-color: var(--bg); color: var(--text);
             font-family: 'Inter', sans-serif; overflow: hidden;
         }
 
@@ -27,16 +27,12 @@
             position: fixed; inset: 0; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: radial-gradient(circle at center, #111827 0%, #020617 100%);
-            text-align: center;
         }
-
-        .welcome-title {
+        .hero-title {
             font-size: 9rem; letter-spacing: 2rem; font-weight: 900; margin: 0;
             background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        .welcome-slogan { font-size: 1.4rem; color: var(--text-dim); margin: 1rem 0 4rem 0; letter-spacing: 0.5rem; text-transform: uppercase; }
-
+        .welcome-slogan { font-size: 1.4rem; color: var(--dim); margin: 1rem 0 4rem 0; letter-spacing: 0.5rem; text-transform: uppercase; }
         .btn-init {
             background: white; color: black; border: none; padding: 1.5rem 5rem;
             font-size: 1.2rem; font-weight: 800; border-radius: 60px; cursor: pointer; transition: 0.3s;
@@ -44,88 +40,82 @@
 
         /* --- PANTALLA 2: ESTRUCTURA APP --- */
         #screen-app { display: none; height: 100vh; flex-direction: column; padding: 40px; box-sizing: border-box; }
-        
         .corner-logo { font-size: 2.2rem; letter-spacing: 0.5rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .content-area { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: flex-end; /* Alineación inferior pegada a la nav */
-            margin-bottom: 120px; overflow: hidden;
+            justify-content: flex-end; /* Texto y tarjetas reposan sobre la nav */
+            margin-bottom: 110px; overflow: hidden;
         }
 
-        .view { display: none; width: 100%; max-width: 1300px; margin: 0 auto; }
+        .view { display: none; width: 100%; max-width: 1400px; margin: 0 auto; }
         .view.active { display: flex; flex-direction: column; }
 
         /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
-        #home-welcome-content {
+        #home-welcome-msg {
             font-size: 2.6rem; font-weight: 800; line-height: 1.1;
-            text-align: justify; text-justify: inter-word;
+            text-align: justify; text-justify: inter-word; /* Márgenes rectos */
         }
+        .lema-home { font-style: italic; font-size: 3.5rem; display: block; margin-bottom: 1.5rem; color: var(--accent); text-align: left; }
+        .p-sep { margin-top: 1.2rem; display: block; }
+        .blue { color: var(--accent); }
+        .purple { color: #c084fc; }
 
-        .home-slogan-italic { 
-            font-style: italic; font-size: 3.5rem; display: block; 
-            margin-bottom: 2rem; color: var(--accent); text-align: left;
-        }
-
-        .para { margin-top: 1.5rem; display: block; }
-        .hl-blue { color: var(--accent); }
-        .hl-purp { color: #c084fc; }
-
-        /* HISTORIAL: ÚLTIMA SESIÓN ABAJO, EMPUJA ARRIBA */
-        #sessions-history { display: none; flex-direction: column-reverse; gap: 20px; overflow-y: auto; width: 100%; }
-        
+        /* HISTORIAL: APILADO DESDE ABAJO */
+        #sessions-history { display: none; flex-direction: column-reverse; gap: 15px; overflow-y: auto; width: 100%; }
         .session-card {
-            background: var(--card-bg); padding: 30px; border-radius: 20px;
+            background: var(--card); padding: 25px; border-radius: 15px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255,255,255,0.1); animation: slideIn 0.4s ease;
         }
-        .session-card h4 { margin: 0; font-size: 2rem; color: var(--accent); }
-        .session-card span { color: var(--text-dim); font-size: 1.1rem; }
-        .session-card .time-val { font-size: 3.5rem; font-weight: 100; font-family: monospace; }
+        .card-info h4 { margin: 0; font-size: 1.8rem; color: var(--accent); }
+        .card-info span { color: var(--dim); font-size: 1rem; }
+        .card-time { font-size: 2.5rem; font-weight: 200; font-family: monospace; }
 
         /* CRONÓMETRO */
         #view-add { align-items: center; justify-content: center; height: 100%; }
-        .timer-ui { text-align: center; width: 100%; }
-        .timer-header { display: flex; justify-content: flex-end; width: 85%; margin: 0 auto; }
-        .btn-stop { background: #ef4444; color: white; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
-        .clock-display { font-size: 15rem; font-weight: 100; font-family: 'Courier New', monospace; margin: 20px 0; }
-        .clock-controls { display: flex; gap: 100px; justify-content: center; }
-        .clk-btn { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
-        .clk-btn:hover { color: white; transform: scale(1.1); }
+        .timer-header { display: flex; justify-content: flex-end; width: 85%; }
+        .btn-stop { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 900; cursor: pointer; }
+        .clock-display { font-size: 14rem; font-weight: 100; font-family: 'Courier New', monospace; margin: 10px 0; }
+        .clock-controls { display: flex; gap: 80px; justify-content: center; }
+        .clk-icon { color: var(--dim); cursor: pointer; transition: 0.3s; }
+        .clk-icon:hover { color: white; }
 
         /* ESTADÍSTICAS */
-        #view-stats { align-items: center; justify-content: center; height: 100%; text-align: center; }
-        .stats-counter { font-size: 18rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-        .stats-label { font-size: 2rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5rem; }
+        #view-stats { align-items: center; justify-content: center; height: 100%; }
+        .stats-grid { display: flex; width: 100%; justify-content: space-around; align-items: center; }
+        .stat-box { text-align: center; }
+        .stat-val { font-size: 12rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+        .stat-label { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.4rem; color: var(--dim); margin-top: 10px; }
 
         /* MODAL */
         #modal-overlay {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98);
             z-index: 2000; align-items: center; justify-content: center;
         }
-        .modal-body { background: var(--nav-bg); padding: 60px; border-radius: 40px; text-align: center; border: 1px solid #1e293b; width: 550px; }
-        .modal-clock { font-size: 5rem; color: var(--accent); margin: 30px 0; font-family: monospace; }
-        .modal-input { width: 100%; padding: 20px; margin-bottom: 30px; border-radius: 15px; border: 1px solid #334155; background: #020617; color: white; font-size: 1.4rem; box-sizing: border-box; }
-        .btn-upload { background: var(--accent); border: none; padding: 20px; border-radius: 15px; font-weight: 900; cursor: pointer; width: 100%; font-size: 1.2rem; text-transform: uppercase; }
+        .modal-body { background: var(--nav-bg); padding: 50px; border-radius: 30px; text-align: center; border: 1px solid #1e293b; width: 500px; }
+        .modal-time { font-size: 4rem; color: var(--accent); margin: 20px 0; font-family: monospace; }
+        .modal-input { width: 100%; padding: 18px; margin-bottom: 25px; border-radius: 10px; border: 1px solid #334155; background: #020617; color: white; font-size: 1.3rem; box-sizing: border-box; }
+        .btn-upload { background: var(--accent); border: none; padding: 18px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; font-size: 1.1rem; }
 
-        /* NAV BAR (2CM DE SEPARACIÓN) */
+        /* NAV BAR (2CM) */
         .nav-dock {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            background: var(--nav-bg); padding: 25px 90px; border-radius: 100px;
+            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
+            background: var(--nav-bg); padding: 22px 85px; border-radius: 100px;
             display: flex; gap: 80px; border: 1px solid #1e293b;
         }
-        .nav-trigger { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
-        .nav-trigger.active { color: var(--accent); transform: scale(1.2); }
+        .nav-link { color: var(--dim); cursor: pointer; transition: 0.3s; }
+        .nav-link.active { color: var(--accent); transform: scale(1.2); }
 
-        @keyframes slideIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div id="screen-welcome">
-        <h1 class="welcome-title">DEEP</h1>
+        <h1 class="hero-title">DEEP</h1>
         <div class="welcome-slogan">Focus that goes beneath the surface</div>
-        <button class="btn-init" onclick="goToApp()">Empecemos</button>
+        <button class="btn-init" onclick="launch()">Empecemos</button>
     </div>
 
     <main id="screen-app">
@@ -133,60 +123,64 @@
 
         <div class="content-area">
             <section id="view-home" class="view active">
-                <div id="home-welcome-content">
-                    <span class="home-slogan-italic">Focus that goes beneath the surface</span>
-                    🚀 Bienvenido a <span class="hl-blue">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span class="hl-purp">sesiones de estudio</span> que añadas de ahora en adelante. 
-                    <span class="para">➕ Si clicas a <span class="hl-blue">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.</span>
-                    <span class="para">📊 En <span class="hl-blue">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
-                    <span class="para">✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!</span>
+                <div id="home-welcome-msg">
+                    <span class="lema-home">Focus that goes beneath the surface</span>
+                    🚀 Bienvenido a <span class="blue">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span class="purple">sesiones de estudio</span> que añadas de ahora en adelante. 
+                    <span class="p-sep">➕ Si clicas a <span class="blue">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.</span>
+                    <span class="p-sep">📊 En <span class="blue">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
+                    <span class="p-sep">✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!</span>
                 </div>
                 <div id="sessions-history"></div>
             </section>
 
             <section id="view-add" class="view">
-                <div class="timer-ui">
-                    <div class="timer-header">
-                        <button class="btn-stop" onclick="openSummary()">Terminar sesión</button>
-                    </div>
-                    <div class="clock-display" id="display">00:00:00</div>
-                    <div class="clock-controls">
-                        <div class="clk-btn" onclick="pauseTimer()"><i data-lucide="pause-circle" size="100"></i></div>
-                        <div class="clk-btn" onclick="startTimer()"><i data-lucide="play-circle" size="100"></i></div>
-                    </div>
+                <div class="timer-header">
+                    <button class="btn-stop" onclick="openSummary()">Terminar sesión</button>
+                </div>
+                <div class="clock-display" id="display">00:00:00</div>
+                <div class="clock-controls">
+                    <div class="clk-icon" onclick="pauseT()"><i data-lucide="pause-circle" size="100"></i></div>
+                    <div class="clk-icon" onclick="startT()"><i data-lucide="play-circle" size="100"></i></div>
                 </div>
             </section>
 
             <section id="view-stats" class="view">
-                <div class="stats-counter" id="total-sessions">0</div>
-                <div class="stats-label">Sesiones completadas</div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-val" id="stat-sessions">0</div>
+                        <div class="stat-label">Sesiones</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="stat-hours">0</div>
+                        <div class="stat-label">Horas</div>
+                    </div>
+                </div>
             </section>
         </div>
 
         <nav class="nav-dock">
-            <div class="nav-trigger active" onclick="navTo('home', this)"><i data-lucide="home" size="36"></i></div>
-            <div class="nav-trigger" onclick="navTo('add', this)"><i data-lucide="plus-circle" size="36"></i></div>
-            <div class="nav-trigger" onclick="navTo('stats', this)"><i data-lucide="bar-chart-3" size="36"></i></div>
+            <div class="nav-link active" onclick="navTo('home', this)"><i data-lucide="home" size="36"></i></div>
+            <div class="nav-link" onclick="navTo('add', this)"><i data-lucide="plus-circle" size="36"></i></div>
+            <div class="nav-link" onclick="navTo('stats', this)"><i data-lucide="bar-chart-3" size="36"></i></div>
         </nav>
     </main>
 
     <div id="modal-overlay">
         <div class="modal-body">
-            <h2 style="margin:0; font-size: 2.5rem;">Sesión Finalizada 🏆</h2>
-            <div id="modal-time" class="modal-clock">00:00:00</div>
-            <input type="text" id="session-name-input" class="modal-input" placeholder="Nombre de la sesión (ej. Matemáticas)">
-            <button class="btn-upload" onclick="uploadSession()">Subir sesión</button>
+            <h2 style="margin:0; font-size: 2.2rem;">Sesión Completada 🏆</h2>
+            <div id="modal-time" class="modal-time">00:00:00</div>
+            <input type="text" id="session-input" class="modal-input" placeholder="Nombre de la sesión...">
+            <button class="btn-upload" onclick="upload()">Subir sesión</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        let totalSeconds = 0;
-        let timerInterval = null;
-        let sessionCount = 0;
-        let hasAnySession = false;
+        let seconds = 0, timerInterval = null, hasContent = false;
+        let totalSessions = 0, totalSecondsStudied = 0;
 
-        function goToApp() {
+        function launch() {
             document.getElementById('screen-welcome').style.display = 'none';
             document.getElementById('screen-app').style.display = 'flex';
         }
@@ -194,64 +188,62 @@
         function navTo(viewId, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
-            document.querySelectorAll('.nav-trigger').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
         }
 
-        function startTimer() {
-            if (timerInterval) return; // Ya está corriendo
+        function startT() {
+            if (timerInterval) return;
             timerInterval = setInterval(() => {
-                totalSeconds++;
-                updateClockDisplay();
+                seconds++;
+                updateDisplay();
             }, 1000);
         }
 
-        function pauseTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
+        function pauseT() { clearInterval(timerInterval); timerInterval = null; }
 
-        function updateClockDisplay() {
-            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-            const s = (totalSeconds % 60).toString().padStart(2, '0');
+        function updateDisplay() {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
             document.getElementById('display').innerText = `${h}:${m}:${s}`;
         }
 
         function openSummary() {
-            pauseTimer();
+            pauseT();
             document.getElementById('modal-time').innerText = document.getElementById('display').innerText;
             document.getElementById('modal-overlay').style.display = 'flex';
         }
 
-        function uploadSession() {
-            const name = document.getElementById('session-name-input').value || "Sesión General";
+        function upload() {
+            const name = document.getElementById('session-input').value || "Sesión General";
             const timeStr = document.getElementById('display').innerText;
             const dateStr = new Date().toLocaleDateString();
 
-            if (!hasAnySession) {
-                document.getElementById('home-welcome-content').style.display = 'none';
+            if (!hasContent) {
+                document.getElementById('home-welcome-msg').style.display = 'none';
                 document.getElementById('sessions-history').style.display = 'flex';
-                hasAnySession = true;
+                hasContent = true;
             }
 
+            // Historial
             const card = document.createElement('div');
             card.className = 'session-card';
-            card.innerHTML = `<div><h4>${name}</h4><span>📅 ${dateStr}</span></div><div class="time-val">${timeStr}</div>`;
-            
-            // Lógica de apilado: Al usar column-reverse en el CSS, appendChild lo pone abajo visualmente
+            card.innerHTML = `<div><h4>${name}</h4><span>📅 ${dateStr}</span></div><div class="card-time">${timeStr}</div>`;
             document.getElementById('sessions-history').appendChild(card);
 
-            // Actualizar Estadísticas
-            sessionCount++;
-            document.getElementById('total-sessions').innerText = sessionCount;
+            // Estadísticas
+            totalSessions++;
+            totalSecondsStudied += seconds;
+            document.getElementById('stat-sessions').innerText = totalSessions;
+            document.getElementById('stat-hours').innerText = (totalSecondsStudied / 3600).toFixed(1);
 
-            // Reset total
+            // Reset
             document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('session-name-input').value = "";
-            totalSeconds = 0; 
-            updateClockDisplay();
-            navTo('home', document.querySelector('.nav-trigger:first-child'));
+            document.getElementById('session-input').value = "";
+            seconds = 0;
+            updateDisplay();
+            navTo('home', document.querySelector('.nav-link:first-child'));
         }
     </script>
 </body>
