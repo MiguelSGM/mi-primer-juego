@@ -44,7 +44,7 @@
 
         .content-area { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: flex-end; /* Texto y tarjetas reposan sobre la nav */
+            justify-content: flex-end; /* Alineación inferior pegada a la nav */
             margin-bottom: 110px; overflow: hidden;
         }
 
@@ -54,27 +54,28 @@
         /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
         #home-welcome-msg {
             font-size: 2.6rem; font-weight: 800; line-height: 1.1;
-            text-align: justify; text-justify: inter-word; /* Márgenes rectos */
+            text-align: justify; text-justify: inter-word;
         }
         .lema-home { font-style: italic; font-size: 3.5rem; display: block; margin-bottom: 1.5rem; color: var(--accent); text-align: left; }
         .p-sep { margin-top: 1.2rem; display: block; }
         .blue { color: var(--accent); }
         .purple { color: #c084fc; }
 
-        /* HISTORIAL: APILADO DESDE ABAJO */
+        /* HISTORIAL: ÚLTIMA SESIÓN ABAJO */
         #sessions-history { display: none; flex-direction: column-reverse; gap: 15px; overflow-y: auto; width: 100%; }
         .session-card {
             background: var(--card); padding: 25px; border-radius: 15px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255,255,255,0.1); animation: slideIn 0.4s ease;
         }
-        .card-info h4 { margin: 0; font-size: 1.8rem; color: var(--accent); }
-        .card-info span { color: var(--dim); font-size: 1rem; }
+        .card-info h4 { margin: 0; font-size: 2.2rem; color: var(--accent); }
+        .card-info span { color: var(--dim); font-size: 1.1rem; }
         .card-time { font-size: 2.5rem; font-weight: 200; font-family: monospace; }
 
         /* CRONÓMETRO */
         #view-add { align-items: center; justify-content: center; height: 100%; }
-        .timer-header { display: flex; justify-content: flex-end; width: 85%; }
+        .timer-header { display: flex; justify-content: space-between; align-items: center; width: 85%; }
+        .subject-select { background: #1e293b; color: white; border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; }
         .btn-stop { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 900; cursor: pointer; }
         .clock-display { font-size: 14rem; font-weight: 100; font-family: 'Courier New', monospace; margin: 10px 0; }
         .clock-controls { display: flex; gap: 80px; justify-content: center; }
@@ -83,10 +84,10 @@
 
         /* ESTADÍSTICAS */
         #view-stats { align-items: center; justify-content: center; height: 100%; }
-        .stats-grid { display: flex; width: 100%; justify-content: space-around; align-items: center; }
-        .stat-box { text-align: center; }
+        .stats-grid { display: flex; width: 100%; justify-content: space-around; align-items: center; gap: 100px; }
+        .stat-box { text-align: center; flex: 1; }
         .stat-val { font-size: 12rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-        .stat-label { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.4rem; color: var(--dim); margin-top: 10px; }
+        .stat-label { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.4rem; color: var(--dim); margin-top: 15px; }
 
         /* MODAL */
         #modal-overlay {
@@ -114,7 +115,7 @@
 
     <div id="screen-welcome">
         <h1 class="hero-title">DEEP</h1>
-        <div class="welcome-slogan">Focus that goes beneath the surface</div>
+        <div class="welcome-slogan">Sumerge tu mente, eleva tu estudio</div>
         <button class="btn-init" onclick="launch()">Empecemos</button>
     </div>
 
@@ -135,6 +136,10 @@
 
             <section id="view-add" class="view">
                 <div class="timer-header">
+                    <select class="subject-select" id="subject-selector">
+                        <option value="Matemáticas➕">Matemáticas➕</option>
+                        <option value="Inglés🇺🇸">Inglés🇺🇸</option>
+                    </select>
                     <button class="btn-stop" onclick="openSummary()">Terminar sesión</button>
                 </div>
                 <div class="clock-display" id="display">00:00:00</div>
@@ -216,7 +221,9 @@
         }
 
         function upload() {
-            const name = document.getElementById('session-input').value || "Sesión General";
+            const subject = document.getElementById('subject-selector').value;
+            const customName = document.getElementById('session-input').value;
+            const name = customName ? `${subject} - ${customName}` : subject;
             const timeStr = document.getElementById('display').innerText;
             const dateStr = new Date().toLocaleDateString();
 
