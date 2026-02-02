@@ -9,158 +9,95 @@
         :root {
             --bg: #020617;
             --accent: #38bdf8;
-            --text: #f8fafc;
+            --text-main: #f8fafc;
             --nav-bg: #0f172a;
             --dim: #64748b;
+            --danger: #ef4444;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg); color: var(--text-main);
+            font-family: 'Inter', sans-serif; overflow: hidden;
         }
 
         /* --- PANTALLA 1: BIENVENIDA --- */
-        #welcome-screen {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+        #screen-welcome {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #111827 0%, #020617 100%);
         }
 
-        .welcome-title {
-            font-size: 8rem;
-            letter-spacing: 1.5rem;
-            font-weight: 900;
-            margin: 0;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .hero-title {
+            font-size: 8rem; letter-spacing: 1.5rem; font-weight: 900; margin: 0;
+            background: linear-gradient(to right, #38bdf8, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .slogan {
-            font-size: 1.2rem;
-            color: var(--dim);
-            letter-spacing: 0.6rem;
-            margin: 1rem 0 4rem 0;
-            text-transform: uppercase;
-        }
+        .slogan { font-size: 1.2rem; color: var(--dim); letter-spacing: 0.5rem; margin: 1rem 0 3rem 0; text-transform: uppercase; }
 
         .btn-start {
-            background: white;
-            color: black;
-            border: none;
-            padding: 1.2rem 4rem;
-            font-size: 1rem;
-            font-weight: 800;
-            border-radius: 50px;
-            cursor: pointer;
-            text-transform: uppercase;
+            background: white; color: black; border: none; padding: 1.2rem 4rem;
+            font-size: 1rem; font-weight: 800; border-radius: 50px; cursor: pointer;
         }
 
         /* --- PANTALLA 2: INTERFAZ APP --- */
-        #app-interface {
-            display: none;
-            height: 100vh;
-            flex-direction: column;
-            padding: 30px;
-            box-sizing: border-box;
-        }
+        #screen-app { display: none; height: 100vh; flex-direction: column; padding: 30px; box-sizing: border-box; }
 
-        .corner-logo {
-            font-size: 2rem;
-            letter-spacing: 0.5rem;
-            font-weight: 800;
-            color: var(--accent);
-        }
+        .corner-logo { font-size: 2rem; letter-spacing: 0.5rem; font-weight: 800; color: var(--accent); }
 
-        /* ÁREA DE CONTENIDO */
-        .content-area {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-bottom: 120px;
-        }
+        .content-area { flex: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 100px; }
 
-        .view { display: none; width: 100%; height: 100%; }
-        .active-view { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .view { display: none; width: 100%; }
+        .view.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
         /* HOME: TEXTO GIGANTE */
-        .home-text {
-            font-size: 2.4rem;
-            font-weight: 700;
-            line-height: 1.3;
-            max-width: 1100px;
-            text-align: left;
-        }
-        .blue { color: #38bdf8; }
-        .purple { color: #c084fc; }
-        .green { color: #4ade80; }
+        .home-text { font-size: 2.8rem; font-weight: 800; line-height: 1.2; max-width: 1200px; }
+        .c-blue { color: var(--accent); }
+        .c-purple { color: #c084fc; }
+        .c-green { color: #4ade80; }
 
         /* CRONÓMETRO */
-        .timer-container { position: relative; text-align: center; }
+        .timer-box { position: relative; display: flex; flex-direction: column; align-items: center; }
         
-        .timer-header {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 10px;
-        }
+        .timer-top-bar { width: 100%; display: flex; justify-content: flex-end; margin-bottom: -20px; }
 
         .btn-finish {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.9rem;
+            background: var(--danger); color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
 
-        .timer-display {
-            font-size: 11rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 200;
-            color: var(--text);
-            margin: 0;
+        .timer-display { font-size: 12rem; font-weight: 200; font-family: monospace; margin: 20px 0; }
+
+        .timer-controls { display: flex; gap: 50px; }
+        .icon-btn { color: var(--dim); cursor: pointer; transition: 0.3s; }
+        .icon-btn:hover { color: var(--accent); transform: scale(1.1); }
+
+        /* MODAL DE RESUMEN */
+        #summary-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 200; align-items: center; justify-content: center;
         }
 
-        .timer-controls {
-            display: flex;
-            gap: 40px;
-            margin-top: 20px;
+        .modal-card {
+            background: var(--nav-bg); padding: 40px; border-radius: 20px;
+            border: 1px solid #1e293b; text-align: center; width: 400px;
         }
 
-        .ctrl-icon {
-            color: var(--dim);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .ctrl-icon:hover { color: var(--accent); }
+        .modal-card h3 { font-size: 2rem; margin-top: 0; }
 
-        /* NAVEGACIÓN (SEPARACIÓN 2CM) */
+        .session-input {
+            width: 100%; padding: 12px; margin: 20px 0; border-radius: 8px;
+            border: 1px solid #334155; background: #1e293b; color: white; font-size: 1rem;
+        }
+
+        .btn-save { background: var(--accent); color: var(--bg); border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* NAVEGACIÓN (2CM SEPARACIÓN) */
         .nav-bar {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--nav-bg);
-            padding: 20px 60px;
-            border-radius: 100px;
-            display: flex;
-            gap: 80px; /* Separación física de aprox 2cm */
-            border: 1px solid #1e293b;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--nav-bg); padding: 20px 60px; border-radius: 100px;
+            display: flex; gap: 80px; border: 1px solid #1e293b;
         }
 
         .nav-item { color: var(--dim); cursor: pointer; transition: 0.3s; }
@@ -169,82 +106,83 @@
 </head>
 <body>
 
-    <div id="welcome-screen">
-        <h1 class="welcome-title">DEEP</h1>
-        <div class="slogan">Sumérgete en el conocimiento</div>
-        <button class="btn-start" onclick="startApp()">Empecemos</button>
+    <div id="screen-welcome">
+        <h1 class="hero-title">DEEP</h1>
+        <div class="slogan">Tu enfoque no tiene límites</div>
+        <button class="btn-start" onclick="launchApp()">Empecemos</button>
     </div>
 
-    <main id="app-interface">
+    <main id="screen-app">
         <div class="corner-logo">DEEP</div>
 
         <div class="content-area">
-            <section id="view-home" class="view active-view">
+            <section id="view-home" class="view active">
                 <div class="home-text">
-                    🚀 Bienvenido a <span class="blue">DEEP</span>, la mejor web para impulsar tus estudios. <br><br>
-                    🏠 Estás en tu menú, aquí verás las <span class="purple">sesiones de estudio</span> que añadas de ahora en adelante. <br><br>
-                    ➕ Si clicas a <span class="green">"añadir"</span>, podrás meter todas las sesiones que quieras. <br><br>
-                    📊 En <b>"estadísticas"</b>, podrás ver todo lo estudiado con gráficos y más detalles. <br><br>
+                    🚀 Bienvenido a <span class="c-blue">DEEP</span>, la mejor web para impulsar tus estudios. <br><br>
+                    🏠 Estás en tu menú, aquí verás las <span class="c-purple">sesiones de estudio</span> que añadas. <br><br>
+                    ➕ Si clicas a <span class="c-green">"añadir"</span>, podrás meter todas las sesiones que quieras. <br><br>
+                    📊 En <b>"estadísticas"</b>, verás tus gráficos y más detalles. <br><br>
                     ✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!
                 </div>
             </section>
 
             <section id="view-add" class="view">
-                <div class="timer-container">
-                    <div class="timer-header">
-                        <button class="btn-finish" onclick="resetTimer()">Terminar sesión</button>
+                <div class="timer-box">
+                    <div class="timer-top-bar">
+                        <button class="btn-finish" onclick="finishSession()">Terminar sesión</button>
                     </div>
-                    <h2 class="timer-display" id="display">00:00:00</h2>
+                    <div class="timer-display" id="display">00:00:00</div>
                     <div class="timer-controls">
-                        <div class="ctrl-icon" onclick="pauseTimer()"><i data-lucide="pause-circle" size="64"></i></div>
-                        <div class="ctrl-icon" onclick="runTimer()"><i data-lucide="play-circle" size="64"></i></div>
+                        <div class="icon-btn" onclick="pauseTimer()"><i data-lucide="pause-circle" size="70"></i></div>
+                        <div class="icon-btn" onclick="startTimer()"><i data-lucide="play-circle" size="70"></i></div>
                     </div>
                 </div>
             </section>
         </div>
 
         <nav class="nav-bar">
-            <div class="nav-item active" onclick="showView('home', this)">
+            <div class="nav-item active" onclick="changeView('home', this)">
                 <i data-lucide="home" size="32"></i>
             </div>
-            <div class="nav-item" onclick="showView('add', this)">
+            <div class="nav-item" onclick="changeView('add', this)">
                 <i data-lucide="plus-circle" size="32"></i>
             </div>
-            <div class="nav-item" onclick="showView('stats', this)">
+            <div class="nav-item" onclick="changeView('stats', this)">
                 <i data-lucide="bar-chart-3" size="32"></i>
             </div>
         </nav>
     </main>
 
+    <div id="summary-modal">
+        <div class="modal-card">
+            <h3>Sesión Finalizada 🏆</h3>
+            <p>Tiempo total: <span id="final-time" class="c-blue" style="font-weight: bold; font-size: 1.5rem;">00:00:00</span></p>
+            <input type="text" class="session-input" id="session-name" placeholder="Nombre de la sesión (ej. Matemáticas)">
+            <button class="btn-save" onclick="closeSummary()">Guardar y continuar</button>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
 
         // NAVEGACIÓN
-        function startApp() {
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-interface').style.display = 'flex';
+        function launchApp() {
+            document.getElementById('screen-welcome').style.display = 'none';
+            document.getElementById('screen-app').style.display = 'flex';
         }
 
-        function showView(viewId, el) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-            document.getElementById('view-' + viewId).classList.add('active-view');
-            
+        function changeView(viewId, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
         }
 
-        // LÓGICA DEL CRONÓMETRO
+        // CRONÓMETRO
         let seconds = 0;
         let timerInterval = null;
 
-        function updateDisplay() {
-            const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
-            const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-            const secs = (seconds % 60).toString().padStart(2, '0');
-            document.getElementById('display').innerText = `${hrs}:${mins}:${secs}`;
-        }
-
-        function runTimer() {
+        function startTimer() {
             if (timerInterval) return;
             timerInterval = setInterval(() => {
                 seconds++;
@@ -257,11 +195,25 @@
             timerInterval = null;
         }
 
-        function resetTimer() {
+        function updateDisplay() {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('display').innerText = `${h}:${m}:${s}`;
+        }
+
+        function finishSession() {
             pauseTimer();
+            const timeStr = document.getElementById('display').innerText;
+            document.getElementById('final-time').innerText = timeStr;
+            document.getElementById('summary-modal').style.display = 'flex';
+        }
+
+        function closeSummary() {
+            document.getElementById('summary-modal').style.display = 'none';
             seconds = 0;
             updateDisplay();
-            alert("Sesión finalizada. ¡Buen trabajo!");
+            changeView('home', document.querySelector('.nav-item:first-child'));
         }
     </script>
 </body>
