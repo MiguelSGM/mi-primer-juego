@@ -3,179 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Neon - Music & Menu Fixed</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <title>DEEP - Focus App</title>
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            margin: 0; background: #000; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; height: 100vh; width: 100vw;
-            color: #33ff00; font-family: 'Courier New', Courier, monospace; overflow: hidden;
+        /* Estilos básicos para una estética moderna y limpia */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0f172a; /* Azul muy oscuro / Negro */
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
-        #game-wrapper { position: relative; width: 640px; }
-        #ui-panel {
-            width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; background: #111; border: 2px solid #33ff00; border-bottom: none;
-            border-radius: 10px 10px 0 0;
+
+        .welcome-container {
+            text-align: center;
+            animation: fadeIn 1.2s ease-out;
         }
-        #start-menu {
-            position: absolute; top: 46px; left: 0; width: 640px; height: 480px;
-            background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 100;
-            border: 2px solid #33ff00; border-radius: 0 0 10px 10px;
+
+        h1 {
+            font-size: 4rem;
+            letter-spacing: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 200;
+            text-transform: uppercase;
         }
-        h1 { font-size: 50px; text-shadow: 0 0 15px #33ff00; margin-bottom: 30px; }
-        .play-btn {
-            background: #33ff00; color: #000; border: none; padding: 15px 40px;
-            font-size: 24px; font-family: 'Courier New'; cursor: pointer; font-weight: bold;
-            transition: 0.2s;
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
         }
-        .play-btn:hover { background: #fff; box-shadow: 0 0 20px #33ff00; transform: scale(1.1); }
-        button.diff-btn {
-            background: #222; border: 1px solid #33ff00; color: #33ff00;
-            padding: 5px 10px; cursor: pointer; font-size: 11px;
+
+        .btn-start {
+            background-color: #38bdf8; /* Azul brillante para el botón */
+            color: #0f172a;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
         }
-        button.active { background: #33ff00; color: #000; }
-        #phaser-app { width: 640px; height: 480px; }
+
+        .btn-start:hover {
+            background-color: #7dd3fc;
+            transform: scale(1.05);
+        }
+
+        /* Animación suave de entrada */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-wrapper">
-        <div id="ui-panel">
-            <div style="display: flex; gap: 8px;">
-                <button class="diff-btn" id="btn-200" onclick="setDifficulty(200)">FÁCIL</button>
-                <button class="diff-btn" id="btn-120" onclick="setDifficulty(120)">MEDIO</button>
-                <button class="diff-btn" id="btn-70" onclick="setDifficulty(70)">DIFÍCIL</button>
-            </div>
-            <div id="score-display">0 | 0</div>
-        </div>
-
-        <div id="start-menu">
-            <h1>SNAKE NEON</h1>
-            <button class="play-btn" onclick="startGame()">JUGAR</button>
-            <p style="color: #888; margin-top: 20px;">Música activa al comenzar</p>
-        </div>
-
-        <div id="phaser-app"></div>
+    <div class="welcome-container">
+        <h1>DEEP</h1>
+        <p>Tu tiempo. Tu enfoque. Tu progreso.</p>
+        <button class="btn-start" onclick="startApp()">¡Empecemos!</button>
     </div>
 
-<script>
-    let gameSpeed = parseInt(localStorage.getItem('snakeSpeed')) || 120;
-    let gameStarted = false;
-    let audioCtx;
-    let appleCount = 0, highScore = localStorage.getItem('snakeHighScore') || 0;
-    let snake = [], food, cursors, moveTime = 0, direction = { x: 16, y: 0 }, nextDirection = { x: 16, y: 0 };
-
-    const config = {
-        type: Phaser.CANVAS,
-        width: 640, height: 480, parent: 'phaser-app',
-        backgroundColor: '#050505',
-        scene: { preload: preload, create: create, update: update }
-    };
-
-    const game = new Phaser.Game(config);
-
-    function preload() {
-        let graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        graphics.lineStyle(2, 0x33ff00).fillStyle(0x004400).fillRoundedRect(1, 1, 14, 14, 4).strokeRoundedRect(1, 1, 14, 14, 4);
-        graphics.generateTexture('block', 16, 16);
-        graphics.clear().fillStyle(0xff0000).fillCircle(8, 8, 7).generateTexture('food', 16, 16);
-    }
-
-    function create() {
-        document.getElementById('score-display').innerText = `${appleCount} | ${highScore}`;
-        highlightButton();
-        for (let i = 0; i < 3; i++) snake.push(this.add.image(160 - (i * 16), 160, 'block'));
-        food = this.add.image(320, 240, 'food');
-        cursors = this.input.keyboard.createCursorKeys();
-    }
-
-    function update(time) {
-        if (!gameStarted) return;
-        if (cursors.left.isDown && direction.x === 0) nextDirection = { x: -16, y: 0 };
-        else if (cursors.right.isDown && direction.x === 0) nextDirection = { x: 16, y: 0 };
-        else if (cursors.up.isDown && direction.y === 0) nextDirection = { x: 0, y: -16 };
-        else if (cursors.down.isDown && direction.y === 0) nextDirection = { x: 0, y: 16 };
-        if (time >= moveTime) {
-            moveTime = time + gameSpeed; 
-            moveSnake();
+    <script>
+        function startApp() {
+            // Por ahora, solo lanzamos una alerta para confirmar que funciona
+            alert("¡Bienvenido a DEEP! Preparando tu espacio de estudio...");
+            // Aquí es donde luego redirigiremos al cronómetro o dashboard
         }
-    }
-
-    function moveSnake() {
-        direction = nextDirection;
-        let x = snake[0].x + direction.x, y = snake[0].y + direction.y;
-        if (x === food.x && y === food.y) {
-            playNote(600, 0.05, 'sine', 0.1); // Sonido de comer
-            appleCount++;
-            if (appleCount > highScore) { highScore = appleCount; localStorage.setItem('snakeHighScore', highScore); }
-            document.getElementById('score-display').innerText = `${appleCount} | ${highScore}`;
-            let newPart = game.scene.scenes[0].add.image(food.x, food.y, 'block');
-            snake.unshift(newPart);
-            repositionFood();
-        } else {
-            let part = snake.pop(); part.x = x; part.y = y; snake.unshift(part);
-        }
-        if (x < 0 || x >= 640 || y < 0 || y >= 480) gameOver();
-        for (let i = 1; i < snake.length; i++) if (x === snake[i].x && y === snake[i].y) gameOver();
-    }
-
-    function repositionFood() {
-        food.setPosition(Math.floor(Math.random() * 40) * 16, Math.floor(Math.random() * 30) * 16);
-    }
-
-    // --- SISTEMA DE AUDIO REINSTALADO ---
-    function playNote(freq, dur, type, vol) {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + dur);
-    }
-
-    window.startGame = function() {
-        gameStarted = true;
-        document.getElementById('start-menu').style.display = 'none';
-        
-        // Iniciar el contexto de audio
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Secuenciador de música
-            const melody = [261.63, 0, 329.63, 392.00, 261.63, 0, 349.23, 329.63];
-            let step = 0;
-            setInterval(() => {
-                if (gameStarted && melody[step] > 0) {
-                    playNote(melody[step], 0.15, 'triangle', 0.02);
-                }
-                step = (step + 1) % melody.length;
-            }, 250);
-        }
-    }
-
-    function highlightButton() {
-        document.querySelectorAll('.diff-btn').forEach(b => {
-            const speed = parseInt(b.getAttribute('onclick').match(/\d+/)[0]);
-            if(speed === gameSpeed) b.classList.add('active');
-            else b.classList.remove('active');
-        });
-    }
-
-    window.setDifficulty = function(speed) {
-        localStorage.setItem('snakeSpeed', speed);
-        location.reload();
-    }
-
-    function gameOver() {
-        gameStarted = false;
-        alert("GAME OVER\nManzanas: " + appleCount);
-        location.reload();
-    }
-</script>
+    </script>
 </body>
 </html>
