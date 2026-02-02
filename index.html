@@ -90,10 +90,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg: #0f172a;
-            --nav-bg: #1e293b;
+            --bg: #0a0f1a;
+            --nav-bg: #161e2d;
             --accent: #38bdf8;
-            --text-dim: #94a3b8;
+            --text-dim: #64748b;
         }
 
         body {
@@ -118,57 +118,56 @@
             align-items: center;
             z-index: 100;
             background-color: var(--bg);
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
 
-        h1 { font-size: 3.5rem; letter-spacing: 0.6rem; font-weight: 200; margin: 0; }
+        h1 { font-size: 3.5rem; letter-spacing: 0.8rem; font-weight: 200; margin: 0; }
         
         .btn-start {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             background-color: var(--accent);
             color: var(--bg);
             border: none;
-            padding: 1rem 2.5rem;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 1.2rem 3rem;
+            font-size: 0.9rem;
+            font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
         }
 
-        /* CONTENIDO PRINCIPAL (Oculto al inicio) */
-        #main-content {
+        /* CONTENIDO PRINCIPAL (Vacío por ahora) */
+        #main-app {
+            display: none;
             flex: 1;
-            display: none; /* Se activa con JS */
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            color: var(--text-dim);
         }
 
-        /* BARRA DE PESTAÑAS (Oculta al inicio) */
+        /* BARRA DE PESTAÑAS MEJORADA */
         #tab-bar {
-            display: none; /* Se activa con JS */
+            display: none;
             background-color: var(--nav-bg);
-            border-top: 1px solid #334155;
-            justify-content: space-around;
-            padding: 20px 0;
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            border-top: 1px solid #2d3748;
+            padding: 25px 0; /* Más altura */
+            padding-bottom: calc(25px + env(safe-area-inset-bottom));
+            justify-content: space-evenly; /* Máxima separación entre iconos */
         }
 
         .tab-item {
             color: var(--text-dim);
             cursor: pointer;
-            transition: color 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            transition: color 0.3s, transform 0.2s;
+        }
+
+        .tab-item:active {
+            transform: scale(0.9);
         }
 
         .tab-item.active {
             color: var(--accent);
         }
 
-        /* Utilidad para desvanecer */
+        /* Animación para ocultar */
         .fade-out { opacity: 0; pointer-events: none; }
     </style>
 </head>
@@ -179,41 +178,36 @@
         <button class="btn-start" onclick="startApp()">¡Empecemos!</button>
     </div>
 
-    <div id="main-content">
-        Selecciona una opción
-    </div>
+    <main id="main-app"></main>
 
     <nav id="tab-bar">
         <div class="tab-item active" onclick="selectTab(this)">
-            <i data-lucide="home"></i>
+            <i data-lucide="home" size="28"></i>
         </div>
         <div class="tab-item" onclick="selectTab(this)">
-            <i data-lucide="plus-circle"></i>
+            <i data-lucide="plus-circle" size="28"></i>
         </div>
         <div class="tab-item" onclick="selectTab(this)">
-            <i data-lucide="bar-chart-3"></i>
+            <i data-lucide="bar-chart-3" size="28"></i>
         </div>
     </nav>
 
     <script>
-        // Inicializar iconos
         lucide.createIcons();
 
         function startApp() {
-            // 1. Desvanecer bienvenida
             const welcome = document.getElementById('welcome-screen');
             welcome.classList.add('fade-out');
 
-            // 2. Mostrar navegación y contenido después de la animación
+            // Eliminamos la pantalla de bienvenida del flujo totalmente
             setTimeout(() => {
-                welcome.style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
+                welcome.remove(); 
+                document.getElementById('main-app').style.display = 'block';
                 document.getElementById('tab-bar').style.display = 'flex';
-            }, 500);
+            }, 400);
         }
 
         function selectTab(element) {
-            // Quitar clase activa y ponerla al nuevo
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             element.classList.add('active');
         }
