@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEP - Study Focus</title>
+    <title>DEEP - Focus Studio</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg: #020617;
             --accent: #38bdf8;
+            --nav-bg: #0f172a;
             --text-main: #f8fafc;
             --text-dim: #64748b;
-            --nav-bg: #0f172a;
             --card-bg: #1e293b;
             --gradient: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
         }
@@ -19,7 +19,7 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg); color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif; overflow: hidden;
+            font-family: 'Inter', sans-serif; overflow: hidden;
         }
 
         /* --- PANTALLA 1: BIENVENIDA --- */
@@ -59,7 +59,7 @@
         /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
         #home-welcome-content {
             font-size: 2.7rem; font-weight: 800; line-height: 1.1;
-            text-align: justify; text-justify: inter-word; /* Márgenes rectos */
+            text-align: justify; text-justify: inter-word;
         }
 
         .home-slogan-italic { 
@@ -93,6 +93,11 @@
         .clk-btn { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
         .clk-btn:hover { color: white; transform: scale(1.1); }
 
+        /* ESTADÍSTICAS */
+        #view-stats { align-items: center; justify-content: center; height: 100%; text-align: center; }
+        .stats-counter { font-size: 18rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+        .stats-label { font-size: 2rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5rem; }
+
         /* MODAL */
         #modal-overlay {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98);
@@ -119,7 +124,7 @@
 
     <div id="screen-welcome">
         <h1 class="welcome-title">DEEP</h1>
-        <div class="welcome-slogan">Sumerge tu mente en lo importante</div>
+        <div class="welcome-slogan">Focus that goes beneath the surface</div>
         <button class="btn-init" onclick="goToApp()">Empecemos</button>
     </div>
 
@@ -129,7 +134,7 @@
         <div class="content-area">
             <section id="view-home" class="view active">
                 <div id="home-welcome-content">
-                    <span class="home-slogan-italic">Sumerge tu mente en lo importante</span>
+                    <span class="home-slogan-italic">Focus that goes beneath the surface</span>
                     🚀 Bienvenido a <span class="hl-blue">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span class="hl-purp">sesiones de estudio</span> que añadas de ahora en adelante. 
                     <span class="para">➕ Si clicas a <span class="hl-blue">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.</span>
                     <span class="para">📊 En <span class="hl-blue">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.</span>
@@ -149,6 +154,11 @@
                         <div class="clk-btn" onclick="startTimer()"><i data-lucide="play-circle" size="100"></i></div>
                     </div>
                 </div>
+            </section>
+
+            <section id="view-stats" class="view">
+                <div class="stats-counter" id="total-sessions">0</div>
+                <div class="stats-label">Sesiones completadas</div>
             </section>
         </div>
 
@@ -173,6 +183,7 @@
 
         let totalSeconds = 0;
         let timerInterval = null;
+        let sessionCount = 0;
         let hasAnySession = false;
 
         function goToApp() {
@@ -214,6 +225,7 @@
             const timeStr = document.getElementById('display').innerText;
             const dateStr = new Date().toLocaleDateString();
 
+            // Actualizar lógica de Home
             if (!hasAnySession) {
                 document.getElementById('home-welcome-content').style.display = 'none';
                 document.getElementById('sessions-history').style.display = 'flex';
@@ -223,9 +235,11 @@
             const card = document.createElement('div');
             card.className = 'session-card';
             card.innerHTML = `<div><h4>${name}</h4><span>📅 ${dateStr}</span></div><div class="time-val">${timeStr}</div>`;
-            
-            // Apilado: column-reverse hace que appendChild lo coloque abajo visualmente
             document.getElementById('sessions-history').appendChild(card);
+
+            // Actualizar Estadísticas
+            sessionCount++;
+            document.getElementById('total-sessions').innerText = sessionCount;
 
             // Reset
             document.getElementById('modal-overlay').style.display = 'none';
