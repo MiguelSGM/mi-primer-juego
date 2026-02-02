@@ -93,7 +93,7 @@
             --bg: #0a0f1a;
             --nav-bg: #111827;
             --accent: #38bdf8;
-            --text-dim: #94a3b8;
+            --text-dim: #64748b;
         }
 
         body {
@@ -108,17 +108,16 @@
             overflow: hidden;
         }
 
-        /* --- PANTALLA DE INICIO (BIENVENIDA) --- */
-        #welcome-overlay {
-            position: fixed;
+        /* --- ESCENA 1: BIENVENIDA --- */
+        #welcome-scene {
+            position: absolute;
             inset: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 10;
             background-color: var(--bg);
-            transition: opacity 0.4s ease;
         }
 
         .welcome-title {
@@ -138,117 +137,6 @@
             border-radius: 50px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 0.1rem;
-            transition: transform 0.2s;
         }
 
-        .btn-start:active { transform: scale(0.95); }
-
-        /* --- SEGUNDA PANTALLA (INTERFAZ DEEP) --- */
-        #app-interface {
-            display: none; /* Se activa con JS */
-            flex: 1;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        /* 1. Logo y Lema en la esquina */
-        .brand-corner {
-            text-align: left;
-        }
-
-        .brand-corner h2 {
-            font-size: 1.1rem;
-            letter-spacing: 0.3rem;
-            margin: 0;
-            font-weight: 400;
-        }
-
-        .brand-corner p {
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            margin: 2px 0 0 0;
-            text-transform: uppercase;
-            letter-spacing: 0.05rem;
-        }
-
-        /* 2. Navegación Inferior (Separación 2cm) */
-        .tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--nav-bg);
-            border-top: 1px solid #1f2937;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 80px; /* Separación de aprox 2cm */
-            padding: 25px 0;
-            padding-bottom: calc(25px + env(safe-area-inset-bottom));
-        }
-
-        .tab-item {
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .tab-item.active {
-            color: var(--accent);
-        }
-
-        /* Ocultar elementos */
-        .fade-out { opacity: 0; pointer-events: none; }
-    </style>
-</head>
-<body>
-
-    <div id="welcome-overlay">
-        <div class="welcome-title">DEEP</div>
-        <button class="btn-start" onclick="launchApp()">¡Empecemos!</button>
-    </div>
-
-    <div id="app-interface">
-        
-        <header class="brand-corner">
-            <h2>DEEP</h2>
-            <p>Focus & Time Control</p>
-        </header>
-
-        <nav class="tab-bar">
-            <div class="tab-item active" onclick="switchTab(this)">
-                <i data-lucide="home" size="32"></i>
-            </div>
-            <div class="tab-item" onclick="switchTab(this)">
-                <i data-lucide="plus-circle" size="32"></i>
-            </div>
-            <div class="tab-item" onclick="switchTab(this)">
-                <i data-lucide="bar-chart-3" size="32"></i>
-            </div>
-        </nav>
-
-    </div>
-
-    <script>
-        // Cargar iconos
-        lucide.createIcons();
-
-        function launchApp() {
-            const welcome = document.getElementById('welcome-overlay');
-            welcome.classList.add('fade-out');
-
-            // 3. El botón y la bienvenida desaparecen completamente tras la animación
-            setTimeout(() => {
-                welcome.remove(); 
-                document.getElementById('app-interface').style.display = 'flex';
-            }, 400);
-        }
-
-        function switchTab(el) {
-            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-        }
-    </script>
-</body>
-</html>
+        /* --- ESCENA 2: APP PRINCIPAL (OCULTA POR DEFECT
