@@ -91,15 +91,15 @@
     <style>
         :root {
             --bg: #0a0f1a;
-            --nav-bg: #161e2d;
+            --nav-bg: #111827;
             --accent: #38bdf8;
-            --text-dim: #64748b;
+            --text-dim: #94a3b8;
         }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: white;
             height: 100vh;
@@ -108,8 +108,8 @@
             overflow: hidden;
         }
 
-        /* 1. PANTALLA DE BIENVENIDA */
-        #welcome-screen {
+        /* --- PANTALLA DE INICIO (BIENVENIDA) --- */
+        #welcome-overlay {
             position: fixed;
             inset: 0;
             display: flex;
@@ -118,113 +118,136 @@
             align-items: center;
             z-index: 100;
             background-color: var(--bg);
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
 
-        .welcome-title { font-size: 3.5rem; letter-spacing: 0.8rem; font-weight: 200; }
-        
+        .welcome-title {
+            font-size: 4rem;
+            letter-spacing: 1rem;
+            font-weight: 200;
+            margin-bottom: 2rem;
+        }
+
         .btn-start {
-            margin-top: 2rem;
             background-color: var(--accent);
             color: var(--bg);
             border: none;
-            padding: 1.2rem 3rem;
+            padding: 1rem 3rem;
             font-size: 0.9rem;
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            transition: transform 0.2s;
         }
 
-        /* 2. LOGO Y LEMA (ESQUINA SUPERIOR) */
-        #brand-header {
-            display: none; /* Oculto al inicio */
+        .btn-start:active { transform: scale(0.95); }
+
+        /* --- SEGUNDA PANTALLA (INTERFAZ DEEP) --- */
+        #app-interface {
+            display: none; /* Se activa con JS */
+            flex: 1;
+            flex-direction: column;
             padding: 20px;
+        }
+
+        /* 1. Logo y Lema en la esquina */
+        .brand-corner {
             text-align: left;
         }
 
-        #brand-header h2 {
-            font-size: 1.2rem;
+        .brand-corner h2 {
+            font-size: 1.1rem;
             letter-spacing: 0.3rem;
             margin: 0;
-            font-weight: 300;
+            font-weight: 400;
         }
 
-        #brand-header p {
-            font-size: 0.7rem;
+        .brand-corner p {
+            font-size: 0.65rem;
             color: var(--text-dim);
             margin: 2px 0 0 0;
+            text-transform: uppercase;
             letter-spacing: 0.05rem;
         }
 
-        /* 3. NAVEGACIÓN INFERIOR (BOTONES MEDIANOS Y SEPARADOS) */
-        #tab-bar {
-            display: none; /* Oculto al inicio */
+        /* 2. Navegación Inferior (Separación 2cm) */
+        .tab-bar {
             position: fixed;
             bottom: 0;
+            left: 0;
             width: 100%;
             background-color: var(--nav-bg);
-            border-top: 1px solid #2d3748;
-            padding: 30px 0;
-            padding-bottom: calc(30px + env(safe-area-inset-bottom));
-            justify-content: center; /* Centramos el grupo de botones */
-            gap: 75px; /* Separación de aprox 2cm en la mayoría de pantallas */
+            border-top: 1px solid #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 80px; /* Separación de aprox 2cm */
+            padding: 25px 0;
+            padding-bottom: calc(25px + env(safe-area-inset-bottom));
         }
 
         .tab-item {
             color: var(--text-dim);
             cursor: pointer;
-            transition: color 0.3s, transform 0.2s;
+            transition: color 0.3s;
         }
 
         .tab-item.active {
             color: var(--accent);
         }
 
-        /* Utilidad */
+        /* Ocultar elementos */
         .fade-out { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div id="welcome-screen">
+    <div id="welcome-overlay">
         <div class="welcome-title">DEEP</div>
-        <button class="btn-start" onclick="startApp()">¡Empecemos!</button>
+        <button class="btn-start" onclick="launchApp()">¡Empecemos!</button>
     </div>
 
-    <header id="brand-header">
-        <h2>DEEP</h2>
-        <p>Tu tiempo. Tu enfoque. Tu progreso.</p>
-    </header>
+    <div id="app-interface">
+        
+        <header class="brand-corner">
+            <h2>DEEP</h2>
+            <p>Focus & Time Control</p>
+        </header>
 
-    <nav id="tab-bar">
-        <div class="tab-item active" onclick="selectTab(this)">
-            <i data-lucide="home" size="32"></i> </div>
-        <div class="tab-item" onclick="selectTab(this)">
-            <i data-lucide="plus-circle" size="32"></i>
-        </div>
-        <div class="tab-item" onclick="selectTab(this)">
-            <i data-lucide="bar-chart-3" size="32"></i>
-        </div>
-    </nav>
+        <nav class="tab-bar">
+            <div class="tab-item active" onclick="switchTab(this)">
+                <i data-lucide="home" size="32"></i>
+            </div>
+            <div class="tab-item" onclick="switchTab(this)">
+                <i data-lucide="plus-circle" size="32"></i>
+            </div>
+            <div class="tab-item" onclick="switchTab(this)">
+                <i data-lucide="bar-chart-3" size="32"></i>
+            </div>
+        </nav>
+
+    </div>
 
     <script>
+        // Cargar iconos
         lucide.createIcons();
 
-        function startApp() {
-            const welcome = document.getElementById('welcome-screen');
+        function launchApp() {
+            const welcome = document.getElementById('welcome-overlay');
             welcome.classList.add('fade-out');
 
+            // 3. El botón y la bienvenida desaparecen completamente tras la animación
             setTimeout(() => {
-                welcome.remove();
-                // Mostramos los elementos de la segunda pantalla
-                document.getElementById('brand-header').style.display = 'block';
-                document.getElementById('tab-bar').style.display = 'flex';
-            }, 500);
+                welcome.remove(); 
+                document.getElementById('app-interface').style.display = 'flex';
+            }, 400);
         }
 
-        function selectTab(element) {
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
+        function switchTab(el) {
+            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
         }
     </script>
 </body>
