@@ -8,323 +8,300 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --azul-deep: #007bff;
-            --azul-oscuro: #001f3f;
-            --blanco: #ffffff;
-            --fondo: #f0f7ff;
-            --azul-brillante: #00d4ff;
+            --azul-deep: #0047AB;
+            --azul-claro: #E3F2FD;
+            --azul-brillante: #007FFF;
+            --texto: #002366;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--fondo); overflow: hidden;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            font-family: 'Segoe UI', sans-serif; background: var(--azul-claro); color: var(--texto);
+            overflow: hidden; 
         }
 
         /* --- PANTALLAS --- */
-        .screen {
-            position: fixed; inset: 0; display: none;
-            flex-direction: column; padding: 20px; z-index: 10;
-        }
+        .screen { position: fixed; inset: 0; display: none; flex-direction: column; padding: 25px; z-index: 10; }
         .screen.active { display: flex; }
 
         /* --- PANTALLA 1: BIENVENIDA --- */
-        #screen-welcome { 
-            justify-content: center; align-items: center; 
-            background: linear-gradient(180deg, var(--azul-oscuro) 0%, var(--azul-deep) 100%);
-            color: white; text-align: center;
-        }
-        .big-logo { font-size: 6rem; font-weight: 900; letter-spacing: 10px; margin: 0; color: var(--blanco); text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        .lema-principal { font-size: 1.2rem; margin: 20px 0; font-style: italic; color: var(--azul-brillante); }
+        #screen-1 { justify-content: center; align-items: center; text-align: center; background: white; }
+        .big-logo { font-size: 6rem; font-weight: 900; color: var(--azul-deep); margin: 0; letter-spacing: 5px; }
+        .lema-p1 { font-size: 1.2rem; font-style: italic; margin: 20px 0; color: var(--azul-brillante); }
         
         /* Formulario Registro */
-        #registration-box { display: none; flex-direction: column; gap: 15px; width: 85%; max-width: 350px; }
-        .marquee-container { overflow: hidden; white-space: nowrap; margin-bottom: 10px; }
-        .marquee-text { display: inline-block; animation: marquee 15s linear infinite; font-weight: bold; color: yellow; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        #reg-box { display: none; flex-direction: column; gap: 15px; width: 100%; max-width: 320px; }
+        .marquee { overflow: hidden; white-space: nowrap; background: var(--azul-deep); color: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .marquee p { display: inline-block; animation: scroll 12s linear infinite; margin: 0; font-weight: bold; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        
+        input, select { padding: 15px; border: 2px solid var(--azul-deep); border-radius: 12px; font-size: 1rem; outline: none; }
+        .btn-empezar { background: var(--azul-deep); color: white; border: none; padding: 18px 40px; border-radius: 50px; font-weight: 800; font-size: 1.2rem; cursor: pointer; }
 
-        input, select {
-            padding: 15px; border-radius: 12px; border: 2px solid var(--azul-brillante);
-            background: white; font-size: 1rem; outline: none;
+        /* --- PANTALLA 2: APP --- */
+        .corner-logo { position: absolute; top: 20px; left: 20px; font-size: 1.5rem; font-weight: 900; color: var(--azul-deep); cursor: pointer; z-index: 20; }
+        
+        .content-area { flex: 1; margin-top: 60px; margin-bottom: 90px; overflow: hidden; display: flex; flex-direction: column; }
+        .view { display: none; flex-direction: column; height: 100%; }
+        .view.active { display: flex; }
+
+        /* HOME: TEXTO GIGANTE */
+        #home-welcome { 
+            font-size: 2rem; font-weight: 700; text-align: justify; 
+            margin-top: auto; padding: 10px; border-left: 8px solid var(--azul-deep);
         }
-        .btn-start { 
-            background: var(--blanco); color: var(--azul-deep); border: none; 
-            padding: 15px 40px; border-radius: 50px; font-size: 1.3rem; font-weight: 900; 
-            cursor: pointer; transition: transform 0.2s;
-        }
+        .lema-home { font-style: italic; font-size: 2.5rem; color: var(--azul-brillante); display: block; margin-bottom: 15px; }
 
-        /* --- INTERFAZ APP --- */
-        .top-header { display: flex; padding: 10px; position: absolute; top: 0; left: 0; }
-        .deep-med { font-size: 2rem; font-weight: 800; color: var(--azul-deep); cursor: pointer; }
+        /* SESIONES: SCROLL HACIA ARRIBA */
+        #sessions-container { display: none; flex-direction: column-reverse; gap: 15px; overflow-y: auto; padding: 10px; }
+        .session-card { background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--azul-deep); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .session-card h2 { font-size: 2.2rem; margin: 0; color: var(--azul-deep); }
+        .session-card p { font-size: 1.2rem; margin: 5px 0; font-weight: bold; color: #555; }
 
-        .main-container {
-            flex: 1; margin-top: 60px; margin-bottom: 100px;
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-
-        /* HOME PAGE TEXTO GIGANTE */
-        #home-view { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
-        .home-text-container {
-            font-size: 1.8rem; font-weight: 700; text-align: justify;
-            line-height: 1.1; color: #003366; padding: 10px;
-        }
-        .lema-home { font-size: 2.2rem; font-style: italic; color: var(--azul-deep); display: block; margin-bottom: 15px; }
-
-        /* LISTA SESIONES */
-        #sessions-list { display: none; flex-direction: column-reverse; gap: 15px; overflow-y: auto; padding: 10px; }
-        .card-session {
-            background: white; padding: 20px; border-radius: 20px;
-            border: 3px solid var(--azul-deep); box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .card-session h3 { font-size: 2rem; margin: 0; color: var(--azul-deep); }
-
-        /* CRONÓMETRO */
-        .timer-view { align-items: center; justify-content: center; text-align: center; }
-        .timer-header { width: 100%; display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .clock-num { font-size: 5.5rem; font-weight: 900; color: var(--azul-oscuro); font-family: monospace; margin: 30px 0; }
-        .btn-pause { background: var(--azul-deep); color: white; border: none; padding: 20px; border-radius: 50%; width: 90px; height: 90px; }
+        /* CRONOMETRO */
+        .timer-header { display: flex; justify-content: flex-end; align-items: center; gap: 10px; width: 100%; margin-bottom: 30px; }
+        .clock { font-size: 6rem; font-weight: 900; font-family: monospace; color: var(--azul-deep); text-align: center; margin: 40px 0; }
+        .btn-control { background: var(--azul-deep); color: white; border: none; padding: 20px 40px; border-radius: 15px; font-weight: 800; font-size: 1.5rem; }
 
         /* ESTADISTICAS */
-        .stats-row { display: flex; justify-content: space-between; align-items: center; margin: 40px 0; }
+        .stats-grid { display: flex; justify-content: space-between; margin-top: 40px; }
         .stat-box { text-align: center; flex: 1; }
-        .stat-num { font-size: 5rem; font-weight: 900; color: var(--azul-deep); display: block; }
-        .stat-txt { font-weight: bold; color: #555; }
+        .stat-val { font-size: 5rem; font-weight: 900; color: var(--azul-deep); display: block; }
+        .stat-label { font-weight: bold; color: var(--azul-brillante); text-transform: uppercase; font-size: 0.9rem; }
 
-        /* NAVEGACIÓN (2CM DISTANCIA) */
-        .nav-bottom {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--blanco); padding: 15px 30px; border-radius: 40px;
-            display: flex; gap: 75px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 2px solid var(--azul-deep); z-index: 100;
+        /* NAVEGACION (Distancia 2cm) */
+        .nav-bar { 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
+            background: white; padding: 15px 35px; border-radius: 50px; 
+            display: flex; gap: 75px; /* ~2cm */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #ddd;
         }
-        .nav-btn { color: #ccc; cursor: pointer; transition: 0.3s; }
-        .nav-btn.active { color: var(--azul-deep); transform: scale(1.2); }
+        .nav-item { color: #ccc; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--azul-deep); transform: scale(1.3); }
 
         /* MODAL */
-        #modal-finish {
-            position: fixed; inset: 0; background: rgba(0,31,63,0.95);
-            display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
-        }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; width: 100%; text-align: center; }
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 100%; text-align: center; }
     </style>
 </head>
 <body>
 
-    <section id="screen-welcome" class="screen active">
+    <div id="screen-1" class="screen active">
         <h1 class="big-logo">DEEP</h1>
-        <p class="lema-principal">"Sumerge tu mente en el océano del conocimiento" 🌊</p>
-        <button id="btn-pre-start" class="btn-start" onclick="showReg()">Empecemos 🚀</button>
-
-        <div id="registration-box">
-            <div class="marquee-container">
-                <span class="marquee-text">"La inteligencia consiste no solo en el conocimiento, sino también en la destreza de aplicar los conocimientos en la práctica." — Aristóteles 🧠</span>
+        <p class="lema-p1">"Sumerge tu mente en el océano del éxito" 🌊</p>
+        <button id="btn-pre" class="btn-empezar" onclick="showReg()">Empecemos 🚀</button>
+        
+        <div id="reg-box">
+            <div class="marquee">
+                <p>"La felicidad no es algo hecho. Viene de tus propias acciones." — Dalai Lama 🧘‍♂️</p>
             </div>
-            <input type="text" id="reg-name" placeholder="👤 Tu nombre de usuario...">
-            <input type="text" id="reg-fav" placeholder="⭐ Tu asignatura favorita...">
-            <button class="btn-start" onclick="saveUser()">Entrar 🚪</button>
+            <input type="text" id="reg-name" placeholder="👤 Nombre de usuario">
+            <input type="text" id="reg-subject" placeholder="⭐ Asignatura favorita">
+            <button class="btn-empezar" onclick="startApp()">Entrar 🚪</button>
         </div>
-    </section>
+    </div>
 
-    <section id="screen-app" class="screen">
-        <div class="top-header">
-            <div class="deep-med" onclick="nav('home')">DEEP</div>
-        </div>
+    <div id="screen-2" class="screen">
+        <div class="corner-logo" onclick="showTab('home')">DEEP</div>
 
-        <div class="main-container">
-            <div id="view-home" class="view">
-                <div id="home-intro" class="home-text-container">
-                    <span class="lema-home">Sumerge tu mente en el océano del conocimiento 🌊</span>
-                    👋 Bienvenido a <span style="color:var(--azul-deep)">DEEP</span>, la mejor web para impulsar tus estudios. 📚 Estás en tu menú, aquí verás las sesiones de estudio que añadas de ahora en adelante. ✨
+        <div class="content-area">
+            <div id="view-home" class="view active">
+                <div id="home-welcome">
+                    <span class="lema-home">Sumerge tu mente en el océano del éxito 🌊</span>
+                    👋 Bienvenido a <span style="color:var(--azul-deep)">DEEP</span>, la mejor web para impulsar tus estudios. 📘 Estás en tu menú, aquí verás las sesiones de estudio que añadas de ahora en adelante. 🌈
                     <br><br>
-                    ➕ Si clicas a <span style="color:var(--azul-deep)">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras. 📝
+                    ➕ Si clicas a <span style="color:var(--azul-deep)">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras. ✍️
                     <br><br>
                     📊 En <span style="color:var(--azul-deep)">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles. 📈
                     <br><br>
-                    🌈 ¡Disfruta de tu experiencia en <span style="color:var(--azul-deep)">DEEP</span>! 💎
+                    ¡Disfruta de tu experiencia en <span style="color:var(--azul-deep)">DEEP</span>! 💎
                 </div>
-                <div id="sessions-list"></div>
+                <div id="sessions-container"></div>
             </div>
 
-            <div id="view-add" class="view" style="display:none;">
-                <div class="timer-view">
-                    <div class="timer-header">
-                        <select id="sel-subject" onchange="checkOther(this)">
+            <div id="view-add" class="view">
+                <div class="timer-header">
+                    <div style="display:flex; flex-direction:column;">
+                        <select id="timer-subj" onchange="checkOther(this)">
                             <option value="Matemáticas➕">Matemáticas➕</option>
                             <option value="Inglés🇺🇸">Inglés🇺🇸</option>
                             <option value="Lengua Castellana y Literatura 🇪🇸">Lengua 🇪🇸</option>
                             <option value="Otra">Otra</option>
                         </select>
-                        <input type="text" id="input-other" placeholder="¿Cual?" style="display:none; width:100px">
-                        <button class="btn-start" style="padding:10px 15px; background:red; color:white;" onclick="stopClock()">Terminar 🏁</button>
+                        <input type="text" id="timer-other" placeholder="¿Cuál?" style="display:none; margin-top:5px;">
                     </div>
-                    <div class="clock-num" id="clock-txt">00:00:00</div>
-                    <button class="btn-pause" onclick="toggleClock()" id="btn-p">
-                        <i data-lucide="pause" size="40"></i>
-                    </button>
+                    <button class="btn-empezar" style="padding:10px 20px; background: #ff4444;" onclick="finishSession()">Terminar Sesión 🏁</button>
                 </div>
+                <div class="clock" id="display">00:00:00</div>
+                <button class="btn-control" id="btn-pause" onclick="toggleTimer()">PAUSA ⏸️</button>
             </div>
 
-            <div id="view-stats" class="view" style="display:none; text-align: center;">
-                <h2 style="color:var(--azul-deep)">Tus Logros 🏆</h2>
-                <div class="stats-row">
+            <div id="view-stats" class="view">
+                <h1 style="text-align:center; color:var(--azul-deep)">Tus Números 📊</h1>
+                <div class="stats-grid">
                     <div class="stat-box">
-                        <span class="stat-num" id="st-count">0</span>
-                        <span class="stat-txt">Sesiones 📁</span>
+                        <span class="stat-val" id="stat-sessions">0</span>
+                        <span class="stat-label">Sesiones 📁</span>
                     </div>
                     <div style="width:100px"></div>
                     <div class="stat-box">
-                        <span class="stat-num" id="st-hours">0</span>
-                        <span class="stat-txt">Horas ⏳</span>
+                        <span class="stat-val" id="stat-hours">0.0</span>
+                        <span class="stat-label">Horas ⏳</span>
                     </div>
                 </div>
-                <div class="stat-box" style="margin: 30px 0;">
-                    <span class="stat-num" id="st-streak" style="color: #ff6b6b;">0</span>
-                    <span class="stat-txt">Días de Racha 🔥</span>
+                <div class="stat-box" style="margin: 40px 0;">
+                    <span class="stat-val" id="stat-streak" style="color:#FF8C00">0</span>
+                    <span class="stat-label">Días de Racha 🔥</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-txt">Asignatura Estrella ⭐</span>
-                    <div id="st-top" style="font-size: 2.5rem; font-weight: 800; color: var(--azul-deep);">-</div>
+                    <span class="stat-label">Asignatura Más Estudiada 🏆</span>
+                    <div id="stat-top-subj" style="font-size: 2rem; font-weight: 800; color: var(--azul-deep); margin-top:10px;">-</div>
                 </div>
             </div>
 
-            <div id="view-notes" class="view" style="display:none;">
-                <h2 style="color:var(--azul-deep)">Tus Notas 📝</h2>
-                <textarea style="width:100%; height:300px; border-radius:20px; padding:20px;" placeholder="Escribe aquí tus apuntes importantes..."></textarea>
+            <div id="view-notes" class="view">
+                <h1 style="text-align:center; color:var(--azul-deep)">Notas Rápidas 📝</h1>
+                <textarea style="flex:1; border:2px solid var(--azul-deep); border-radius:15px; padding:20px; font-size:1.2rem;" placeholder="Escribe aquí lo que necesites recordar..."></textarea>
             </div>
         </div>
 
-        <nav class="nav-bottom">
-            <div class="nav-btn active" onclick="nav('home', this)"><i data-lucide="home" size="30"></i></div>
-            <div class="nav-btn" onclick="nav('add', this)"><i data-lucide="plus-circle" size="30"></i></div>
-            <div class="nav-btn" onclick="nav('stats', this)"><i data-lucide="bar-chart-2" size="30"></i></div>
-            <div class="nav-btn" onclick="nav('notes', this)"><i data-lucide="sticky-note" size="30"></i></div>
+        <nav class="nav-bar">
+            <div class="nav-item active" onclick="showTab('home', this)"><i data-lucide="home"></i></div>
+            <div class="nav-item" onclick="showTab('add', this)"><i data-lucide="plus-circle"></i></div>
+            <div class="nav-item" onclick="showTab('stats', this)"><i data-lucide="bar-chart"></i></div>
+            <div class="nav-item" onclick="showTab('notes', this)"><i data-lucide="sticky-note"></i></div>
         </nav>
-    </section>
+    </div>
 
-    <div id="modal-finish">
+    <div id="modal">
         <div class="modal-content">
-            <h2>¡Sesión Completada! 🌟</h2>
-            <div class="clock-num" id="modal-time" style="font-size: 3rem;">00:00:00</div>
-            <input type="text" id="session-title" placeholder="Nombre de la sesión (ej: Álgebra)" style="width:100%; margin-bottom:20px;">
-            <button class="btn-start" style="background:var(--azul-deep); color:white; width:100%" onclick="saveSession()">Guardar en el menú 📥</button>
+            <h2 style="color:var(--azul-deep)">¡Sesión Terminada! ✨</h2>
+            <div class="clock" id="modal-time" style="font-size: 3rem;">00:00:00</div>
+            <input type="text" id="session-name" placeholder="Nombre de la sesión..." style="width:100%; margin-bottom:20px;">
+            <button class="btn-empezar" style="width:100%" onclick="saveSession()">Subir Sesión 🚀</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-        let timer = null, secs = 0, isPaused = false, fireOk = false;
-        let db = JSON.parse(localStorage.getItem('deep_db')) || {
+        let timer = null, seconds = 0, isPaused = false, fireDone = false;
+        let data = JSON.parse(localStorage.getItem('deep_db')) || {
             user: '', fav: '', sessions: [], streak: 0, lastDate: null, subTime: {}
         };
 
         window.onload = () => {
-            if(db.user) {
-                document.getElementById('screen-welcome').style.display = 'none';
-                document.getElementById('screen-app').classList.add('active');
-                renderSessions();
+            if(data.user) {
+                document.getElementById('screen-1').classList.remove('active');
+                document.getElementById('screen-2').classList.add('active');
                 updateStats();
+                renderSessions();
             }
         };
 
         function showReg() {
-            document.getElementById('btn-pre-start').style.display = 'none';
-            document.getElementById('registration-box').style.display = 'flex';
+            document.getElementById('btn-pre').style.display = 'none';
+            document.getElementById('reg-box').style.display = 'flex';
         }
 
-        function saveUser() {
-            db.user = document.getElementById('reg-name').value || "Estudiante";
-            db.fav = document.getElementById('reg-fav').value || "Estudio";
-            localStorage.setItem('deep_db', JSON.stringify(db));
+        function startApp() {
+            data.user = document.getElementById('reg-name').value || "Estudiante";
+            data.fav = document.getElementById('reg-subject').value || "General";
+            save();
             location.reload();
         }
 
-        function nav(v, btn) {
-            document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
-            document.getElementById('view-' + v).style.display = 'flex';
-            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            if(v === 'add' && !timer && secs === 0) startClock();
+        function showTab(tab, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + tab).classList.add('active');
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
+            if(tab === 'add' && !timer && seconds === 0) startTimer();
         }
 
-        function checkOther(s) { document.getElementById('input-other').style.display = s.value === 'Otra' ? 'inline-block' : 'none'; }
+        function checkOther(s) { document.getElementById('timer-other').style.display = s.value === 'Otra' ? 'block' : 'none'; }
 
-        function startClock() {
-            isPaused = false; updateIcon();
+        function startTimer() {
+            isPaused = false;
+            document.getElementById('btn-pause').innerText = "PAUSA ⏸️";
             timer = setInterval(() => {
-                secs++;
-                updateUI();
-                if(secs === 1800 && !fireOk) {
+                seconds++;
+                updateClock();
+                if(seconds === 1800 && !fireDone) {
                     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    fireOk = true;
+                    fireDone = true;
                 }
             }, 1000);
         }
 
-        function toggleClock() {
-            if(isPaused) startClock();
-            else { clearInterval(timer); timer = null; isPaused = true; updateIcon(); }
+        function toggleTimer() {
+            if(!isPaused) {
+                clearInterval(timer);
+                isPaused = true;
+                document.getElementById('btn-pause').innerText = "REANUDAR ▶️";
+            } else {
+                startTimer();
+            }
         }
 
-        function updateIcon() {
-            const i = document.getElementById('btn-p');
-            i.innerHTML = isPaused ? `<i data-lucide="play" size="40"></i>` : `<i data-lucide="pause" size="40"></i>`;
-            lucide.createIcons();
+        function updateClock() {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('display').innerText = `${h}:${m}:${s}`;
         }
 
-        function updateUI() {
-            const h = Math.floor(secs / 3600).toString().padStart(2, '0');
-            const m = Math.floor((secs % 3600) / 60).toString().padStart(2, '0');
-            const s = (secs % 60).toString().padStart(2, '0');
-            document.getElementById('clock-txt').innerText = `${h}:${m}:${s}`;
-        }
-
-        function stopClock() {
-            clearInterval(timer); timer = null;
-            document.getElementById('modal-time').innerText = document.getElementById('clock-txt').innerText;
-            document.getElementById('modal-finish').style.display = 'flex';
+        function finishSession() {
+            clearInterval(timer);
+            document.getElementById('modal-time').innerText = document.getElementById('display').innerText;
+            document.getElementById('modal').style.display = 'flex';
         }
 
         function saveSession() {
-            let sub = document.getElementById('sel-subject').value;
-            if(sub === 'Otra') sub = document.getElementById('input-other').value || 'Otra';
-            const title = document.getElementById('session-title').value || "Sesión";
-            const today = new Date().toLocaleDateString();
+            let sub = document.getElementById('timer-subj').value;
+            if(sub === 'Otra') sub = document.getElementById('timer-other').value || 'Otra';
+            const name = document.getElementById('session-name').value || "Sesión";
+            const date = new Date().toLocaleDateString();
 
-            db.sessions.push({ title, sub, time: document.getElementById('clock-txt').innerText, date: today, s: secs });
-            db.subTime[sub] = (db.subTime[sub] || 0) + secs;
+            data.sessions.push({ name, sub, date, time: document.getElementById('display').innerText, s: seconds });
+            data.subTime[sub] = (data.subTime[sub] || 0) + seconds;
 
-            if(secs >= 1800) {
-                const day = new Date().toDateString();
-                if(db.lastDate !== day) { db.streak++; db.lastDate = day; }
+            if(seconds >= 1800) {
+                const today = new Date().toDateString();
+                if(data.lastDate !== today) { data.streak++; data.lastDate = today; }
             }
 
-            localStorage.setItem('deep_db', JSON.stringify(db));
+            save();
             location.reload();
         }
 
         function renderSessions() {
-            if(db.sessions.length > 0) {
-                document.getElementById('home-intro').style.display = 'none';
-                const list = document.getElementById('sessions-list');
-                list.style.display = 'flex';
-                db.sessions.forEach(s => {
+            if(data.sessions.length > 0) {
+                document.getElementById('home-welcome').style.display = 'none';
+                const container = document.getElementById('sessions-container');
+                container.style.display = 'flex';
+                data.sessions.forEach(s => {
                     const el = document.createElement('div');
-                    el.className = 'card-session';
-                    el.innerHTML = `<h3>${s.title} 📝</h3><div style="display:flex; justify-content:space-between; color:var(--azul-deep); font-weight:bold;"><span>${s.sub}</span><span>${s.date} 📅</span></div><div style="font-size:2.5rem; font-family:monospace; margin-top:10px;">${s.time} ⏱️</div>`;
-                    list.appendChild(el);
+                    el.className = 'session-card';
+                    el.innerHTML = `<h2>${s.name} 📚</h2><p>${s.sub} • ${s.date} 📅</p><div class="clock" style="margin:10px 0; font-size:3rem;">${s.time} ⏱️</div>`;
+                    container.appendChild(el);
                 });
             }
         }
 
         function updateStats() {
-            document.getElementById('st-count').innerText = db.sessions.length;
-            const total = db.sessions.reduce((a, b) => a + b.s, 0);
-            document.getElementById('st-hours').innerText = (total / 3600).toFixed(1);
-            document.getElementById('st-streak').innerText = db.streak;
+            document.getElementById('stat-sessions').innerText = data.sessions.length;
+            const total = data.sessions.reduce((acc, s) => acc + s.s, 0);
+            document.getElementById('stat-hours').innerText = (total / 3600).toFixed(1);
+            document.getElementById('stat-streak').innerText = data.streak;
             let top = "-"; let max = 0;
-            for(let k in db.subTime) { if(db.subTime[k] > max) { max = db.subTime[k]; top = k; } }
-            document.getElementById('st-top').innerText = top;
+            for(let k in data.subTime) { if(data.subTime[k] > max) { max = data.subTime[k]; top = k; } }
+            document.getElementById('stat-top-subj').innerText = top;
         }
+
+        function save() { localStorage.setItem('deep_db', JSON.stringify(data)); }
     </script>
 </body>
 </html>
