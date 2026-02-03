@@ -12,29 +12,25 @@
             --blanco: #FFFFFF;
         }
 
-        body {
+        body, html {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            height: 100%;
+            width: 100%;
             background-color: var(--azul-claro);
             font-family: 'Segoe UI', sans-serif;
             color: var(--azul-oscuro);
             overflow: hidden;
         }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        /* Contenedor universal */
+        .app-container {
+            position: relative;
             width: 100%;
             height: 100%;
-            max-width: 600px;
-            position: relative;
+            display: flex;
             justify-content: center;
+            align-items: center;
         }
 
         /* --- ANIMACIONES --- */
@@ -45,48 +41,44 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
+            from { opacity: 0; transform: translateX(60px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
         .screen {
             display: none;
-            width: 90%;
+            width: 100%;
+            height: 100%;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             animation: slideIn 0.7s ease-out forwards;
         }
 
         .screen.active { display: flex; }
 
-        .floating-quote {
-            margin-top: 35px;
-            font-size: 1.1rem;
-            font-style: italic;
-            animation: relax-move 5s ease-in-out infinite;
-        }
-
-        /* --- COMPONENTES DE INTERFAZ --- */
+        /* --- ESTILOS DE CUADROS Y BOTONES --- */
         .form-box {
             background-color: var(--blanco);
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            width: 100%;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             box-sizing: border-box;
-            position: relative;
+            z-index: 2;
         }
 
         .btn-deep {
             background-color: var(--azul-oscuro);
             color: var(--blanco);
             border: none;
-            padding: 15px 45px;
+            padding: 15px 40px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
@@ -95,12 +87,9 @@
 
         .btn-deep:hover { background-color: var(--azul-hover); }
 
-        /* Botón Entendido alineado abajo a la derecha */
-        .btn-entendido-pos {
-            align-self: flex-end !important;
-            padding: 10px 30px !important;
-            font-size: 0.9rem !important;
-            margin-top: 10px;
+        .btn-entendido {
+            align-self: flex-end; /* Abajo a la derecha */
+            padding: 10px 25px;
         }
 
         .btn-volver {
@@ -108,109 +97,129 @@
             background: none;
             border: 2px solid var(--azul-oscuro);
             color: var(--azul-oscuro);
-            padding: 6px 12px;
+            padding: 8px 15px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             transition: 0.3s;
         }
 
         .btn-volver:hover { background-color: var(--azul-oscuro); color: white; }
 
-        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 6px; background: white; font-size: 1rem; }
+        .floating-quote {
+            margin-top: 40px;
+            font-size: 1.1rem;
+            font-style: italic;
+            animation: relax-move 5s ease-in-out infinite;
+            max-width: 80%;
+            text-align: center;
+        }
 
-        /* --- BARRA DE NAVEGACIÓN INFERIOR --- */
-        .navbar-container {
-            position: absolute;
-            bottom: 30px;
-            background-color: var(--blanco);
-            padding: 10px 40px;
-            border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
+
+        /* --- HOME PAGE Y NAVBAR (PUNTO 2) --- */
+        .home-content {
+            flex: 1;
+            width: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 65px; /* ~2cm de distancia */
+        }
+
+        .navbar-frame {
+            position: absolute;
+            bottom: 40px;
+            background-color: var(--blanco);
+            padding: 15px 50px;
+            border-radius: 60px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 75px; /* ~2cm de distancia */
         }
 
         .nav-icon {
             background: none;
             border: none;
             color: var(--azul-oscuro);
-            font-size: 1.8rem;
+            font-size: 2rem;
             cursor: pointer;
             transition: color 0.3s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .nav-icon:hover { 
-            color: var(--azul-hover);
-            transform: scale(1.1);
+            color: var(--azul-hover); 
+            transform: scale(1.2); 
         }
 
-        .add-icon {
-            font-size: 3.2rem;
-            font-weight: bold;
-        }
+        .nav-icon.add { font-size: 3.5rem; font-weight: bold; }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="app-container">
 
         <div id="screen-1" class="screen active">
-            <h1 style="font-size: 5.5rem; margin: 0; letter-spacing: 5px;">DEEP</h1>
+            <h1 style="font-size: 6rem; margin: 0; letter-spacing: 10px;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
             <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
         </div>
 
         <div id="screen-2" class="screen">
-            <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
-            <div class="form-box">
-                <input type="text" placeholder="Tu nombre">
-                <input type="text" placeholder="Asignatura favorita">
-                <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
+            <div style="width: 90%; max-width: 500px; display: flex; flex-direction: column;">
+                <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
+                <div class="form-box">
+                    <input type="text" placeholder="Tu nombre">
+                    <input type="text" placeholder="Asignatura favorita">
+                    <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
+                </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
         </div>
 
         <div id="screen-3" class="screen">
-            <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
-            <div class="form-box">
-                <label style="font-weight: bold;">Nota en exámenes / Nota objetiva</label>
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <select id="n1"></select>
-                    <select id="n2"></select>
+            <div style="width: 90%; max-width: 500px; display: flex; flex-direction: column;">
+                <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
+                <div class="form-box">
+                    <label>Nota media / Nota meta</label>
+                    <div style="display: flex; gap: 10px;">
+                        <select id="sel1" style="flex:1"></select>
+                        <select id="sel2" style="flex:1"></select>
+                    </div>
+                    <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
-                <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
             </div>
-            <div class="floating-quote" style="font-size: 0.9rem;">“Todo el mundo es un genio...”</div>
+            <div class="floating-quote" style="font-size: 0.9rem;">“Todo el mundo es un genio. Pero si juzgas a un pez...”</div>
         </div>
 
         <div id="screen-4" class="screen">
-            <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
-            <div class="form-box">
-                <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                <select><option disabled selected>¿Consideras que es suficiente?</option><option>Sí</option><option>No</option></select>
-                <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
+            <div style="width: 90%; max-width: 500px; display: flex; flex-direction: column;">
+                <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
+                <div class="form-box">
+                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
+                    <select><option disabled selected>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
+                    <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
+                </div>
             </div>
-            <div class="floating-quote" style="font-size: 0.9rem;">“¿Qué es, pues, el tiempo?...”</div>
+            <div class="floating-quote" style="font-size: 0.9rem;">“¿Qué es, pues, el tiempo? Si nadie me lo pregunta...”</div>
         </div>
 
         <div id="screen-5" class="screen">
-            <div id="welcome-modal" class="form-box">
-                <p style="font-size: 1.15rem; line-height: 1.6; text-align: left;">
-                    Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
-                </p>
-                <button class="btn-deep btn-entendido-pos" onclick="closeModal()">ENTENDIDO</button>
+            <div class="home-content">
+                <div id="welcome-box" class="form-box">
+                    <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
+                        Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
+                    </p>
+                    <button class="btn-deep btn-entendido" onclick="closeWelcome()">ENTENDIDO</button>
+                </div>
             </div>
 
-            <div class="navbar-container">
+            <div class="navbar-frame">
                 <button class="nav-icon">🏠</button>
                 <button class="nav-icon">📊</button>
-                <button class="nav-icon add-icon">⊕</button>
+                <button class="nav-icon add">⊕</button>
                 <button class="nav-icon">📋</button>
                 <button class="nav-icon">👤</button>
             </div>
@@ -219,32 +228,27 @@
     </div>
 
     <script>
-        // Lógica de cambio de pantalla con transición
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const nextScreen = document.getElementById(`screen-${n}`);
-            nextScreen.classList.add('active');
+            document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        // Función para cerrar el cuadro de bienvenida
-        function closeModal() {
-            document.getElementById('welcome-modal').style.display = 'none';
+        function closeWelcome() {
+            document.getElementById('welcome-box').style.display = 'none';
         }
 
-        // Generar opciones de notas 1-10
-        const setup = () => {
-            const sels = [document.getElementById('n1'), document.getElementById('n2')];
-            sels.forEach(s => {
-                if(s) {
-                    for(let i=1; i<=10; i++) {
-                        let o = document.createElement('option');
-                        o.value = i; o.text = i;
-                        s.appendChild(o);
-                    }
+        // Setup de notas
+        const init = () => {
+            const s1 = document.getElementById('sel1');
+            const s2 = document.getElementById('sel2');
+            if(s1 && s2) {
+                for(let i=1; i<=10; i++) {
+                    s1.options.add(new Option(i, i));
+                    s2.options.add(new Option(i, i));
                 }
-            });
+            }
         }
-        setup();
+        init();
     </script>
 </body>
 </html>
