@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deep - Aplicación de Estudio</title>
     <style>
-        /* Paleta de Colores Oficial de Deep */
+        /* Paleta de Colores Oficial */
         :root {
             --azul-claro: #D1E4F9;
             --azul-oscuro: #1A1A40;
@@ -26,34 +26,33 @@
             overflow: hidden;
         }
 
-        /* Contenedor Principal */
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
             position: relative;
         }
 
         /* --- ANIMACIONES --- */
         
-        /* Movimiento lateral de frases */
+        /* Movimiento lateral de las frases */
         @keyframes relax-move {
             0% { transform: translateX(-10px); }
             50% { transform: translateX(10px); }
             100% { transform: translateX(-10px); }
         }
 
-        /* Transición de entrada suave hacia la izquierda */
+        /* Transición de entrada (desplazamiento suave) */
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(40px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
         .screen {
-            display: none; /* Ocultas por defecto */
+            display: none;
             width: 100%;
             flex-direction: column;
             align-items: center;
@@ -70,9 +69,10 @@
             font-style: italic;
             animation: relax-move 5s ease-in-out infinite;
             max-width: 90%;
+            line-height: 1.4;
         }
 
-        /* --- ELEMENTOS DE INTERFAZ --- */
+        /* --- UI COMPONENTS --- */
 
         h1 {
             font-size: 5rem;
@@ -110,7 +110,7 @@
         }
 
         .btn-volver {
-            align-self: flex-start; /* Posiciona arriba a la izquierda fuera del cuadro */
+            align-self: flex-start;
             background: none;
             border: 2px solid var(--azul-oscuro);
             color: var(--azul-oscuro);
@@ -132,7 +132,6 @@
             border-radius: 6px;
             font-size: 1rem;
             color: var(--azul-oscuro);
-            background-color: white;
         }
 
         label {
@@ -159,11 +158,9 @@
             <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
             <div class="form-box">
                 <label>Tu nombre:</label>
-                <input type="text" placeholder="Escribe aquí...">
-                
+                <input type="text" placeholder="Tu nombre...">
                 <label>Asignatura favorita:</label>
-                <input type="text" placeholder="¿Qué te apasiona?">
-                
+                <input type="text" placeholder="Asignatura...">
                 <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
             </div>
             <div class="floating-quote">
@@ -176,22 +173,16 @@
             <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
             <div class="form-box">
                 <label>¿Qué nota sueles sacar?</label>
-                <select id="nota-actual">
-                    <option value="" disabled selected>Selecciona tu nota</option>
-                    <script>
-                        for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);
-                    </script>
+                <select>
+                    <option value="" disabled selected>Selecciona nota</option>
+                    <script>for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                 </select>
-                
-                <label>¿Cuál es tu nota objetiva (meta)?</label>
-                <select id="nota-meta">
-                    <option value="" disabled selected>Selecciona tu meta</option>
-                    <script>
-                        for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);
-                    </script>
+                <label>¿Cuál es tu nota objetiva?</label>
+                <select>
+                    <option value="" disabled selected>Selecciona meta</option>
+                    <script>for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                 </select>
-                
-                <button class="btn-deep">CONTINUAR</button>
+                <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
             </div>
             <div class="floating-quote">
                 “Todo el mundo es un genio. Pero si juzgas a un pez por su habilidad para trepar árboles, vivirá toda su vida pensando que es un necio”<br>
@@ -199,14 +190,33 @@
             </div>
         </div>
 
+        <div id="screen-4" class="screen">
+            <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
+            <div class="form-box">
+                <label>¿Cuánto tiempo sueles estudiar? (ej. 2 horas)</label>
+                <input type="text" placeholder="Escribe aquí el tiempo...">
+                
+                <label>¿Consideras que es suficiente?</label>
+                <select>
+                    <option value="" disabled selected>Elige una opción</option>
+                    <option value="si">Sí, es suficiente</option>
+                    <option value="no">No, necesito más</option>
+                    <option value="depende">Depende del día</option>
+                </select>
+                
+                <button class="btn-deep">CONTINUAR</button>
+            </div>
+            <div class="floating-quote">
+                “¿Qué es, pues, el tiempo? Si nadie me lo pregunta, lo sé; pero si quiero explicárselo a quien me lo pregunta, no lo sé”<br>
+                <small style="font-style: normal;">- Agustín de Hipona -</small>
+            </div>
+        </div>
+
     </div>
 
     <script>
         function changeScreen(screenNumber) {
-            // Ocultar todas las pantallas
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            
-            // Mostrar la pantalla deseada
             document.getElementById(`screen-${screenNumber}`).classList.add('active');
         }
     </script>
