@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deep - App de Estudio</title>
     <style>
-        /* Definición de colores y estilos globales */
+        /* Paleta de colores y Reset */
+        :root {
+            --azul-claro: #D1E4F9;
+            --azul-oscuro: #1A1A40;
+            --azul-hover: #3B3B75;
+            --blanco: #FFFFFF;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -13,70 +20,124 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #D1E4F9; /* Azul claro de fondo */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #1A1A40; /* Azul oscuro para el texto */
+            background-color: var(--azul-claro);
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--azul-oscuro);
+            overflow: hidden;
         }
 
         .container {
             text-align: center;
+            width: 100%;
+            max-width: 600px;
         }
 
-        /* Estilo del título principal */
-        h1 {
-            font-size: 80px;
-            margin: 0;
-            letter-spacing: 5px;
-            font-weight: bold;
+        /* Animación de movimiento ligero y relajante */
+        @keyframes floating {
+            0% { transform: translateX(0px); }
+            50% { transform: translateX(15px); }
+            100% { transform: translateX(0px); }
         }
 
-        /* Estilo del botón */
-        .btn-empecemos {
+        .animated-quote {
             display: inline-block;
-            margin: 20px 0;
-            padding: 15px 40px;
-            background-color: #1A1A40; /* Azul oscuro inicial */
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 18px;
+            animation: floating 4s ease-in-out infinite;
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        /* Títulos y textos */
+        h1 {
+            font-size: 5rem;
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+        }
+
+        /* Estilo de Botones */
+        .btn-deep {
+            display: inline-block;
+            margin: 30px 0;
+            padding: 15px 50px;
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
             border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease; /* Transición suave */
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
         }
 
-        /* Efecto al pasar el ratón (Hover) */
-        .btn-empecemos:hover {
-            background-color: #3B3B75; /* Un azul un poco más claro al pasar el ratón */
+        .btn-deep:hover {
+            background-color: var(--azul-hover);
         }
 
-        /* Estilo de la frase */
-        .quote {
-            margin-top: 10px;
-            font-size: 20px;
-            font-style: italic;
+        /* Formulario (Oculto inicialmente) */
+        #pantalla-registro {
+            display: none;
         }
 
-        .author {
-            display: block;
-            font-size: 16px;
-            margin-top: 5px;
-            font-style: normal;
+        .form-box {
+            background-color: var(--blanco);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
+
+        input {
+            padding: 12px;
+            border: 2px solid var(--azul-oscuro);
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        label {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div id="pantalla-inicio" class="container">
         <h1>DEEP</h1>
-        
-        <button class="btn-empecemos">¡EMPECEMOS!</button>
-        
-        <div class="quote">
-            “El conocimiento es poder”
-            <span class="author">-Francis Bacon-</span>
+        <button class="btn-deep" onclick="mostrarRegistro()">¡EMPECEMOS!</button>
+        <div class="animated-quote">
+            “El conocimiento es poder”<br>
+            <small>- Francis Bacon -</small>
         </div>
     </div>
+
+    <div id="pantalla-registro" class="container">
+        <div class="form-box">
+            <label for="nombre">Tu nombre:</label>
+            <input type="text" id="nombre" placeholder="Escribe tu nombre...">
+            
+            <label for="asignatura">Asignatura favorita:</label>
+            <input type="text" id="asignatura" placeholder="¿Qué te gusta estudiar?">
+            
+            <button class="btn-deep">CONTINUAR</button>
+        </div>
+        
+        <div class="animated-quote">
+            “El nombre es la herencia espiritual del lenguaje”<br>
+            <small>- Walter Benjamin -</small>
+        </div>
+    </div>
+
+    <script>
+        // Función para cambiar de pantalla
+        function mostrarRegistro() {
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('pantalla-registro').style.display = 'block';
+        }
+    </script>
 
 </body>
 </html>
