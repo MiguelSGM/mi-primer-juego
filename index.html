@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deep - Aplicación de Estudio</title>
     <style>
-        /* Variables de color */
+        /* Paleta de Colores Oficial de Deep */
         :root {
             --azul-claro: #D1E4F9;
             --azul-oscuro: #1A1A40;
@@ -26,47 +26,70 @@
             overflow: hidden;
         }
 
+        /* Contenedor Principal */
         .container {
             display: flex;
-            flex-direction: column; /* Asegura que todo esté uno debajo de otro */
+            flex-direction: column;
             align-items: center;
             text-align: center;
             width: 90%;
             max-width: 500px;
+            position: relative;
         }
 
         /* --- ANIMACIONES --- */
         
-        /* Movimiento lateral relajante de las frases */
+        /* Movimiento lateral de frases */
         @keyframes relax-move {
             0% { transform: translateX(-10px); }
             50% { transform: translateX(10px); }
             100% { transform: translateX(-10px); }
         }
 
-        /* Transición de entrada (desplazamiento a la izquierda) */
+        /* Transición de entrada suave hacia la izquierda */
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
+            from { opacity: 0; transform: translateX(40px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .animated-view {
-            animation: slideIn 0.8s ease-out forwards;
+        .screen {
+            display: none; /* Ocultas por defecto */
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
         }
 
         .floating-quote {
-            margin-top: 40px;
+            margin-top: 35px;
             font-size: 1.1rem;
             font-style: italic;
             animation: relax-move 5s ease-in-out infinite;
+            max-width: 90%;
         }
 
-        /* --- ELEMENTOS --- */
+        /* --- ELEMENTOS DE INTERFAZ --- */
 
         h1 {
             font-size: 5rem;
             margin: 0 0 20px 0;
             letter-spacing: 6px;
+        }
+
+        .form-box {
+            background-color: var(--blanco);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-sizing: border-box;
         }
 
         .btn-deep {
@@ -79,6 +102,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             text-transform: uppercase;
+            margin-top: 10px;
         }
 
         .btn-deep:hover {
@@ -86,15 +110,14 @@
         }
 
         .btn-volver {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: transparent;
-            color: var(--azul-oscuro);
+            align-self: flex-start; /* Posiciona arriba a la izquierda fuera del cuadro */
+            background: none;
             border: 2px solid var(--azul-oscuro);
-            padding: 8px 15px;
-            cursor: pointer;
+            color: var(--azul-oscuro);
+            padding: 6px 12px;
             font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
             transition: all 0.3s;
         }
 
@@ -103,24 +126,13 @@
             color: var(--blanco);
         }
 
-        /* Cuadro de Formulario */
-        .form-box {
-            background-color: var(--blanco);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        input {
+        input, select {
             padding: 12px;
             border: 2px solid var(--azul-oscuro);
             border-radius: 6px;
             font-size: 1rem;
             color: var(--azul-oscuro);
+            background-color: white;
         }
 
         label {
@@ -128,57 +140,74 @@
             font-weight: bold;
             font-size: 0.9rem;
         }
-
-        /* Control de pantallas */
-        .hidden { display: none; }
-
     </style>
 </head>
 <body>
 
-    <div id="pantalla-inicio" class="container">
-        <h1>DEEP</h1>
-        <button class="btn-deep" onclick="irARegistro()">¡EMPECEMOS!</button>
-        <div class="floating-quote">
-            “El conocimiento es poder”<br>
-            <small style="font-style: normal;">- Francis Bacon -</small>
-        </div>
-    </div>
+    <div class="container">
 
-    <div id="pantalla-registro" class="container hidden">
-        <button class="btn-volver" onclick="irAInicio()">← VOLVER</button>
-        
-        <div class="form-box">
-            <label>Nombre:</label>
-            <input type="text" placeholder="Tu nombre">
-            
-            <label>Asignatura favorita:</label>
-            <input type="text" placeholder="Ej. Historia, Programación...">
-            
-            <button class="btn-deep">CONTINUAR</button>
+        <div id="screen-1" class="screen active">
+            <h1>DEEP</h1>
+            <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
+            <div class="floating-quote">
+                “El conocimiento es poder”<br>
+                <small style="font-style: normal;">- Francis Bacon -</small>
+            </div>
         </div>
-        
-        <div class="floating-quote">
-            “El nombre es la herencia espiritual del lenguaje”<br>
-            <small style="font-style: normal;">- Walter Benjamin -</small>
+
+        <div id="screen-2" class="screen">
+            <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
+            <div class="form-box">
+                <label>Tu nombre:</label>
+                <input type="text" placeholder="Escribe aquí...">
+                
+                <label>Asignatura favorita:</label>
+                <input type="text" placeholder="¿Qué te apasiona?">
+                
+                <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
+            </div>
+            <div class="floating-quote">
+                “El nombre es la herencia espiritual del lenguaje”<br>
+                <small style="font-style: normal;">- Walter Benjamin -</small>
+            </div>
         </div>
+
+        <div id="screen-3" class="screen">
+            <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
+            <div class="form-box">
+                <label>¿Qué nota sueles sacar?</label>
+                <select id="nota-actual">
+                    <option value="" disabled selected>Selecciona tu nota</option>
+                    <script>
+                        for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);
+                    </script>
+                </select>
+                
+                <label>¿Cuál es tu nota objetiva (meta)?</label>
+                <select id="nota-meta">
+                    <option value="" disabled selected>Selecciona tu meta</option>
+                    <script>
+                        for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);
+                    </script>
+                </select>
+                
+                <button class="btn-deep">CONTINUAR</button>
+            </div>
+            <div class="floating-quote">
+                “Todo el mundo es un genio. Pero si juzgas a un pez por su habilidad para trepar árboles, vivirá toda su vida pensando que es un necio”<br>
+                <small style="font-style: normal;">- Albert Einstein -</small>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const pantallaInicio = document.getElementById('pantalla-inicio');
-        const pantallaRegistro = document.getElementById('pantalla-registro');
-
-        function irARegistro() {
-            pantallaInicio.classList.add('hidden');
-            pantallaRegistro.classList.remove('hidden');
-            // Añadimos la clase de animación para que entre suavemente
-            pantallaRegistro.classList.add('animated-view');
-        }
-
-        function irAInicio() {
-            pantallaRegistro.classList.add('hidden');
-            pantallaInicio.classList.remove('hidden');
-            pantallaInicio.classList.add('animated-view');
+        function changeScreen(screenNumber) {
+            // Ocultar todas las pantallas
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            
+            // Mostrar la pantalla deseada
+            document.getElementById(`screen-${screenNumber}`).classList.add('active');
         }
     </script>
 
