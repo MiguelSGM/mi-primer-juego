@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg: #05070a;
+            --bg: #030712;
             --accent: #38bdf8;
             --nav-bg: #0f172a;
             --text-main: #f8fafc;
@@ -22,15 +22,14 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg); color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif;
-            overflow: hidden; /* Evita rebotes en móvil */
+            font-family: 'Inter', -apple-system, sans-serif; overflow: hidden;
         }
 
         /* --- PANTALLA 1: BIENVENIDA --- */
         #screen-welcome {
             position: fixed; inset: 0; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #111827 0%, #05070a 100%);
+            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
             text-align: center; padding: 20px;
         }
         .hero-title {
@@ -38,105 +37,92 @@
             background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .welcome-slogan { font-size: 1.1rem; color: var(--text-dim); margin: 1rem 0 3rem 0; text-transform: uppercase; letter-spacing: 3px; }
-        .btn-init {
-            background: white; color: black; border: none; padding: 1.2rem 4rem;
-            font-size: 1.1rem; font-weight: 800; border-radius: 50px; cursor: pointer;
-        }
+        .btn-init { background: white; color: black; border: none; padding: 1.2rem 4rem; font-size: 1.1rem; font-weight: 800; border-radius: 50px; cursor: pointer; }
 
-        /* --- PANTALLA 2: ESTRUCTURA APP --- */
+        /* --- PANTALLA 1.1: REGISTRO --- */
+        #screen-register {
+            position: fixed; inset: 0; z-index: 999; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            background: var(--bg); padding: 30px;
+        }
+        .reg-box { background: var(--nav-bg); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; border: 1px solid #1e293b; }
+        .reg-input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid #334155; background: #020617; color: white; }
+
+        /* --- PANTALLA 2: APP --- */
         #screen-app { display: none; height: 100vh; flex-direction: column; padding: 20px; }
-        .corner-logo { font-size: 1.8rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .corner-logo { font-size: 1.8rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
 
-        .content-container {
-            flex: 1; display: flex; flex-direction: column;
-            overflow: hidden; margin-bottom: 90px;
-        }
-
+        .content-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 90px; }
         .view { display: none; width: 100%; height: 100%; flex-direction: column; }
         .view.active { display: flex; }
 
-        /* HOME: TEXTO GIGANTE Y JUSTIFICADO */
-        #home-content { 
-            height: 100%; display: flex; flex-direction: column; 
-            justify-content: flex-end; /* Lo pega a la navegación */
-        }
-        #home-welcome-msg {
-            font-size: 1.9rem; font-weight: 800; line-height: 1.1;
-            text-align: justify; text-justify: inter-word;
-        }
-        .lema-home { font-style: italic; font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: block; }
-        
-        /* HISTORIAL CON SCROLL */
-        #history-list {
-            display: none; flex-direction: column; gap: 15px;
-            overflow-y: auto; padding: 10px 0;
-        }
-        .session-card {
-            background: var(--card-bg); padding: 20px; border-radius: 15px;
-            border-left: 5px solid var(--accent); flex-shrink: 0;
-        }
-        .session-card h4 { margin: 0 0 5px 0; font-size: 1.6rem; color: var(--accent); }
-        .session-card .data { display: flex; justify-content: space-between; align-items: flex-end; color: var(--text-dim); }
-        .session-card .time-val { font-size: 1.8rem; color: white; font-family: monospace; }
+        /* HOME */
+        #home-content { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+        #home-welcome-msg { font-size: 1.8rem; font-weight: 800; line-height: 1.1; text-align: justify; }
+        .lema-home { font-style: italic; font-size: 2.2rem; color: var(--accent); margin-bottom: 1rem; display: block; }
+
+        #history-list { display: none; flex-direction: column; gap: 15px; overflow-y: auto; padding: 10px 0; }
+        .session-card { background: var(--card-bg); padding: 20px; border-radius: 15px; border-left: 5px solid var(--accent); flex-shrink: 0; }
+        .session-card h4 { margin: 0; font-size: 2rem; color: var(--accent); }
 
         /* CRONÓMETRO */
         #view-add { align-items: center; justify-content: center; }
-        .timer-header { display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 20px; }
-        .subject-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-        .btn-finish { background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 800; }
+        .timer-header { display: flex; justify-content: space-between; width: 100%; align-items: center; }
         .clock-display { font-size: 6rem; font-weight: 100; font-family: monospace; margin: 40px 0; }
-        .clk-btn { color: var(--accent); cursor: pointer; background: none; border: none; }
+        .btn-stop-main { background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 800; }
 
         /* ESTADÍSTICAS */
         .stats-grid { display: flex; justify-content: space-between; width: 100%; margin: auto 0; }
-        .stat-box { text-align: center; flex: 1; }
-        .stat-val { font-size: 5rem; font-weight: 900; color: var(--accent); line-height: 1; }
-        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-top: 10px; }
-        .top-subject-section { text-align: center; margin-bottom: 40px; }
+        .stat-val { font-size: 4rem; font-weight: 900; color: var(--accent); line-height: 1; }
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-top: 5px; }
+
+        /* NAV BAR */
+        .nav-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--nav-bg); padding: 15px 40px; border-radius: 50px;
+            display: flex; gap: 60px; border: 1px solid #1e293b;
+        }
+        .nav-item { color: var(--text-dim); cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
 
         /* MODAL */
         #modal-overlay {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             z-index: 2000; align-items: center; justify-content: center; padding: 20px;
         }
-        .modal { background: var(--nav-bg); padding: 30px; border-radius: 25px; width: 100%; text-align: center; border: 1px solid #1e293b; }
-        .modal-input { width: 100%; padding: 15px; margin: 20px 0; border-radius: 10px; border: 1px solid #334155; background: #020617; color: white; }
-        .btn-upload { background: var(--accent); border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: 800; }
-
-        /* NAV BAR (2CM DE DISTANCIA APROX EN MÓVIL) */
-        .nav-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--nav-bg); padding: 15px 40px; border-radius: 50px;
-            display: flex; gap: 60px; /* 60px suele ser ~2cm en pantallas retina */
-            border: 1px solid #1e293b;
-        }
-        .nav-item { color: var(--text-dim); }
-        .nav-item.active { color: var(--accent); transform: scale(1.2); }
+        .modal { background: var(--nav-bg); padding: 30px; border-radius: 25px; width: 100%; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="screen-welcome">
         <h1 class="hero-title">DEEP</h1>
-        <div class="welcome-slogan">Sumerge tu mente, alcanza la excelencia</div>
-        <button class="btn-init" onclick="launchApp()">Empecemos</button>
+        <div class="welcome-slogan">Sumerge tu mente en el conocimiento profundo</div>
+        <button class="btn-init" onclick="showRegister()">Empecemos</button>
+    </div>
+
+    <div id="screen-register">
+        <div class="reg-box">
+            <h2 style="margin-top:0">Hola 👋</h2>
+            <input type="text" id="reg-user" class="reg-input" placeholder="Tu nombre de usuario">
+            <input type="text" id="reg-subject" class="reg-input" placeholder="Asignatura favorita">
+            <button class="btn-init" style="width:100%" onclick="saveProfile()">Entrar</button>
+        </div>
     </div>
 
     <main id="screen-app">
-        <div class="corner-logo">DEEP</div>
+        <div class="corner-logo" onclick="nav('home', document.querySelector('.nav-item'))">DEEP</div>
 
         <div class="content-container">
             <section id="view-home" class="view active">
                 <div id="home-content">
                     <div id="home-welcome-msg">
-                        <span class="lema-home">Sumerge tu mente, alcanza la excelencia</span>
-                        🚀 Bienvenido a <span style="color:var(--accent)">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span style="color:#a855f7">sesiones de estudio</span> que añadas de ahora en adelante. 
+                        <span class="lema-home">Sumerge tu mente en el conocimiento profundo</span>
+                        🚀 Bienvenido a <span style="color:var(--accent)">DEEP</span>, <span id="display-name"></span>. Estás en tu menú, aquí verás las <span style="color:#a855f7">sesiones de estudio</span> que añadas de ahora en adelante. 
                         <br><br>
                         ➕ Si clicas a <span style="color:var(--accent)">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.
                         <br><br>
                         📊 En <span style="color:var(--accent)">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.
-                        <br><br>
-                        ✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!
                     </div>
                     <div id="history-list"></div>
                 </div>
@@ -144,39 +130,41 @@
 
             <section id="view-add" class="view">
                 <div class="timer-header">
-                    <div class="subject-box">
-                        <select id="subject-sel" onchange="checkOther(this)" style="padding: 10px; border-radius: 5px; background: #1e293b; color: white; border: 1px solid var(--accent);">
+                    <div style="display:flex; flex-direction:column; gap:5px;">
+                        <select id="subject-sel" onchange="toggleOther(this)" style="background:#1e293b; color:white; border:1px solid var(--accent); padding:8px; border-radius:5px;">
                             <option value="Matemáticas➕">Matemáticas➕</option>
                             <option value="Inglés🇺🇸">Inglés🇺🇸</option>
-                            <option value="Lengua Castellana🇪🇸">Lengua Castellana🇪🇸</option>
+                            <option value="Lengua Castellana 🇪🇸">Lengua Castellana 🇪🇸</option>
                             <option value="Otra">Otra</option>
                         </select>
-                        <input type="text" id="custom-subject" placeholder="Escribe asignatura..." style="display:none; padding: 8px; border-radius: 5px; margin-top: 5px;">
+                        <input type="text" id="other-subject" placeholder="¿Qué asignatura?" style="display:none; padding:8px; border-radius:5px; border:1px solid var(--accent); background:#020617; color:white;">
                     </div>
-                    <button class="btn-finish" onclick="stopSession()">Terminar</button>
+                    <button class="btn-stop-main" onclick="stopTimer()">Terminar</button>
                 </div>
                 <div class="clock-display" id="clock">00:00:00</div>
-                <button class="clk-btn" onclick="toggleT()"><i id="play-pause-icon" data-lucide="pause-circle" size="80"></i></button>
+                <button class="nav-item" style="background:none; border:none; color:var(--accent);" onclick="togglePause()">
+                    <i id="pause-icon" data-lucide="pause-circle" size="80"></i>
+                </button>
             </section>
 
             <section id="view-stats" class="view">
                 <div class="stats-grid">
                     <div class="stat-box">
-                        <div class="stat-val" id="stat-count">0</div>
+                        <div class="stat-val" id="stat-sessions">0</div>
                         <div class="stat-label">Sesiones</div>
                     </div>
-                    <div style="width: 40px;"></div> <div class="stat-box">
-                        <div class="stat-val" id="stat-hours">0</div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="stat-hours">0.0</div>
                         <div class="stat-label">Horas</div>
                     </div>
                 </div>
-                <div class="stat-box" style="margin: 40px 0;">
-                    <div class="stat-val" id="stat-streak" style="color: #fb923c;">0</div>
-                    <div class="stat-label">Días de Racha 🔥</div>
+                <div class="stat-box" style="margin-top: 40px;">
+                    <div class="stat-val" id="stat-streak" style="color:#fb923c">0</div>
+                    <div class="stat-label">Racha 🔥</div>
                 </div>
-                <div class="top-subject-section">
-                    <div class="stat-label">Más Estudiada</div>
-                    <div id="stat-top" style="font-size: 2rem; font-weight: 800; color: #4ade80;">-</div>
+                <div class="stat-box" style="margin-top: 40px;">
+                    <div id="stat-top" style="font-size:2rem; font-weight:800; color:#4ade80">-</div>
+                    <div class="stat-label">Más estudiada</div>
                 </div>
             </section>
         </div>
@@ -191,20 +179,35 @@
     <div id="modal-overlay">
         <div class="modal">
             <h2 style="margin:0">Sesión Finalizada</h2>
-            <div id="final-time" style="font-size: 3rem; margin: 20px 0; color: var(--accent); font-family: monospace;">00:00:00</div>
+            <div id="final-time" style="font-size:3rem; margin:20px 0; color:var(--accent); font-family:monospace;">00:00:00</div>
             <input type="text" id="session-name" class="modal-input" placeholder="Nombre de la sesión...">
-            <button class="btn-upload" onclick="upload()">Subir Sesión</button>
+            <button class="btn-init" style="width:100%" onclick="confirmUpload()">Subir sesión</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
-        let seconds = 0, timer = null, isPaused = false, hasData = false, firefired = false;
-        let stats = { count: 0, totalSecs: 0, streak: 0, lastDate: null, subjects: {} };
+        let seconds = 0, timer = null, isPaused = false, confettiFired = false;
+        let userData = JSON.parse(localStorage.getItem('deep_data')) || {
+            user: "", subject: "", history: [], stats: { sessions: 0, seconds: 0, streak: 0, lastDate: null, subTime: {} }
+        };
 
-        function launchApp() {
+        window.onload = () => { if(userData.user) loadApp(); };
+
+        function showRegister() { document.getElementById('screen-welcome').style.display = 'none'; document.getElementById('screen-register').style.display = 'flex'; }
+
+        function saveProfile() {
+            userData.user = document.getElementById('reg-user').value || "Estudiante";
+            userData.subject = document.getElementById('reg-subject').value || "General";
+            save(); loadApp();
+        }
+
+        function loadApp() {
             document.getElementById('screen-welcome').style.display = 'none';
+            document.getElementById('screen-register').style.display = 'none';
             document.getElementById('screen-app').style.display = 'flex';
+            document.getElementById('display-name').innerText = userData.user;
+            renderHistory(); updateStatsUI();
         }
 
         function nav(v, el) {
@@ -212,88 +215,100 @@
             document.getElementById('view-' + v).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
             el.classList.add('active');
-            if(v === 'add' && !timer && seconds === 0) startT();
+            if(v === 'add' && !timer && seconds === 0) startTimer();
         }
 
-        function checkOther(s) { document.getElementById('custom-subject').style.display = s.value === 'Otra' ? 'block' : 'none'; }
+        function toggleOther(s) { document.getElementById('other-subject').style.display = s.value === 'Otra' ? 'block' : 'none'; }
 
-        function startT() {
-            isPaused = false; updateIcon();
+        function startTimer() {
+            isPaused = false; updatePauseIcon();
             timer = setInterval(() => {
                 seconds++;
                 updateClock();
-                if(seconds === 1800 && !firefired) { // 30 mins
+                if(seconds === 1800 && !confettiFired) {
                     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                    firefired = true;
+                    confettiFired = true;
                 }
             }, 1000);
         }
 
-        function toggleT() {
-            if(isPaused) startT();
-            else { clearInterval(timer); timer = null; isPaused = true; updateIcon(); }
+        function togglePause() {
+            if(isPaused) startTimer();
+            else { clearInterval(timer); timer = null; isPaused = true; updatePauseIcon(); }
         }
 
-        function updateIcon() {
-            const icon = document.getElementById('play-pause-icon');
+        function updatePauseIcon() {
+            const icon = document.getElementById('pause-icon');
             icon.setAttribute('data-lucide', isPaused ? 'play-circle' : 'pause-circle');
             lucide.createIcons();
         }
 
         function updateClock() {
-            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
+            const h = Math.floor(seconds/3600).toString().padStart(2,'0');
+            const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
+            const s = (seconds%60).toString().padStart(2,'0');
             document.getElementById('clock').innerText = `${h}:${m}:${s}`;
         }
 
-        function stopSession() {
+        function stopTimer() {
             clearInterval(timer); timer = null;
             document.getElementById('final-time').innerText = document.getElementById('clock').innerText;
             document.getElementById('modal-overlay').style.display = 'flex';
         }
 
-        function upload() {
+        function confirmUpload() {
             let sub = document.getElementById('subject-sel').value;
-            if(sub === 'Otra') sub = document.getElementById('custom-subject').value || 'Otra';
+            if(sub === 'Otra') sub = document.getElementById('other-subject').value || 'Otra';
             const name = document.getElementById('session-name').value || "Sesión";
             const time = document.getElementById('clock').innerText;
             const today = new Date().toLocaleDateString();
 
-            if(!hasData) {
-                document.getElementById('home-welcome-msg').style.display = 'none';
-                document.getElementById('history-list').style.display = 'flex';
-                hasData = true;
+            userData.stats.sessions++;
+            userData.stats.seconds += seconds;
+            userData.stats.subTime[sub] = (userData.stats.subTime[sub] || 0) + seconds;
+
+            if(seconds >= 1800) {
+                if(userData.stats.lastDate !== today) {
+                    userData.stats.streak++;
+                    userData.stats.lastDate = today;
+                }
             }
 
-            // Stats
-            stats.count++;
-            stats.totalSecs += seconds;
-            stats.subjects[sub] = (stats.subjects[sub] || 0) + seconds;
-            if(seconds >= 1800 && stats.lastDate !== today) {
-                stats.streak++;
-                stats.lastDate = today;
-            }
-
-            document.getElementById('stat-count').innerText = stats.count;
-            document.getElementById('stat-hours').innerText = (stats.totalSecs / 3600).toFixed(1);
-            document.getElementById('stat-streak').innerText = stats.streak;
-            let top = Object.keys(stats.subjects).reduce((a, b) => stats.subjects[a] > stats.subjects[b] ? a : b, '-');
-            document.getElementById('stat-top').innerText = top;
-
-            // UI Card
-            const card = document.createElement('div');
-            card.className = 'session-card';
-            card.innerHTML = `<h4>${name} (${sub})</h4><div class="data"><span>📅 ${today}</span><span class="time-val">${time}</span></div>`;
-            const list = document.getElementById('history-list');
-            list.appendChild(card);
-            list.scrollTop = list.scrollHeight; // Auto scroll al final (más reciente)
-
-            // Reset
+            userData.history.push({ name, sub, time, date: today });
+            save(); renderHistory(); updateStatsUI();
+            
             document.getElementById('modal-overlay').style.display = 'none';
-            seconds = 0; firefired = false; updateClock();
-            nav('home', document.querySelector('.nav-item'));
+            seconds = 0; confettiFired = false; updateClock();
+            nav('home', document.querySelector('.nav-bar .nav-item'));
         }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            if(userData.history.length > 0) {
+                document.getElementById('home-welcome-msg').style.display = 'none';
+                list.style.display = 'flex';
+                list.innerHTML = userData.history.map(s => `
+                    <div class="session-card">
+                        <h4>${s.name}</h4>
+                        <div style="display:flex; justify-content:space-between; color:var(--text-dim); margin-top:10px;">
+                            <span>${s.sub} • ${s.date}</span>
+                            <span style="color:white; font-family:monospace; font-size:1.2rem;">${s.time}</span>
+                        </div>
+                    </div>
+                `).join('');
+                list.scrollTop = list.scrollHeight;
+            }
+        }
+
+        function updateStatsUI() {
+            document.getElementById('stat-sessions').innerText = userData.stats.sessions;
+            document.getElementById('stat-hours').innerText = (userData.stats.seconds / 3600).toFixed(1);
+            document.getElementById('stat-streak').innerText = userData.stats.streak;
+            const top = Object.keys(userData.stats.subTime).reduce((a, b) => userData.stats.subTime[a] > userData.stats.subTime[b] ? a : b, '-');
+            document.getElementById('stat-top').innerText = top;
+        }
+
+        function save() { localStorage.setItem('deep_data', JSON.stringify(userData)); }
     </script>
 </body>
 </html>
