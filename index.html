@@ -8,7 +8,7 @@
         :root {
             --azul-claro: #D1E4F9;
             --azul-oscuro: #1A1A40;
-            --azul-hover: #3B3B75;
+            --azul-hover: #4A4A8F;
             --blanco: #FFFFFF;
         }
 
@@ -76,7 +76,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            position: relative;
+            box-sizing: border-box;
         }
 
         .btn-deep {
@@ -102,40 +102,46 @@
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 10px;
+            transition: 0.3s;
         }
 
-        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 6px; }
+        .btn-volver:hover { background-color: var(--azul-oscuro); color: white; }
+
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 6px; background: white; }
 
         /* --- HOME PAGE & NAVBAR (Punto 2) --- */
-        .navbar {
+        .navbar-container {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px;
+            background-color: var(--blanco);
+            padding: 10px 40px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            gap: 75px; /* Distancia aproximada de 2cm */
+            gap: 60px; /* Espaciado entre iconos (~2cm) */
         }
 
         .nav-icon {
             background: none;
             border: none;
             color: var(--azul-oscuro);
-            font-size: 2rem;
+            font-size: 1.8rem;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.2s;
+            padding: 10px;
         }
 
-        .nav-icon:hover { color: var(--azul-hover); }
+        .nav-icon:hover { 
+            color: var(--azul-hover);
+            transform: scale(1.1);
+        }
 
         .add-icon {
-            font-size: 3.5rem; /* Más grande */
-            line-height: 1;
-        }
-
-        /* CUADRO BIENVENIDA */
-        #welcome-modal {
-            margin-top: -50px;
+            font-size: 3rem;
+            color: var(--azul-oscuro);
+            font-weight: bold;
         }
 
         .btn-entendido {
@@ -147,6 +153,7 @@
             font-weight: bold;
             cursor: pointer;
             text-decoration: underline;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -173,35 +180,39 @@
         <div id="screen-3" class="screen">
             <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
             <div class="form-box">
-                <select id="n1"></select> <select id="n2"></select>
+                <label>Nota Habitual / Nota Objetivo</label>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <select id="n1"></select>
+                    <select id="n2"></select>
+                </div>
                 <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">“Todo el mundo es un genio...”</div>
+            <div class="floating-quote" style="font-size: 0.9rem;">“Todo el mundo es un genio. Pero si juzgas a un pez...”</div>
         </div>
 
         <div id="screen-4" class="screen">
             <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
             <div class="form-box">
-                <input type="text" placeholder="¿Cuánto tiempo estudias?">
-                <select><option>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
+                <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
+                <select><option disabled selected>¿Consideras que es suficiente?</option><option>Sí</option><option>No</option></select>
                 <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
+            <div class="floating-quote" style="font-size: 0.9rem;">“¿Qué es, pues, el tiempo? Si nadie me lo pregunta...”</div>
         </div>
 
         <div id="screen-5" class="screen">
             <div id="welcome-modal" class="form-box">
-                <p>Bienvenido a Deep, ahora te encuentras en la página principal, aqui verás tus sesiones de estudio una vez las añadas.</p>
+                <p style="font-size: 1.1rem; line-height: 1.5;">Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.</p>
                 <button class="btn-entendido" onclick="closeModal()">ENTENDIDO</button>
             </div>
 
-            <nav class="navbar">
+            <div class="navbar-container">
                 <button class="nav-icon">🏠</button>
                 <button class="nav-icon">📊</button>
                 <button class="nav-icon add-icon">⊕</button>
                 <button class="nav-icon">📋</button>
                 <button class="nav-icon">👤</button>
-            </nav>
+            </div>
         </div>
 
     </div>
@@ -216,12 +227,20 @@
             document.getElementById('welcome-modal').style.display = 'none';
         }
 
-        // Llenar selects
-        const f = (id) => {
-            const s = document.getElementById(id);
-            if(s) for(let i=1; i<=10; i++) s.options.add(new Option(i, i));
+        // Rellenar selectores de notas
+        const setupNotes = () => {
+            const selects = [document.getElementById('n1'), document.getElementById('n2')];
+            selects.forEach(s => {
+                if(s) {
+                    for(let i=1; i<=10; i++) {
+                        let opt = document.createElement('option');
+                        opt.value = i; opt.innerHTML = i;
+                        s.appendChild(opt);
+                    }
+                }
+            });
         }
-        f('n1'); f('n2');
+        setupNotes();
     </script>
 </body>
 </html>
