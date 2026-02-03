@@ -31,21 +31,20 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            width: 90%;
+            width: 100%;
+            height: 100%;
             max-width: 550px;
             position: relative;
+            justify-content: center;
         }
 
         /* --- ANIMACIONES --- */
-        
-        /* Movimiento lateral de las frases */
         @keyframes relax-move {
             0% { transform: translateX(-10px); }
             50% { transform: translateX(10px); }
             100% { transform: translateX(-10px); }
         }
 
-        /* Transición de entrada (desplazamiento suave) */
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(40px); }
             to { opacity: 1; transform: translateX(0); }
@@ -53,7 +52,7 @@
 
         .screen {
             display: none;
-            width: 100%;
+            width: 90%;
             flex-direction: column;
             align-items: center;
             animation: slideIn 0.6s ease-out;
@@ -68,18 +67,10 @@
             font-size: 1.1rem;
             font-style: italic;
             animation: relax-move 5s ease-in-out infinite;
-            max-width: 90%;
             line-height: 1.4;
         }
 
         /* --- UI COMPONENTS --- */
-
-        h1 {
-            font-size: 5rem;
-            margin: 0 0 20px 0;
-            letter-spacing: 6px;
-        }
-
         .form-box {
             background-color: var(--blanco);
             padding: 30px;
@@ -102,12 +93,9 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             text-transform: uppercase;
-            margin-top: 10px;
         }
 
-        .btn-deep:hover {
-            background-color: var(--azul-hover);
-        }
+        .btn-deep:hover { background-color: var(--azul-hover); }
 
         .btn-volver {
             align-self: flex-start;
@@ -118,26 +106,52 @@
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        .btn-volver:hover {
-            background-color: var(--azul-oscuro);
-            color: var(--blanco);
         }
 
         input, select {
             padding: 12px;
             border: 2px solid var(--azul-oscuro);
             border-radius: 6px;
-            font-size: 1rem;
-            color: var(--azul-oscuro);
         }
 
-        label {
-            text-align: left;
+        /* --- HOME PAGE & NAV (Punto 2) --- */
+        .navbar {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 75px; /* Aproximadamente 2cm entre botones */
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--azul-oscuro);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             font-weight: bold;
-            font-size: 0.9rem;
+        }
+
+        .nav-item.add-btn {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            font-size: 2rem;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -146,80 +160,69 @@
     <div class="container">
 
         <div id="screen-1" class="screen active">
-            <h1>DEEP</h1>
+            <h1 style="font-size: 5rem; margin-bottom: 20px;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
-            <div class="floating-quote">
-                “El conocimiento es poder”<br>
-                <small style="font-style: normal;">- Francis Bacon -</small>
-            </div>
+            <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
         </div>
 
         <div id="screen-2" class="screen">
             <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
             <div class="form-box">
-                <label>Tu nombre:</label>
-                <input type="text" placeholder="Tu nombre...">
-                <label>Asignatura favorita:</label>
-                <input type="text" placeholder="Asignatura...">
+                <input type="text" placeholder="Tu nombre">
+                <input type="text" placeholder="Asignatura favorita">
                 <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">
-                “El nombre es la herencia espiritual del lenguaje”<br>
-                <small style="font-style: normal;">- Walter Benjamin -</small>
-            </div>
+            <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”<br><small>- Walter Benjamin -</small></div>
         </div>
 
         <div id="screen-3" class="screen">
             <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
             <div class="form-box">
-                <label>¿Qué nota sueles sacar?</label>
-                <select>
-                    <option value="" disabled selected>Selecciona nota</option>
-                    <script>for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);</script>
-                </select>
-                <label>¿Cuál es tu nota objetiva?</label>
-                <select>
-                    <option value="" disabled selected>Selecciona meta</option>
-                    <script>for(let i=1; i<=10; i++) document.write(`<option value="${i}">${i}</option>`);</script>
-                </select>
+                <label>Nota actual / Nota meta</label>
+                <select id="n1"></select> <select id="n2"></select>
                 <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">
-                “Todo el mundo es un genio. Pero si juzgas a un pez por su habilidad para trepar árboles, vivirá toda su vida pensando que es un necio”<br>
-                <small style="font-style: normal;">- Albert Einstein -</small>
-            </div>
+            <div class="floating-quote">“Todo el mundo es un genio...”<br><small>- Albert Einstein -</small></div>
         </div>
 
         <div id="screen-4" class="screen">
             <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
             <div class="form-box">
-                <label>¿Cuánto tiempo sueles estudiar? (ej. 2 horas)</label>
-                <input type="text" placeholder="Escribe aquí el tiempo...">
-                
-                <label>¿Consideras que es suficiente?</label>
-                <select>
-                    <option value="" disabled selected>Elige una opción</option>
-                    <option value="si">Sí, es suficiente</option>
-                    <option value="no">No, necesito más</option>
-                    <option value="depende">Depende del día</option>
-                </select>
-                
-                <button class="btn-deep">CONTINUAR</button>
+                <input type="text" placeholder="¿Cuánto tiempo estudias?">
+                <select><option>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
+                <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">
-                “¿Qué es, pues, el tiempo? Si nadie me lo pregunta, lo sé; pero si quiero explicárselo a quien me lo pregunta, no lo sé”<br>
-                <small style="font-style: normal;">- Agustín de Hipona -</small>
-            </div>
+            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”<br><small>- Agustín de Hipona -</small></div>
+        </div>
+
+        <div id="screen-5" class="screen">
+            <h2 style="margin-top: -100px;">¡Bienvenido a Deep!</h2>
+            <p>Tu viaje de estudio comienza aquí.</p>
+            
+            <nav class="navbar">
+                <button class="nav-item">🏠<span class="nav-label">Casa</span></button>
+                <button class="nav-item">📊<span class="nav-label">Estadística</span></button>
+                <button class="nav-item add-btn">+</button>
+                <button class="nav-item">📝<span class="nav-label">Notas</span></button>
+                <button class="nav-item">👤<span class="nav-label">Perfil</span></button>
+            </nav>
         </div>
 
     </div>
 
     <script>
-        function changeScreen(screenNumber) {
+        function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(`screen-${screenNumber}`).classList.add('active');
+            document.getElementById(`screen-${n}`).classList.add('active');
         }
-    </script>
 
+        // Llenar selects de notas rápidamente
+        const fill = (id) => {
+            const s = document.getElementById(id);
+            if(s) for(let i=1; i<=10; i++) s.options.add(new Option(i, i));
+        }
+        fill('n1'); fill('n2');
+    </script>
 </body>
 </html>
+
