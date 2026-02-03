@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DEEP - Focus Studio</title>
+    <title>DEEP - Study Focus</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg: #030712;
+            --bg: #020617;
             --accent: #38bdf8;
             --nav-bg: #0f172a;
             --text-main: #f8fafc;
@@ -18,133 +18,128 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
             background-color: var(--bg); color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif; overflow: hidden;
+            font-family: 'Inter', sans-serif; overflow: hidden;
         }
+
+        /* --- PANTALLAS --- */
+        .screen { position: fixed; inset: 0; display: none; flex-direction: column; padding: 30px; }
+        .screen.active { display: flex; }
 
         /* --- PANTALLA 1: BIENVENIDA --- */
-        #screen-welcome {
-            position: fixed; inset: 0; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
-            text-align: center; padding: 20px;
+        #screen-welcome { 
+            z-index: 1000; justify-content: center; align-items: center; text-align: center;
+            background: radial-gradient(circle at center, #111827 0%, #020617 100%);
         }
         .hero-title {
-            font-size: 6rem; letter-spacing: 1rem; font-weight: 900; margin: 0;
+            font-size: 7rem; letter-spacing: 1.5rem; font-weight: 900; margin: 0;
             background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .welcome-slogan { font-size: 1.1rem; color: var(--text-dim); margin: 1rem 0 3rem 0; text-transform: uppercase; letter-spacing: 3px; }
-        .btn-init { background: white; color: black; border: none; padding: 1.2rem 4rem; font-size: 1.1rem; font-weight: 800; border-radius: 50px; cursor: pointer; }
-
-        /* --- PANTALLA 1.1: REGISTRO --- */
-        #screen-register {
-            position: fixed; inset: 0; z-index: 999; display: none;
-            flex-direction: column; justify-content: center; align-items: center;
-            background: var(--bg); padding: 30px;
+        .welcome-slogan { font-size: 1.2rem; color: var(--text-dim); margin: 1rem 0 3rem 0; text-transform: uppercase; letter-spacing: 4px; }
+        
+        /* Formulario inicial */
+        #init-form { display: none; flex-direction: column; gap: 15px; width: 100%; max-width: 300px; margin-top: 20px; }
+        .input-init { padding: 15px; border-radius: 10px; border: 1px solid var(--accent); background: #0f172a; color: white; font-size: 1rem; }
+        
+        .btn-main {
+            background: white; color: black; border: none; padding: 1.2rem 4rem;
+            font-size: 1.1rem; font-weight: 800; border-radius: 50px; cursor: pointer;
         }
-        .reg-box { background: var(--nav-bg); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; border: 1px solid #1e293b; }
-        .reg-input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid #334155; background: #020617; color: white; }
 
-        /* --- PANTALLA 2: APP --- */
-        #screen-app { display: none; height: 100vh; flex-direction: column; padding: 20px; }
-        .corner-logo { font-size: 1.8rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+        /* --- LOGO Y NAV --- */
+        .corner-logo { font-size: 2rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; width: fit-content; }
 
-        .content-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 90px; }
-        .view { display: none; width: 100%; height: 100%; flex-direction: column; }
-        .view.active { display: flex; }
+        .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 90px; }
 
-        /* HOME */
-        #home-content { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
-        #home-welcome-msg { font-size: 1.8rem; font-weight: 800; line-height: 1.1; text-align: justify; }
-        .lema-home { font-style: italic; font-size: 2.2rem; color: var(--accent); margin-bottom: 1rem; display: block; }
+        /* --- HOME: TEXTO GIGANTE --- */
+        #view-home { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+        #welcome-msg { font-size: 2.2rem; font-weight: 800; line-height: 1.1; text-align: justify; text-justify: inter-word; }
+        .lema-home { font-style: italic; font-size: 3rem; color: var(--accent); margin-bottom: 1rem; display: block; text-align: left; }
 
-        #history-list { display: none; flex-direction: column; gap: 15px; overflow-y: auto; padding: 10px 0; }
-        .session-card { background: var(--card-bg); padding: 20px; border-radius: 15px; border-left: 5px solid var(--accent); flex-shrink: 0; }
-        .session-card h4 { margin: 0; font-size: 2rem; color: var(--accent); }
+        /* --- HISTORIAL (SCROLL HACIA ARRIBA) --- */
+        #history-list { display: none; flex-direction: column; gap: 15px; overflow-y: auto; padding: 20px 0; }
+        .session-card { background: var(--card-bg); padding: 25px; border-radius: 20px; border-left: 6px solid var(--accent); flex-shrink: 0; }
+        .session-card h4 { margin: 0 0 10px 0; font-size: 2.2rem; color: var(--accent); }
+        .session-data { display: flex; justify-content: space-between; align-items: flex-end; }
+        .session-time { font-size: 2.5rem; font-family: monospace; }
 
-        /* CRONÓMETRO */
+        /* --- CRONÓMETRO --- */
         #view-add { align-items: center; justify-content: center; }
-        .timer-header { display: flex; justify-content: space-between; width: 100%; align-items: center; }
-        .clock-display { font-size: 6rem; font-weight: 100; font-family: monospace; margin: 40px 0; }
-        .btn-stop-main { background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 800; }
+        .timer-header { display: flex; justify-content: space-between; width: 100%; align-items: center; position: absolute; top: 100px; padding: 0 30px; }
+        .clock-display { font-size: 8rem; font-weight: 100; font-family: monospace; margin: 40px 0; }
+        .btn-stop { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; }
+        .clk-btn { color: var(--accent); background: none; border: none; cursor: pointer; }
 
-        /* ESTADÍSTICAS */
-        .stats-grid { display: flex; justify-content: space-between; width: 100%; margin: auto 0; }
-        .stat-val { font-size: 4rem; font-weight: 900; color: var(--accent); line-height: 1; }
-        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-top: 5px; }
+        /* --- ESTADÍSTICAS --- */
+        .stats-grid { display: flex; justify-content: space-between; width: 100%; margin: auto 0; padding: 0 20px; }
+        .stat-val { font-size: 8rem; font-weight: 900; color: var(--accent); line-height: 1; }
+        .stat-label { font-size: 1rem; text-transform: uppercase; color: var(--text-dim); margin-top: 10px; }
 
-        /* NAV BAR */
+        /* --- MODAL --- */
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-card { background: var(--nav-bg); padding: 40px; border-radius: 30px; width: 100%; max-width: 500px; text-align: center; border: 1px solid #1e293b; }
+
+        /* --- BARRA NAVEGACIÓN (DISTANCIA 2CM) --- */
         .nav-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--nav-bg); padding: 15px 40px; border-radius: 50px;
-            display: flex; gap: 60px; border: 1px solid #1e293b;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--nav-bg); padding: 20px 50px; border-radius: 100px;
+            display: flex; gap: 75px; /* Aprox 2cm */
+            border: 1px solid #1e293b; z-index: 500;
         }
-        .nav-item { color: var(--text-dim); cursor: pointer; }
-        .nav-item.active { color: var(--accent); }
-
-        /* MODAL */
-        #modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            z-index: 2000; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal { background: var(--nav-bg); padding: 30px; border-radius: 25px; width: 100%; text-align: center; }
+        .nav-item { color: var(--text-dim); cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--accent); transform: scale(1.2); }
     </style>
 </head>
 <body>
 
-    <div id="screen-welcome">
+    <div id="screen-welcome" class="screen active">
         <h1 class="hero-title">DEEP</h1>
-        <div class="welcome-slogan">Sumerge tu mente en el conocimiento profundo</div>
-        <button class="btn-init" onclick="showRegister()">Empecemos</button>
-    </div>
-
-    <div id="screen-register">
-        <div class="reg-box">
-            <h2 style="margin-top:0">Hola 👋</h2>
-            <input type="text" id="reg-user" class="reg-input" placeholder="Tu nombre de usuario">
-            <input type="text" id="reg-subject" class="reg-input" placeholder="Asignatura favorita">
-            <button class="btn-init" style="width:100%" onclick="saveProfile()">Entrar</button>
+        <div class="welcome-slogan">Focus that goes beneath the surface</div>
+        
+        <button id="btn-pre-init" class="btn-main" onclick="showForm()">Empecemos</button>
+        
+        <div id="init-form">
+            <input type="text" id="user-name" class="input-init" placeholder="Tu nombre de usuario">
+            <input type="text" id="fav-subject" class="input-init" placeholder="Asignatura favorita">
+            <button class="btn-main" onclick="registerUser()">Entrar</button>
         </div>
     </div>
 
-    <main id="screen-app">
-        <div class="corner-logo" onclick="nav('home', document.querySelector('.nav-item'))">DEEP</div>
+    <main id="screen-app" class="screen">
+        <div class="corner-logo" onclick="nav('home')">DEEP</div>
 
-        <div class="content-container">
-            <section id="view-home" class="view active">
-                <div id="home-content">
-                    <div id="home-welcome-msg">
-                        <span class="lema-home">Sumerge tu mente en el conocimiento profundo</span>
-                        🚀 Bienvenido a <span style="color:var(--accent)">DEEP</span>, <span id="display-name"></span>. Estás en tu menú, aquí verás las <span style="color:#a855f7">sesiones de estudio</span> que añadas de ahora en adelante. 
-                        <br><br>
-                        ➕ Si clicas a <span style="color:var(--accent)">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.
-                        <br><br>
-                        📊 En <span style="color:var(--accent)">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.
-                    </div>
-                    <div id="history-list"></div>
+        <div class="content-area">
+            <section id="view-home" class="view">
+                <div id="welcome-msg">
+                    <span class="lema-home">Focus that goes beneath the surface</span>
+                    🚀 Bienvenido <span id="display-user" class="blue"></span> a <span class="blue">DEEP</span>, la mejor web para impulsar tus estudios. Estás en tu menú, aquí verás las <span style="color:#a855f7">sesiones de estudio</span> que añadas de ahora en adelante. 
+                    <br><br>
+                    ➕ Si clicas a <span class="blue">"añadir"</span>, podrás meter todas las sesiones de estudio que quieras.
+                    <br><br>
+                    📊 En <span class="blue">"estadísticas"</span>, podrás ver todo lo que has estudiado este mes, año o semana, además de gráficos y más detalles.
+                    <br><br>
+                    ✨ ¡Disfruta de tu experiencia en <b>DEEP</b>!
                 </div>
+                <div id="history-list"></div>
             </section>
 
             <section id="view-add" class="view">
                 <div class="timer-header">
                     <div style="display:flex; flex-direction:column; gap:5px;">
-                        <select id="subject-sel" onchange="toggleOther(this)" style="background:#1e293b; color:white; border:1px solid var(--accent); padding:8px; border-radius:5px;">
+                        <select id="subj-sel" onchange="checkOther(this)" style="padding:10px; border-radius:8px; background:#1e293b; color:white; border:1px solid var(--accent);">
                             <option value="Matemáticas➕">Matemáticas➕</option>
                             <option value="Inglés🇺🇸">Inglés🇺🇸</option>
-                            <option value="Lengua Castellana 🇪🇸">Lengua Castellana 🇪🇸</option>
+                            <option value="Lengua Castellana y Literatura 🇪🇸">Lengua Castellana 🇪🇸</option>
                             <option value="Otra">Otra</option>
                         </select>
-                        <input type="text" id="other-subject" placeholder="¿Qué asignatura?" style="display:none; padding:8px; border-radius:5px; border:1px solid var(--accent); background:#020617; color:white;">
+                        <input type="text" id="other-subj" placeholder="Asignatura..." style="display:none; padding:8px; border-radius:5px;">
                     </div>
-                    <button class="btn-stop-main" onclick="stopTimer()">Terminar</button>
+                    <button class="btn-stop" onclick="finishSession()">Terminar Sesión</button>
                 </div>
                 <div class="clock-display" id="clock">00:00:00</div>
-                <button class="nav-item" style="background:none; border:none; color:var(--accent);" onclick="togglePause()">
-                    <i id="pause-icon" data-lucide="pause-circle" size="80"></i>
-                </button>
+                <button class="clk-btn" onclick="toggleClock()"><i id="play-pause-icon" data-lucide="pause-circle" size="100"></i></button>
             </section>
 
             <section id="view-stats" class="view">
@@ -154,157 +149,158 @@
                         <div class="stat-label">Sesiones</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-val" id="stat-hours">0.0</div>
+                        <div class="stat-val" id="stat-hours">0</div>
                         <div class="stat-label">Horas</div>
                     </div>
                 </div>
-                <div class="stat-box" style="margin-top: 40px;">
-                    <div class="stat-val" id="stat-streak" style="color:#fb923c">0</div>
-                    <div class="stat-label">Racha 🔥</div>
+                <div class="stat-box" style="margin-top:40px;">
+                    <div class="stat-val" id="stat-streak" style="color: #fb923c;">0</div>
+                    <div class="stat-label">Días de Racha 🔥</div>
                 </div>
-                <div class="stat-box" style="margin-top: 40px;">
-                    <div id="stat-top" style="font-size:2rem; font-weight:800; color:#4ade80">-</div>
-                    <div class="stat-label">Más estudiada</div>
+                <div style="margin-top:40px; text-align:center;">
+                    <div class="stat-label">Asignatura más estudiada</div>
+                    <div id="stat-top" style="font-size:3rem; font-weight:800; color:#4ade80;">-</div>
                 </div>
             </section>
         </div>
 
         <nav class="nav-bar">
-            <div class="nav-item active" onclick="nav('home', this)"><i data-lucide="home"></i></div>
-            <div class="nav-item" onclick="nav('add', this)"><i data-lucide="plus-circle"></i></div>
-            <div class="nav-item" onclick="nav('stats', this)"><i data-lucide="bar-chart-3"></i></div>
+            <div class="nav-item active" onclick="nav('home')"><i data-lucide="home" size="32"></i></div>
+            <div class="nav-item" onclick="nav('add')"><i data-lucide="plus-circle" size="32"></i></div>
+            <div class="nav-item" onclick="nav('stats')"><i data-lucide="bar-chart-3" size="32"></i></div>
         </nav>
     </main>
 
-    <div id="modal-overlay">
-        <div class="modal">
-            <h2 style="margin:0">Sesión Finalizada</h2>
-            <div id="final-time" style="font-size:3rem; margin:20px 0; color:var(--accent); font-family:monospace;">00:00:00</div>
+    <div id="modal">
+        <div class="modal-card">
+            <h2>¡Buen trabajo! 🏆</h2>
+            <div id="final-time" style="font-size:4rem; color:var(--accent); font-family:monospace; margin:20px 0;">00:00:00</div>
             <input type="text" id="session-name" class="modal-input" placeholder="Nombre de la sesión...">
-            <button class="btn-init" style="width:100%" onclick="confirmUpload()">Subir sesión</button>
+            <button class="btn-main" onclick="confirmUpload()">Subir Sesión</button>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+
         let seconds = 0, timer = null, isPaused = false, confettiFired = false;
         let userData = JSON.parse(localStorage.getItem('deep_data')) || {
-            user: "", subject: "", history: [], stats: { sessions: 0, seconds: 0, streak: 0, lastDate: null, subTime: {} }
+            name: "", subject: "", sessions: [], streak: 0, lastDate: null, totalSecs: 0, subjStats: {}
         };
 
-        window.onload = () => { if(userData.user) loadApp(); };
+        window.onload = () => {
+            if(userData.name) {
+                document.getElementById('screen-welcome').style.display = 'none';
+                document.getElementById('screen-app').classList.add('active');
+                renderHistory();
+                updateStats();
+                document.getElementById('display-user').innerText = userData.name;
+            }
+        };
 
-        function showRegister() { document.getElementById('screen-welcome').style.display = 'none'; document.getElementById('screen-register').style.display = 'flex'; }
-
-        function saveProfile() {
-            userData.user = document.getElementById('reg-user').value || "Estudiante";
-            userData.subject = document.getElementById('reg-subject').value || "General";
-            save(); loadApp();
+        function showForm() {
+            document.getElementById('btn-pre-init').style.display = 'none';
+            document.getElementById('init-form').style.display = 'flex';
         }
 
-        function loadApp() {
-            document.getElementById('screen-welcome').style.display = 'none';
-            document.getElementById('screen-register').style.display = 'none';
-            document.getElementById('screen-app').style.display = 'flex';
-            document.getElementById('display-name').innerText = userData.user;
-            renderHistory(); updateStatsUI();
+        function registerUser() {
+            userData.name = document.getElementById('user-name').value || "Estudiante";
+            userData.subject = document.getElementById('fav-subject').value || "General";
+            save();
+            location.reload();
         }
 
-        function nav(v, el) {
+        function nav(v) {
             document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
             document.getElementById('view-' + v).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-            el.classList.add('active');
-            if(v === 'add' && !timer && seconds === 0) startTimer();
+            const idx = v === 'home' ? 0 : v === 'add' ? 1 : 2;
+            document.querySelectorAll('.nav-item')[idx].classList.add('active');
+
+            if(v === 'add' && !timer && seconds === 0) startClock();
         }
 
-        function toggleOther(s) { document.getElementById('other-subject').style.display = s.value === 'Otra' ? 'block' : 'none'; }
+        function checkOther(s) { document.getElementById('other-subj').style.display = s.value === 'Otra' ? 'block' : 'none'; }
 
-        function startTimer() {
-            isPaused = false; updatePauseIcon();
+        function startClock() {
+            isPaused = false; updateIcon();
             timer = setInterval(() => {
                 seconds++;
-                updateClock();
+                updateClockDisplay();
                 if(seconds === 1800 && !confettiFired) {
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
                     confettiFired = true;
                 }
             }, 1000);
         }
 
-        function togglePause() {
-            if(isPaused) startTimer();
-            else { clearInterval(timer); timer = null; isPaused = true; updatePauseIcon(); }
+        function toggleClock() {
+            if(isPaused) startClock();
+            else { clearInterval(timer); timer = null; isPaused = true; updateIcon(); }
         }
 
-        function updatePauseIcon() {
-            const icon = document.getElementById('pause-icon');
+        function updateIcon() {
+            const icon = document.getElementById('play-pause-icon');
             icon.setAttribute('data-lucide', isPaused ? 'play-circle' : 'pause-circle');
             lucide.createIcons();
         }
 
-        function updateClock() {
-            const h = Math.floor(seconds/3600).toString().padStart(2,'0');
-            const m = Math.floor((seconds%3600)/60).toString().padStart(2,'0');
-            const s = (seconds%60).toString().padStart(2,'0');
+        function updateClockDisplay() {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
             document.getElementById('clock').innerText = `${h}:${m}:${s}`;
         }
 
-        function stopTimer() {
+        function finishSession() {
             clearInterval(timer); timer = null;
             document.getElementById('final-time').innerText = document.getElementById('clock').innerText;
-            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('modal').style.display = 'flex';
         }
 
         function confirmUpload() {
-            let sub = document.getElementById('subject-sel').value;
-            if(sub === 'Otra') sub = document.getElementById('other-subject').value || 'Otra';
+            let sub = document.getElementById('subj-sel').value;
+            if(sub === 'Otra') sub = document.getElementById('other-subj').value || 'Otra';
             const name = document.getElementById('session-name').value || "Sesión";
-            const time = document.getElementById('clock').innerText;
             const today = new Date().toLocaleDateString();
 
-            userData.stats.sessions++;
-            userData.stats.seconds += seconds;
-            userData.stats.subTime[sub] = (userData.stats.subTime[sub] || 0) + seconds;
-
+            // Stats
+            userData.totalSecs += seconds;
+            userData.subjStats[sub] = (userData.subjStats[sub] || 0) + seconds;
+            
+            // Streak
             if(seconds >= 1800) {
-                if(userData.stats.lastDate !== today) {
-                    userData.stats.streak++;
-                    userData.stats.lastDate = today;
+                if(userData.lastDate !== today) {
+                    userData.streak++;
+                    userData.lastDate = today;
                 }
             }
 
-            userData.history.push({ name, sub, time, date: today });
-            save(); renderHistory(); updateStatsUI();
-            
-            document.getElementById('modal-overlay').style.display = 'none';
-            seconds = 0; confettiFired = false; updateClock();
-            nav('home', document.querySelector('.nav-bar .nav-item'));
+            userData.sessions.push({ name: name, subject: sub, time: document.getElementById('clock').innerText, date: today });
+            save();
+            location.reload();
         }
 
         function renderHistory() {
-            const list = document.getElementById('history-list');
-            if(userData.history.length > 0) {
-                document.getElementById('home-welcome-msg').style.display = 'none';
+            if(userData.sessions.length > 0) {
+                document.getElementById('welcome-msg').style.display = 'none';
+                const list = document.getElementById('history-list');
                 list.style.display = 'flex';
-                list.innerHTML = userData.history.map(s => `
-                    <div class="session-card">
-                        <h4>${s.name}</h4>
-                        <div style="display:flex; justify-content:space-between; color:var(--text-dim); margin-top:10px;">
-                            <span>${s.sub} • ${s.date}</span>
-                            <span style="color:white; font-family:monospace; font-size:1.2rem;">${s.time}</span>
-                        </div>
-                    </div>
-                `).join('');
+                userData.sessions.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'session-card';
+                    card.innerHTML = `<h4>${s.name} (${s.subject})</h4><div class="session-data"><span>📅 ${s.date}</span><span class="session-time">${s.time}</span></div>`;
+                    list.appendChild(card);
+                });
                 list.scrollTop = list.scrollHeight;
             }
         }
 
-        function updateStatsUI() {
-            document.getElementById('stat-sessions').innerText = userData.stats.sessions;
-            document.getElementById('stat-hours').innerText = (userData.stats.seconds / 3600).toFixed(1);
-            document.getElementById('stat-streak').innerText = userData.stats.streak;
-            const top = Object.keys(userData.stats.subTime).reduce((a, b) => userData.stats.subTime[a] > userData.stats.subTime[b] ? a : b, '-');
+        function updateStats() {
+            document.getElementById('stat-sessions').innerText = userData.sessions.length;
+            document.getElementById('stat-hours').innerText = (userData.totalSecs / 3600).toFixed(1);
+            document.getElementById('stat-streak').innerText = userData.streak;
+            let top = Object.keys(userData.subjStats).reduce((a, b) => userData.subjStats[a] > userData.subjStats[b] ? a : b, '-');
             document.getElementById('stat-top').innerText = top;
         }
 
