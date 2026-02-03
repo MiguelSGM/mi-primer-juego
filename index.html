@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep - Aplicación de Estudio</title>
+    <title>Deep - App de Estudio</title>
     <style>
-        /* Paleta de Colores Oficial */
         :root {
             --azul-claro: #D1E4F9;
             --azul-oscuro: #1A1A40;
@@ -33,7 +32,7 @@
             text-align: center;
             width: 100%;
             height: 100%;
-            max-width: 550px;
+            max-width: 600px;
             position: relative;
             justify-content: center;
         }
@@ -46,7 +45,7 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(40px); }
+            from { opacity: 0; transform: translateX(50px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
@@ -55,19 +54,16 @@
             width: 90%;
             flex-direction: column;
             align-items: center;
-            animation: slideIn 0.6s ease-out;
+            animation: slideIn 0.7s ease-out forwards;
         }
 
-        .screen.active {
-            display: flex;
-        }
+        .screen.active { display: flex; }
 
         .floating-quote {
             margin-top: 35px;
             font-size: 1.1rem;
             font-style: italic;
             animation: relax-move 5s ease-in-out infinite;
-            line-height: 1.4;
         }
 
         /* --- UI COMPONENTS --- */
@@ -80,7 +76,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            box-sizing: border-box;
+            position: relative;
         }
 
         .btn-deep {
@@ -91,7 +87,7 @@
             font-weight: bold;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: 0.3s;
             text-transform: uppercase;
         }
 
@@ -105,53 +101,52 @@
             padding: 6px 12px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
-        input, select {
-            padding: 12px;
-            border: 2px solid var(--azul-oscuro);
-            border-radius: 6px;
-        }
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 6px; }
 
-        /* --- HOME PAGE & NAV (Punto 2) --- */
+        /* --- HOME PAGE & NAVBAR (Punto 2) --- */
         .navbar {
             position: absolute;
-            bottom: 30px;
+            bottom: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            gap: 75px; /* Aproximadamente 2cm entre botones */
+            gap: 75px; /* Distancia aproximada de 2cm */
         }
 
-        .nav-item {
+        .nav-icon {
             background: none;
             border: none;
             color: var(--azul-oscuro);
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-weight: bold;
-        }
-
-        .nav-item.add-btn {
-            background-color: var(--azul-oscuro);
-            color: var(--blanco);
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
             font-size: 2rem;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: color 0.3s;
         }
 
-        .nav-label {
-            font-size: 0.7rem;
-            margin-top: 5px;
-            text-transform: uppercase;
+        .nav-icon:hover { color: var(--azul-hover); }
+
+        .add-icon {
+            font-size: 3.5rem; /* Más grande */
+            line-height: 1;
+        }
+
+        /* CUADRO BIENVENIDA */
+        #welcome-modal {
+            margin-top: -50px;
+        }
+
+        .btn-entendido {
+            align-self: flex-end;
+            margin-top: 15px;
+            background: none;
+            border: none;
+            color: var(--azul-oscuro);
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -160,7 +155,7 @@
     <div class="container">
 
         <div id="screen-1" class="screen active">
-            <h1 style="font-size: 5rem; margin-bottom: 20px;">DEEP</h1>
+            <h1 style="font-size: 5rem; margin: 0;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
             <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
         </div>
@@ -172,17 +167,16 @@
                 <input type="text" placeholder="Asignatura favorita">
                 <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”<br><small>- Walter Benjamin -</small></div>
+            <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
         </div>
 
         <div id="screen-3" class="screen">
             <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
             <div class="form-box">
-                <label>Nota actual / Nota meta</label>
                 <select id="n1"></select> <select id="n2"></select>
                 <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">“Todo el mundo es un genio...”<br><small>- Albert Einstein -</small></div>
+            <div class="floating-quote">“Todo el mundo es un genio...”</div>
         </div>
 
         <div id="screen-4" class="screen">
@@ -192,19 +186,21 @@
                 <select><option>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
                 <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
             </div>
-            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”<br><small>- Agustín de Hipona -</small></div>
+            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
         </div>
 
         <div id="screen-5" class="screen">
-            <h2 style="margin-top: -100px;">¡Bienvenido a Deep!</h2>
-            <p>Tu viaje de estudio comienza aquí.</p>
-            
+            <div id="welcome-modal" class="form-box">
+                <p>Bienvenido a Deep, ahora te encuentras en la página principal, aqui verás tus sesiones de estudio una vez las añadas.</p>
+                <button class="btn-entendido" onclick="closeModal()">ENTENDIDO</button>
+            </div>
+
             <nav class="navbar">
-                <button class="nav-item">🏠<span class="nav-label">Casa</span></button>
-                <button class="nav-item">📊<span class="nav-label">Estadística</span></button>
-                <button class="nav-item add-btn">+</button>
-                <button class="nav-item">📝<span class="nav-label">Notas</span></button>
-                <button class="nav-item">👤<span class="nav-label">Perfil</span></button>
+                <button class="nav-icon">🏠</button>
+                <button class="nav-icon">📊</button>
+                <button class="nav-icon add-icon">⊕</button>
+                <button class="nav-icon">📋</button>
+                <button class="nav-icon">👤</button>
             </nav>
         </div>
 
@@ -216,13 +212,16 @@
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        // Llenar selects de notas rápidamente
-        const fill = (id) => {
+        function closeModal() {
+            document.getElementById('welcome-modal').style.display = 'none';
+        }
+
+        // Llenar selects
+        const f = (id) => {
             const s = document.getElementById(id);
             if(s) for(let i=1; i<=10; i++) s.options.add(new Option(i, i));
         }
-        fill('n1'); fill('n2');
+        f('n1'); f('n2');
     </script>
 </body>
 </html>
-
