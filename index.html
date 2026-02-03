@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep - App de Estudio</title>
+    <title>Deep - Aplicación de Estudio</title>
     <style>
-        /* Paleta de colores y Reset */
+        /* Variables de color */
         :root {
             --azul-claro: #D1E4F9;
             --azul-oscuro: #1A1A40;
@@ -27,40 +27,53 @@
         }
 
         .container {
+            display: flex;
+            flex-direction: column; /* Asegura que todo esté uno debajo de otro */
+            align-items: center;
             text-align: center;
-            width: 100%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 500px;
         }
 
-        /* Animación de movimiento ligero y relajante */
-        @keyframes floating {
-            0% { transform: translateX(0px); }
-            50% { transform: translateX(15px); }
-            100% { transform: translateX(0px); }
+        /* --- ANIMACIONES --- */
+        
+        /* Movimiento lateral relajante de las frases */
+        @keyframes relax-move {
+            0% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(-10px); }
         }
 
-        .animated-quote {
-            display: inline-block;
-            animation: floating 4s ease-in-out infinite;
-            margin-top: 20px;
-            font-size: 1.2rem;
+        /* Transición de entrada (desplazamiento a la izquierda) */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Títulos y textos */
+        .animated-view {
+            animation: slideIn 0.8s ease-out forwards;
+        }
+
+        .floating-quote {
+            margin-top: 40px;
+            font-size: 1.1rem;
+            font-style: italic;
+            animation: relax-move 5s ease-in-out infinite;
+        }
+
+        /* --- ELEMENTOS --- */
+
         h1 {
             font-size: 5rem;
-            margin-bottom: 10px;
-            letter-spacing: 4px;
+            margin: 0 0 20px 0;
+            letter-spacing: 6px;
         }
 
-        /* Estilo de Botones */
         .btn-deep {
-            display: inline-block;
-            margin: 30px 0;
-            padding: 15px 50px;
             background-color: var(--azul-oscuro);
             color: var(--blanco);
             border: none;
+            padding: 15px 45px;
             font-weight: bold;
             font-size: 1.1rem;
             cursor: pointer;
@@ -72,16 +85,31 @@
             background-color: var(--azul-hover);
         }
 
-        /* Formulario (Oculto inicialmente) */
-        #pantalla-registro {
-            display: none;
+        .btn-volver {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: transparent;
+            color: var(--azul-oscuro);
+            border: 2px solid var(--azul-oscuro);
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
         }
 
+        .btn-volver:hover {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+        }
+
+        /* Cuadro de Formulario */
         .form-box {
             background-color: var(--blanco);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -90,52 +118,67 @@
         input {
             padding: 12px;
             border: 2px solid var(--azul-oscuro);
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 1rem;
-            outline: none;
+            color: var(--azul-oscuro);
         }
 
         label {
             text-align: left;
             font-weight: bold;
+            font-size: 0.9rem;
         }
 
+        /* Control de pantallas */
         .hidden { display: none; }
+
     </style>
 </head>
 <body>
 
     <div id="pantalla-inicio" class="container">
         <h1>DEEP</h1>
-        <button class="btn-deep" onclick="mostrarRegistro()">¡EMPECEMOS!</button>
-        <div class="animated-quote">
+        <button class="btn-deep" onclick="irARegistro()">¡EMPECEMOS!</button>
+        <div class="floating-quote">
             “El conocimiento es poder”<br>
-            <small>- Francis Bacon -</small>
+            <small style="font-style: normal;">- Francis Bacon -</small>
         </div>
     </div>
 
-    <div id="pantalla-registro" class="container">
+    <div id="pantalla-registro" class="container hidden">
+        <button class="btn-volver" onclick="irAInicio()">← VOLVER</button>
+        
         <div class="form-box">
-            <label for="nombre">Tu nombre:</label>
-            <input type="text" id="nombre" placeholder="Escribe tu nombre...">
+            <label>Nombre:</label>
+            <input type="text" placeholder="Tu nombre">
             
-            <label for="asignatura">Asignatura favorita:</label>
-            <input type="text" id="asignatura" placeholder="¿Qué te gusta estudiar?">
+            <label>Asignatura favorita:</label>
+            <input type="text" placeholder="Ej. Historia, Programación...">
             
             <button class="btn-deep">CONTINUAR</button>
         </div>
         
-        <div class="animated-quote">
+        <div class="floating-quote">
             “El nombre es la herencia espiritual del lenguaje”<br>
-            <small>- Walter Benjamin -</small>
+            <small style="font-style: normal;">- Walter Benjamin -</small>
         </div>
     </div>
 
     <script>
-        // Función para cambiar de pantalla
-        function mostrarRegistro() {
-            document.getElementById('pantalla-inicio').style.display = 'none';
-            document.getElementById('pantalla-registro').style.display = 'block';
+        const pantallaInicio = document.getElementById('pantalla-inicio');
+        const pantallaRegistro = document.getElementById('pantalla-registro');
+
+        function irARegistro() {
+            pantallaInicio.classList.add('hidden');
+            pantallaRegistro.classList.remove('hidden');
+            // Añadimos la clase de animación para que entre suavemente
+            pantallaRegistro.classList.add('animated-view');
+        }
+
+        function irAInicio() {
+            pantallaRegistro.classList.add('hidden');
+            pantallaInicio.classList.remove('hidden');
+            pantallaInicio.classList.add('animated-view');
         }
     </script>
 
