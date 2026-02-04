@@ -10,7 +10,7 @@
             --azul-oscuro: #1A1A40;
             --azul-hover: #4A4A8F;
             --blanco: #FFFFFF;
-            --ancho-interfaz: 480px; /* Alineación simétrica con los iconos */
+            --ancho-interfaz: 480px;
         }
 
         body, html {
@@ -57,7 +57,7 @@
 
         .screen.active { display: flex; }
 
-        /* --- ESTRUCTURA DE CUADROS --- */
+        /* --- CUADROS Y BOTONES --- */
         .content-wrapper {
             width: var(--ancho-interfaz);
             display: flex;
@@ -77,7 +77,6 @@
             box-sizing: border-box;
         }
 
-        /* --- BOTONES --- */
         .btn-deep {
             background-color: var(--azul-oscuro);
             color: var(--blanco);
@@ -114,12 +113,32 @@
             text-align: center;
         }
 
-        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; background: white; }
+        /* --- CRONÓMETRO --- */
+        .timer-container {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            text-align: right;
+        }
 
-        /* --- HOME PAGE Y NAVBAR --- */
-        .home-section { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .home-section.active { display: flex; }
+        #display-timer {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
+        .btn-timer-control {
+            background: none;
+            border: 2px solid var(--azul-oscuro);
+            color: var(--azul-oscuro);
+            padding: 8px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* --- NAVBAR --- */
         .navbar-frame {
             position: absolute;
             bottom: 40px;
@@ -144,9 +163,8 @@
             transition: 0.3s;
         }
 
-        .nav-icon:hover { color: var(--azul-hover); transform: scale(1.1); }
+        .nav-icon:hover { color: var(--azul-hover); }
         .nav-icon.add-main { font-size: 3rem; font-weight: bold; }
-
     </style>
 </head>
 <body>
@@ -164,8 +182,8 @@
                 <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
                 <div class="form-box">
                     <input type="text" id="inputName" placeholder="Tu nombre">
-                    <input type="text" id="inputAsignatura" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="validarUsuario()">CONTINUAR</button>
+                    <input type="text" id="inputAsig" placeholder="Asignatura favorita">
+                    <button class="btn-deep" onclick="validarPedro()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
@@ -175,7 +193,7 @@
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
                 <div class="form-box">
-                    <label>Nota examen / Nota objetivo</label>
+                    <label>Notas actual / meta</label>
                     <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
                     <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
@@ -187,9 +205,9 @@
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
-                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <select><option disabled selected>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
-                    <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
+                    <input type="text" placeholder="¿Cuánto tiempo estudias?">
+                    <select><option>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
+                    <button class="btn-deep" onclick="finalizar()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
@@ -200,7 +218,7 @@
             <div id="sec-home" class="home-section active">
                 <div class="content-wrapper">
                     <div id="box-home" class="form-box">
-                        <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.</p>
+                        <p>Bienvenido a <b>Deep</b>, aquí verás tus sesiones de estudio.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-home')">ENTENDIDO</button>
                     </div>
                 </div>
@@ -209,26 +227,31 @@
             <div id="sec-stats" class="home-section">
                 <div class="content-wrapper">
                     <div id="box-stats" class="form-box">
-                        <p>Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas más estudiadas... una vez que añadas sesiones de estudio.</p>
+                        <p>Estás en <b>"Estadísticas"</b>, aquí verás tu progreso.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-stats')">ENTENDIDO</button>
                     </div>
                 </div>
             </div>
 
             <div id="sec-add" class="home-section">
-                <div class="content-wrapper">
+                <div id="timer-ui" class="timer-container">
+                    <div id="display-timer">00:00:00</div>
+                    <button id="btn-toggle-timer" class="btn-timer-control" onclick="toggleTimer()">PARAR</button>
+                </div>
+
+                <div class="content-wrapper" id="add-init-ui">
                     <div id="box-add" class="form-box">
-                        <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio, añade tu primera sesion pulsando el boton que ves aqui debajo.</p>
+                        <p>Estás en <b>"añadir"</b>. Pulsa el botón de abajo para empezar tu sesión.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-add')">ENTENDIDO</button>
                     </div>
-                    <button class="btn-deep" style="margin-top: 25px; width: 100%;">AÑADIR SESIÓN</button>
+                    <button id="btn-start-session" class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="startSession()">AÑADIR SESIÓN</button>
                 </div>
             </div>
 
             <div id="sec-notas" class="home-section">
                 <div class="content-wrapper">
                     <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones para conocer mejor tu progreso en Deep.</p>
+                        <p>Estás en <b>"notas"</b>. Registra tus calificaciones aquí.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px; width: 100%;">AÑADIR NOTA</button>
@@ -238,9 +261,8 @@
             <div id="sec-perfil" class="home-section">
                 <div class="content-wrapper">
                     <div class="form-box">
-                        <h2 style="margin:0">Perfil de Usuario</h2>
-                        <p style="font-size: 1.2rem;">Nombre: <b id="prof-name">---</b></p>
-                        <p style="font-size: 1.2rem;">Asignatura: <b id="prof-asig">---</b></p>
+                        <p><b>NOMBRE:</b> <span id="p-name"></span></p>
+                        <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                     </div>
                 </div>
             </div>
@@ -256,45 +278,36 @@
     </div>
 
     <script>
-        let uActual = "";
-        let aActual = "";
+        let segundos = 0, intervalo = null, activo = false;
+        let uLog = "", aLog = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function validarUsuario() {
+        function validarPedro() {
             const n = document.getElementById('inputName').value.trim();
-            const a = document.getElementById('inputAsignatura').value.trim();
+            const a = document.getElementById('inputAsig').value.trim();
             if(!n) return;
-            uActual = n;
-            aActual = a;
-            
-            const savedData = localStorage.getItem('user_deep_'+n);
-            if(savedData) {
-                const data = JSON.parse(savedData);
-                uActual = data.nombre;
-                aActual = data.asignatura;
-                if(data.status === 'completado') {
-                    actualizarPerfil();
-                    changeScreen(5);
-                    return;
-                }
-            }
-            changeScreen(3);
+            uLog = n; aLog = a;
+            if(localStorage.getItem('deep_'+n)) {
+                const d = JSON.parse(localStorage.getItem('deep_'+n));
+                uLog = d.n; aLog = d.a;
+                actualizarPerfil();
+                changeScreen(5);
+            } else { changeScreen(3); }
         }
 
-        function guardarYHome() {
-            const userData = { nombre: uActual, asignatura: aActual, status: 'completado' };
-            localStorage.setItem('user_deep_'+uActual, JSON.stringify(userData));
+        function finalizar() {
+            localStorage.setItem('deep_'+uLog, JSON.stringify({n: uLog, a: aLog}));
             actualizarPerfil();
             changeScreen(5);
         }
 
         function actualizarPerfil() {
-            document.getElementById('prof-name').innerText = uActual;
-            document.getElementById('prof-asig').innerText = aActual;
+            document.getElementById('p-name').innerText = uLog;
+            document.getElementById('p-asig').innerText = aLog;
         }
 
         function nav(id) {
@@ -303,6 +316,33 @@
         }
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
+
+        /* LÓGICA CRONÓMETRO */
+        function startSession() {
+            document.getElementById('add-init-ui').style.display = 'none';
+            document.getElementById('timer-ui').style.display = 'block';
+            segundos = 0;
+            toggleTimer(); // Empieza automáticamente
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('btn-toggle-timer');
+            if(!activo) {
+                intervalo = setInterval(() => {
+                    segundos++;
+                    const h = Math.floor(segundos / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((segundos % 3600) / 60).toString().padStart(2, '0');
+                    const s = (segundos % 60).toString().padStart(2, '0');
+                    document.getElementById('display-timer').innerText = `${h}:${m}:${s}`;
+                }, 1000);
+                btn.innerText = "PARAR";
+                activo = true;
+            } else {
+                clearInterval(intervalo);
+                btn.innerText = "REANUDAR";
+                activo = false;
+            }
+        }
 
         (function(){
             const s1=document.getElementById('s1'), s2=document.getElementById('s2');
