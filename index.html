@@ -10,7 +10,7 @@
             --azul-oscuro: #1A1A40;
             --azul-hover: #4A4A8F;
             --blanco: #FFFFFF;
-            --ancho-interfaz: 480px; /* Ancho unificado para cuadros y navbar */
+            --ancho-interfaz: 480px; /* Alineación perfecta con los iconos */
         }
 
         body, html {
@@ -102,7 +102,7 @@
             padding: 4px 10px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 5px; /* Casi pegado al cuadro */
+            margin-bottom: 5px; /* Pegado al cuadro */
             font-size: 0.8rem;
         }
 
@@ -131,7 +131,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 55px; /* Distancia equilibrada de 2cm aprox */
+            gap: 55px; /* ~2cm de distancia */
             box-sizing: border-box;
         }
 
@@ -188,7 +188,7 @@
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
                     <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <select><option disabled selected>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
+                    <select><option disabled selected>¿Consideras que es suficiente?</option><option>Sí</option><option>No</option></select>
                     <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
                 </div>
             </div>
@@ -196,6 +196,7 @@
         </div>
 
         <div id="screen-5" class="screen">
+            
             <div id="sec-home" class="home-section active">
                 <div class="content-wrapper">
                     <div id="box-home" class="form-box">
@@ -224,11 +225,21 @@
                 </div>
             </div>
 
+            <div id="sec-notas" class="home-section">
+                <div class="content-wrapper">
+                    <div id="box-notas" class="form-box">
+                        <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones para conocer mejor tu progreso en Deep.</p>
+                        <button class="btn-deep btn-entendido" onclick="cerrar('box-notas')">ENTENDIDO</button>
+                    </div>
+                    <button class="btn-deep" style="margin-top: 25px; width: 100%;">AÑADIR NOTA</button>
+                </div>
+            </div>
+
             <div class="navbar-frame">
                 <button class="nav-icon" onclick="nav('sec-home')">🏠</button>
                 <button class="nav-icon" onclick="nav('sec-stats')">📊</button>
                 <button class="nav-icon add-main" onclick="nav('sec-add')">⊕</button>
-                <button class="nav-icon">📋</button>
+                <button class="nav-icon" onclick="nav('sec-notas')">📋</button>
                 <button class="nav-icon">👤</button>
             </div>
         </div>
@@ -266,7 +277,6 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Inicializar notas 1-10
         (function(){
             const s1=document.getElementById('s1'), s2=document.getElementById('s2');
             for(let i=1; i<=10; i++){
