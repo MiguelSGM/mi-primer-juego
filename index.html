@@ -114,13 +114,13 @@
             text-align: center;
         }
 
-        /* --- CRONÓMETRO (Alineado a los márgenes) --- */
+        /* --- CRONÓMETRO (Alineado arriba a la derecha) --- */
         #cronometro-container {
             display: none;
             position: absolute;
-            top: 40px;
+            top: 40%; /* Un poco por encima de la mitad */
             width: var(--ancho-interfaz);
-            text-align: left; /* Alineado a la izquierda */
+            text-align: right;
         }
 
         #tiempo-txt {
@@ -137,6 +137,14 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
+        }
+
+        /* --- BOTÓN AÑADIR ASIGNATURA --- */
+        .btn-add-asig {
+            position: absolute;
+            bottom: 120px; /* Encima de los iconos */
+            width: var(--ancho-interfaz);
+            z-index: 5;
         }
 
         /* --- NAVBAR INFERIOR --- */
@@ -260,7 +268,7 @@
                         <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
-                    <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
+                    <button class="btn-deep" style="margin-top: 25px; width: 100%;">AÑADIR NOTA</button>
                 </div>
             </div>
 
@@ -271,6 +279,10 @@
                         <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                     </div>
                 </div>
+            </div>
+
+            <div class="btn-add-asig">
+                <button class="btn-deep" style="width: 100%;">AÑADIR ASIGNATURA</button>
             </div>
 
             <div class="navbar-frame">
@@ -324,7 +336,6 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        /* LÓGICA DEL CRONÓMETRO */
         function empezarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
             document.getElementById('cronometro-container').style.display = 'block';
