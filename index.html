@@ -57,18 +57,23 @@
         .screen.active { display: flex; }
 
         /* --- CUADROS Y BOTONES --- */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            max-width: 500px;
+        }
+
         .form-box {
             background-color: var(--blanco);
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 20px;
             box-sizing: border-box;
-            z-index: 2;
         }
 
         .btn-deep {
@@ -81,36 +86,29 @@
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
-            align-self: center;
         }
 
         .btn-deep:hover { background-color: var(--azul-hover); }
 
-        /* Botón Entendido y Añadir Sesión alineados abajo a la derecha */
-        .btn-pos-right {
-            align-self: flex-end !important;
-            padding: 10px 25px !important;
-            font-size: 0.9rem !important;
-        }
+        .btn-entendido { align-self: flex-end; padding: 10px 25px; }
 
         .btn-volver {
             align-self: flex-start;
             background: none;
             border: 2px solid var(--azul-oscuro);
             color: var(--azul-oscuro);
-            padding: 8px 15px;
+            padding: 5px 12px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 5px; /* Pegado al cuadro */
         }
 
         .floating-quote {
-            margin-top: 40px;
+            margin-top: 30px;
             font-size: 1.1rem;
             font-style: italic;
             animation: relax-move 5s ease-in-out infinite;
             text-align: center;
-            max-width: 80%;
         }
 
         input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
@@ -128,7 +126,7 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            gap: 75px; 
+            gap: 75px; /* Distancia de 2cm aprox */
         }
 
         .nav-icon {
@@ -140,7 +138,7 @@
             transition: 0.3s;
         }
 
-        .nav-icon:hover { color: var(--azul-hover); transform: scale(1.1); }
+        .nav-icon:hover { color: var(--azul-hover); }
         .nav-icon.add-main { font-size: 3.5rem; }
 
     </style>
@@ -156,35 +154,39 @@
         </div>
 
         <div id="screen-2" class="screen">
-            <div style="width: 90%; max-width: 500px; display: flex; flex-direction: column;">
+            <div class="form-container">
                 <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
                 <div class="form-box">
-                    <input type="text" id="userName" placeholder="Tu nombre">
+                    <input type="text" id="inputName" placeholder="Tu nombre">
                     <input type="text" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="checkUser()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="validarUsuario()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
         </div>
 
         <div id="screen-3" class="screen">
-            <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
-            <div class="form-box">
-                <label>Notas actual / meta</label>
-                <div style="display: flex; gap: 10px;"><select id="n1"></select><select id="n2"></select></div>
-                <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
+            <div class="form-container">
+                <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
+                <div class="form-box">
+                    <label>Nota examen / Nota objetivo</label>
+                    <div style="display: flex; gap: 10px;"><select id="s1"></select><select id="s2"></select></div>
+                    <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
+                </div>
             </div>
-            <div class="floating-quote">“Todo el mundo es un genio...”</div>
+            <div class="floating-quote" style="font-size: 0.85rem;">“Todo el mundo es un genio. Pero si juzgas a un pez...”</div>
         </div>
 
         <div id="screen-4" class="screen">
-            <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
-            <div class="form-box">
-                <input type="text" placeholder="¿Cuánto tiempo estudias?">
-                <select><option>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
-                <button class="btn-deep" onclick="finishReg()">CONTINUAR</button>
+            <div class="form-container">
+                <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
+                <div class="form-box">
+                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
+                    <select><option>¿Consideras que es suficiente?</option><option>Sí</option><option>No</option></select>
+                    <button class="btn-deep" onclick="completarRegistro()">CONTINUAR</button>
+                </div>
             </div>
-            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
+            <div class="floating-quote" style="font-size: 0.85rem;">“¿Qué es, pues, el tiempo? Si nadie me lo pregunta...”</div>
         </div>
 
         <div id="screen-5" class="screen">
@@ -192,28 +194,31 @@
             <div id="sec-home" class="home-section active">
                 <div id="box-home" class="form-box">
                     <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.</p>
-                    <button class="btn-deep btn-pos-right" onclick="hideBox('box-home')">ENTENDIDO</button>
+                    <button class="btn-deep btn-entendido" onclick="cerrarCuadro('box-home')">ENTENDIDO</button>
                 </div>
             </div>
 
             <div id="sec-stats" class="home-section">
                 <div id="box-stats" class="form-box">
                     <p>Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas más estudiadas... una vez que añadas sesiones de estudio.</p>
-                    <button class="btn-deep btn-pos-right" onclick="hideBox('box-stats')">ENTENDIDO</button>
+                    <button class="btn-deep btn-entendido" onclick="cerrarCuadro('box-stats')">ENTENDIDO</button>
                 </div>
             </div>
 
             <div id="sec-add" class="home-section">
-                <div id="box-add" class="form-box">
-                    <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio, añade tu primera sesion pulsando el boton que ves aqui debajo.</p>
-                    <button class="btn-deep btn-pos-right">AÑADIR SESIÓN</button>
+                <div class="form-container">
+                    <div id="box-add" class="form-box">
+                        <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio, añade tu primera sesion pulsando el boton que ves aqui debajo.</p>
+                        <button class="btn-deep btn-entendido" onclick="cerrarCuadro('box-add')">ENTENDIDO</button>
+                    </div>
+                    <button class="btn-deep" style="margin-top: 20px;">AÑADIR SESIÓN</button>
                 </div>
             </div>
 
             <div class="navbar-frame">
-                <button class="nav-icon" onclick="navTo('sec-home')">🏠</button>
-                <button class="nav-icon" onclick="navTo('sec-stats')">📊</button>
-                <button class="nav-icon nav-icon add-main" onclick="navTo('sec-add')">⊕</button>
+                <button class="nav-icon" onclick="nav('sec-home')">🏠</button>
+                <button class="nav-icon" onclick="nav('sec-stats')">📊</button>
+                <button class="nav-icon add-main" onclick="nav('sec-add')">⊕</button>
                 <button class="nav-icon">📋</button>
                 <button class="nav-icon">👤</button>
             </div>
@@ -222,39 +227,39 @@
     </div>
 
     <script>
-        let currentU = "";
+        let uLog = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function checkUser() {
-            const name = document.getElementById('userName').value.trim();
-            if(!name) return;
-            currentU = name;
-            if(localStorage.getItem('deep_user_'+name) === 'done') {
+        function validarUsuario() {
+            const n = document.getElementById('inputName').value.trim();
+            if(!n) return;
+            uLog = n;
+            if(localStorage.getItem('deep_'+n) === 'fin') {
                 changeScreen(5);
             } else {
                 changeScreen(3);
             }
         }
 
-        function finishReg() {
-            localStorage.setItem('deep_user_'+currentU, 'done');
+        function completarRegistro() {
+            localStorage.setItem('deep_'+uLog, 'fin');
             changeScreen(5);
         }
 
-        function navTo(id) {
+        function nav(id) {
             document.querySelectorAll('.home-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        function hideBox(id) { document.getElementById(id).style.display = 'none'; }
+        function cerrarCuadro(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Cargar notas
+        // Rellenar notas
         (function(){
-            const s1=document.getElementById('n1'), s2=document.getElementById('n2');
+            const s1=document.getElementById('s1'), s2=document.getElementById('s2');
             for(let i=1; i<=10; i++){
                 if(s1) s1.options.add(new Option(i,i));
                 if(s2) s2.options.add(new Option(i,i));
