@@ -32,15 +32,15 @@
             50% { transform: translateX(10px); }
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
         .screen {
             display: none; width: 100%; height: 100%;
             flex-direction: column; justify-content: center; align-items: center;
             animation: slideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .screen.active { display: flex; }
@@ -50,7 +50,7 @@
             animation: relax-move 5s ease-in-out infinite; text-align: center;
         }
 
-        /* --- CUADROS Y FORMULARIOS --- */
+        /* --- CUADROS --- */
         .content-wrapper { width: var(--ancho-interfaz); display: flex; flex-direction: column; position: relative; }
         
         .form-box {
@@ -63,7 +63,6 @@
             background-color: var(--azul-oscuro); color: var(--blanco);
             border: none; padding: 15px 40px; font-weight: bold;
             cursor: pointer; transition: 0.3s; text-transform: uppercase;
-            text-align: center;
         }
         .btn-deep:hover { background-color: var(--azul-hover); }
 
@@ -73,11 +72,11 @@
             cursor: pointer; margin-bottom: 2px; font-size: 0.8rem;
         }
 
-        /* --- SISTEMA DE ASIGNATURAS (SCROLL) --- */
+        /* --- SISTEMA AÑADIR (NUEVO ABAJO) --- */
         #session-scroll-area {
-            max-height: 40vh; overflow-y: auto; width: 100%;
+            max-height: 45vh; overflow-y: auto; width: 100%;
             padding: 10px; margin-bottom: 20px;
-            display: flex; flex-direction: column-reverse; gap: 15px;
+            display: flex; flex-direction: column; gap: 15px; /* Column normal: nuevo abajo */
         }
 
         .asig-card {
@@ -118,29 +117,43 @@
                 <div class="form-box">
                     <input type="text" id="regName" placeholder="Tu nombre">
                     <input type="text" id="regAsig" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="validarUsuario()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="checkPedro()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
         </div>
 
-        <div id="screen-3" class="screen"><button class="btn-deep" onclick="changeScreen(4)">CONTINUAR REGISTRO</button></div>
-        <div id="screen-4" class="screen"><button class="btn-deep" onclick="finalizarYHome()">FINALIZAR REGISTRO</button></div>
+        <div id="screen-3" class="screen">
+            <div class="content-wrapper">
+                <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
+                <div class="form-box">
+                    <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
+                    <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
+                </div>
+            </div>
+            <div class="floating-quote">“Todo el mundo es un genio...”</div>
+        </div>
+
+        <div id="screen-4" class="screen">
+            <div class="content-wrapper">
+                <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
+                <div class="form-box">
+                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
+                    <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
+                </div>
+            </div>
+            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
+        </div>
 
         <div id="screen-5" class="screen">
             
             <div id="sec-home" class="home-section active">
-                <div class="content-wrapper"><div id="box-home" class="form-box">
-                    <p>Bienvenido a <b>Deep</b>, ahora estás en la página principal.</p>
-                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-home')">ENTENDIDO</button>
-                </div></div>
-            </div>
-
-            <div id="sec-stats" class="home-section">
-                <div class="content-wrapper"><div id="box-stats" class="form-box">
-                    <p>Estas en <b>"Estadísticas"</b>, aquí verás tu progreso.</p>
-                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-stats')">ENTENDIDO</button>
-                </div></div>
+                <div class="content-wrapper">
+                    <div id="box-home" class="form-box">
+                        <p>Bienvenido a <b>Deep</b>, ahora estás en la página principal.</p>
+                        <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-home')">ENTENDIDO</button>
+                    </div>
+                </div>
             </div>
 
             <div id="sec-add" class="home-section">
@@ -152,41 +165,34 @@
                             <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
                             <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-add')">ENTENDIDO</button>
                         </div>
-                        <button class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="iniciarSesion()">AÑADIR SESIÓN</button>
+                        <button class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="iniciarEstudio()">EMPEZAR SESIÓN</button>
                     </div>
 
-                    <div id="active-session-controls" style="display:none; flex-direction: column; gap: 10px;">
+                    <div id="active-controls" style="display:none; flex-direction: column; gap: 10px;">
                         <button class="btn-deep" onclick="nuevaAsignatura()">AÑADIR ASIGNATURA</button>
-                        <button class="btn-deep" onclick="terminarSesion()">TERMINAR SESIÓN</button>
+                        <button class="btn-deep" onclick="terminarEstudio()">TERMINAR SESIÓN</button>
                     </div>
 
                     <div id="congrats-ui" class="form-box" style="display:none;">
-                        <h1 style="color: var(--azul-oscuro); margin: 0;">¡FELICIDADES!</h1>
-                        <p><b>TIEMPO DE ESTUDIO TOTAL:</b> <span id="total-time">00:00:00</span></p>
-                        <p><b>ASIGNATURA MÁS ESTUDIADA:</b> <span id="best-asig">---</span></p>
+                        <h1 style="margin:0">¡FELICIDADES!</h1>
+                        <p id="resumen-final"></p>
                     </div>
-                    <button id="btn-congrats-cont" class="btn-deep" style="display:none; margin-top: 20px;">CONTINUAR</button>
                 </div>
             </div>
 
-            <div id="sec-notas" class="home-section">
-                <div class="content-wrapper"><div id="box-notas" class="form-box">
-                    <p>Estás en <b>"notas"</b>, aquí añadirás tus calificaciones.</p>
-                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-notas')">ENTENDIDO</button>
-                </div></div>
-            </div>
-
             <div id="sec-perfil" class="home-section">
-                <div class="content-wrapper"><div class="form-box">
-                    <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
-                    <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
-                </div></div>
+                <div class="content-wrapper">
+                    <div class="form-box">
+                        <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
+                        <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
+                    </div>
+                </div>
             </div>
 
             <div class="navbar-frame">
                 <button class="nav-icon" onclick="nav('sec-home')">🏠</button>
                 <button class="nav-icon" onclick="nav('sec-stats')">📊</button>
-                <button class="nav-icon" onclick="nav('sec-add')" style="font-size: 2.5rem;">⊕</button>
+                <button class="nav-icon add-main" onclick="nav('sec-add')" style="font-size: 2.5rem;">⊕</button>
                 <button class="nav-icon" onclick="nav('sec-notas')">📋</button>
                 <button class="nav-icon" onclick="nav('sec-perfil')">👤</button>
             </div>
@@ -194,31 +200,29 @@
     </div>
 
     <script>
-        let userN = "", asigN = "", asigData = [];
+        let uN = "", aN = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function validarUsuario() {
-            userN = document.getElementById('regName').value;
-            asigN = document.getElementById('regAsig').value;
-            if(localStorage.getItem('deep_user_'+userN)) {
-                const data = JSON.parse(localStorage.getItem('deep_user_'+userN));
-                userN = data.n; asigN = data.a;
-                upPerfil(); changeScreen(5);
-            } else { changeScreen(3); }
+        function checkPedro() {
+            uN = document.getElementById('regName').value.trim();
+            aN = document.getElementById('regAsig').value.trim();
+            if(!uN) return;
+            // Si Pedro ya existe, igual pasamos por Notas y Tiempo para asegurar datos
+            changeScreen(3);
         }
 
-        function finalizarYHome() {
-            localStorage.setItem('deep_user_'+userN, JSON.stringify({n:userN, a:asigN}));
+        function guardarYHome() {
+            localStorage.setItem('deep_user_'+uN, JSON.stringify({n:uN, a:aN}));
             upPerfil(); changeScreen(5);
         }
 
         function upPerfil() {
-            document.getElementById('p-nom').innerText = userN.toUpperCase();
-            document.getElementById('p-asig').innerText = asigN.toUpperCase();
+            document.getElementById('p-nom').innerText = uN.toUpperCase();
+            document.getElementById('p-asig').innerText = aN.toUpperCase();
         }
 
         function nav(id) {
@@ -228,11 +232,10 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        /* LÓGICA DE ESTUDIO */
-        function iniciarSesion() {
+        /* LÓGICA DE AÑADIR */
+        function iniciarEstudio() {
             document.getElementById('add-init-ui').style.display = 'none';
-            document.getElementById('active-session-controls').style.display = 'flex';
-            nuevaAsignatura();
+            document.getElementById('active-controls').style.display = 'flex';
         }
 
         function nuevaAsignatura() {
@@ -242,16 +245,19 @@
             let s = 0, activo = true;
             
             card.innerHTML = `
-                <select class="asig-sel"><option>MATEMÁTICAS</option><option>HISTORIA</option><option>INGLÉS</option><option>CASTELLANO</option></select>
+                <select><option>MATEMÁTICAS</option><option>HISTORIA</option><option>INGLÉS</option><option>CASTELLANO</option></select>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="clock" style="font-weight:bold">00:00:00</span>
-                    <button class="pause-btn" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">⏸</button>
+                    <span class="clk" style="font-weight:bold">00:00:00</span>
+                    <button class="p-btn" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">⏸</button>
                 </div>`;
             
+            // Añadir al final (abajo)
             container.appendChild(card);
-            const display = card.querySelector('.clock');
-            const btn = card.querySelector('.pause-btn');
-            const selector = card.querySelector('.asig-sel');
+            // Scroll automático al último añadido
+            container.scrollTop = container.scrollHeight;
+
+            const display = card.querySelector('.clk');
+            const btn = card.querySelector('.p-btn');
 
             let timer = setInterval(() => {
                 if(activo) {
@@ -268,30 +274,27 @@
             card.dataset.timerId = timer;
         }
 
-        function terminarSesion() {
-            let total = 0, maxS = -1, winner = "";
+        function terminarEstudio() {
             const cards = document.querySelectorAll('.asig-card');
-            
+            let maxS = -1, total = 0, winner = "";
             cards.forEach(c => {
                 let s = parseInt(c.dataset.seconds || 0);
-                let name = c.querySelector('select').value;
                 total += s;
-                if(s > maxS) { maxS = s; winner = name; }
+                if(s > maxS) { maxS = s; winner = c.querySelector('select').value; }
                 clearInterval(c.dataset.timerId);
             });
-
             document.getElementById('session-scroll-area').style.display = 'none';
-            document.getElementById('active-session-controls').style.display = 'none';
-            
-            let fmt = Math.floor(total/3600).toString().padStart(2,'0') + ":" + 
-                      Math.floor((total%3600)/60).toString().padStart(2,'0') + ":" + 
-                      (total%60).toString().padStart(2,'0');
-            
-            document.getElementById('total-time').innerText = fmt;
-            document.getElementById('best-asig').innerText = winner + " (" + fmt + ")";
+            document.getElementById('active-controls').style.display = 'none';
+            document.getElementById('resumen-final').innerHTML = `<b>TIEMPO TOTAL:</b> ${total}s<br><b>MÁS ESTUDIADA:</b> ${winner}`;
             document.getElementById('congrats-ui').style.display = 'flex';
-            document.getElementById('btn-congrats-cont').style.display = 'block';
         }
+
+        (function(){
+            const s1=document.getElementById('s1'), s2=document.getElementById('s2');
+            for(let i=1; i<=10; i++){
+                s1.options.add(new Option(i,i)); s2.options.add(new Option(i,i));
+            }
+        })();
     </script>
 </body>
 </html>
