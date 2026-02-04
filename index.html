@@ -86,10 +86,7 @@
 
         .btn-deep:hover { background-color: var(--azul-hover); }
 
-        .btn-entendido {
-            align-self: flex-end;
-            padding: 10px 25px;
-        }
+        .btn-entendido { align-self: flex-end; padding: 10px 25px; }
 
         .btn-volver {
             align-self: flex-start;
@@ -113,14 +110,8 @@
 
         input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
 
-        /* --- HOME PAGE Y NAVBAR --- */
-        .home-section {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        /* --- NAVBAR INFERIOR --- */
+        .home-section { display: none; width: 100%; flex-direction: column; align-items: center; }
         .home-section.active { display: flex; }
 
         .navbar-frame {
@@ -141,11 +132,11 @@
             color: var(--azul-oscuro);
             font-size: 2rem;
             cursor: pointer;
-            transition: color 0.3s, transform 0.2s;
+            transition: 0.3s;
         }
 
-        .nav-icon:hover { color: var(--azul-hover); transform: scale(1.2); }
-        .nav-icon.add { font-size: 3.5rem; font-weight: bold; }
+        .nav-icon:hover { color: var(--azul-hover); transform: scale(1.1); }
+        .nav-icon.add { font-size: 3.5rem; }
 
     </style>
 </head>
@@ -153,7 +144,7 @@
 
     <div class="app-container">
 
-        <div id="screen-1" class="screen">
+        <div id="screen-1" class="screen active">
             <h1 style="font-size: 6rem; margin: 0; letter-spacing: 10px;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
             <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
@@ -163,9 +154,9 @@
             <div style="width: 90%; max-width: 500px; display: flex; flex-direction: column;">
                 <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
                 <div class="form-box">
-                    <input type="text" placeholder="Tu nombre">
+                    <input type="text" id="inputNombre" placeholder="Tu nombre">
                     <input type="text" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
+                    <button class="btn-deep" onclick="validarUsuario()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
@@ -189,20 +180,19 @@
                 <div class="form-box">
                     <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
                     <select><option disabled selected>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
-                    <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
+                    <button class="btn-deep" onclick="finalizarRegistro()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
         </div>
 
         <div id="screen-5" class="screen">
-            
             <div id="sec-home" class="home-section active">
                 <div id="welcome-box" class="form-box">
                     <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
                         Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
                     </p>
-                    <button class="btn-deep btn-entendido" onclick="cerrarCuadro('welcome-box', 'deep_home_visto')">ENTENDIDO</button>
+                    <button class="btn-deep btn-entendido" onclick="cerrarMensaje('welcome-box')">ENTENDIDO</button>
                 </div>
             </div>
 
@@ -211,7 +201,7 @@
                     <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
                         Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas más estudiadas... una vez que añadas sesiones de estudio.
                     </p>
-                    <button class="btn-deep btn-entendido" onclick="cerrarCuadro('stats-box', 'deep_stats_visto')">ENTENDIDO</button>
+                    <button class="btn-deep btn-entendido" onclick="cerrarMensaje('stats-box')">ENTENDIDO</button>
                 </div>
             </div>
 
@@ -227,39 +217,51 @@
     </div>
 
     <script>
-        window.onload = function() {
-            if (localStorage.getItem('deep_registro_finalizado') === 'true') {
-                document.getElementById('screen-5').classList.add('active');
-                // Ocultar cuadros si ya fueron aceptados anteriormente
-                if(localStorage.getItem('deep_home_visto')) document.getElementById('welcome-box').style.display = 'none';
-                if(localStorage.getItem('deep_stats_visto')) document.getElementById('stats-box').style.display = 'none';
-            } else {
-                document.getElementById('screen-1').classList.add('active');
-            }
-            initNotes();
-        };
+        let usuarioActual = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
-            if(n === 5) localStorage.setItem('deep_registro_finalizado', 'true');
         }
 
-        // Navegación entre secciones del Home
-        function showSection(secId) {
-            document.querySelectorAll('.home-section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(secId).classList.add('active');
+        function validarUsuario() {
+            const nombre = document.getElementById('inputNombre').value.trim();
+            if (nombre === "") return alert("Por favor, escribe un nombre");
+            
+            usuarioActual = nombre;
+            const datos = localStorage.getItem(`deep_user_${nombre}`);
+
+            if (datos === 'completado') {
+                // Si ya existe Pedro y terminó, va directo al home
+                changeScreen(5);
+            } else {
+                // Si es nuevo, sigue el flujo normal
+                changeScreen(3);
+            }
         }
 
-        function cerrarCuadro(elementId, storageKey) {
-            document.getElementById(elementId).style.display = 'none';
-            localStorage.setItem(storageKey, 'true');
+        function finalizarRegistro() {
+            localStorage.setItem(`deep_user_${usuarioActual}`, 'completado');
+            changeScreen(5);
         }
 
-        function initNotes() {
+        function showSection(id) {
+            document.querySelectorAll('.home-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function cerrarMensaje(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Llenar notas
+        (function() {
             const s1 = document.getElementById('sel1'), s2 = document.getElementById('sel2');
-            if(s1 && s2) { for(let i=1; i<=10; i++) { s1.options.add(new Option(i, i)); s2.options.add(new Option(i, i)); } }
-        }
+            for(let i=1; i<=10; i++) {
+                if(s1) s1.options.add(new Option(i, i));
+                if(s2) s2.options.add(new Option(i, i));
+            }
+        })();
     </script>
 </body>
 </html>
