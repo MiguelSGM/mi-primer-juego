@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep - Aplicación de Estudio</title>
+    <title>Deep - App de Estudio</title>
     <style>
         :root {
             --azul-claro: #D1E4F9;
@@ -33,14 +33,14 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
+            from { opacity: 0; transform: translateX(60px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
         .screen {
             display: none; width: 100%; height: 100%;
             flex-direction: column; justify-content: center; align-items: center;
-            animation: slideIn 0.6s ease-out forwards;
+            animation: slideIn 0.7s ease-out forwards;
         }
 
         .screen.active { display: flex; }
@@ -50,7 +50,7 @@
             animation: relax-move 5s ease-in-out infinite; text-align: center;
         }
 
-        /* --- COMPONENTES --- */
+        /* --- CUADROS Y FORMULARIOS --- */
         .content-wrapper { width: var(--ancho-interfaz); display: flex; flex-direction: column; position: relative; }
         
         .form-box {
@@ -63,6 +63,7 @@
             background-color: var(--azul-oscuro); color: var(--blanco);
             border: none; padding: 15px 40px; font-weight: bold;
             cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            text-align: center;
         }
         .btn-deep:hover { background-color: var(--azul-hover); }
 
@@ -72,25 +73,32 @@
             cursor: pointer; margin-bottom: 2px; font-size: 0.8rem;
         }
 
-        /* --- SECCIÓN AÑADIR (DINÁMICA) --- */
-        #asig-list-container {
-            max-height: 50vh; overflow-y: auto; width: 100%;
-            padding-right: 10px; margin-bottom: 20px;
+        /* --- SISTEMA DE AÑADIR ASIGNATURAS --- */
+        #scroll-container {
+            max-height: 45vh; overflow-y: auto; width: 100%;
+            padding: 10px; margin-bottom: 20px;
             display: flex; flex-direction: column-reverse; gap: 15px;
         }
 
         .asig-card {
             background: var(--blanco); padding: 20px; border-radius: 12px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;
         }
+
+        /* --- CRONÓMETRO GLOBAL --- */
+        #global-timer-box {
+            display: none; position: absolute; top: 15%; 
+            width: var(--ancho-interfaz); text-align: right;
+        }
+        #timer-text { font-size: 4rem; font-weight: bold; }
 
         /* --- NAVBAR --- */
         .navbar-frame {
             position: absolute; bottom: 30px; background-color: var(--blanco);
-            width: var(--ancho-interfaz); padding: 15px 0; border-radius: 60px;
+            width: var(--ancho-interfaz); padding: 12px 0; border-radius: 60px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: flex; align-items: center; justify-content: center; gap: 50px;
+            display: flex; align-items: center; justify-content: center; gap: 55px;
         }
         .nav-icon { background: none; border: none; color: var(--azul-oscuro); font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
         .nav-icon:hover { color: var(--azul-hover); }
@@ -106,7 +114,7 @@
     <div class="app-container">
 
         <div id="screen-1" class="screen active">
-            <h1 style="font-size: 5rem; margin: 0; letter-spacing: 8px;">DEEP</h1>
+            <h1 style="font-size: 6rem; margin: 0; letter-spacing: 10px;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
             <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
         </div>
@@ -127,22 +135,21 @@
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
                 <div class="form-box">
-                    <select id="s1"></select><select id="s2"></select>
+                    <label>Nota examen / Nota objetivo</label>
+                    <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
                     <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote">“Todo el mundo es un genio...”</div>
         </div>
 
         <div id="screen-4" class="screen">
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
-                    <input type="text" placeholder="Tiempo de estudio">
+                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
                     <button class="btn-deep" onclick="finalizarYHome()">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
         </div>
 
         <div id="screen-5" class="screen">
@@ -150,7 +157,7 @@
             <div id="sec-home" class="home-section active">
                 <div class="content-wrapper">
                     <div id="box-home" class="form-box">
-                        <p>Bienvenido a <b>Deep</b>, esta es la página principal.</p>
+                        <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal.</p>
                         <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-home')">ENTENDIDO</button>
                     </div>
                 </div>
@@ -166,25 +173,30 @@
             </div>
 
             <div id="sec-add" class="home-section">
-                <div class="content-wrapper">
-                    <div id="asig-list-container"></div>
+                <div id="global-timer-box">
+                    <div id="timer-text">00:00:00</div>
+                    <button id="master-pause" class="btn-deep" style="padding: 5px 15px;" onclick="toggleMaster()">PARAR</button>
+                </div>
 
-                    <div id="add-init-ui">
-                        <div id="box-add" class="form-box">
-                            <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
-                            <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-add')">ENTENDIDO</button>
-                        </div>
-                        <button class="btn-deep" style="margin-top: 25px; width: 100%;" id="btn-master-add" onclick="activarEstudio()">AÑADIR SESIÓN</button>
+                <div class="content-wrapper" id="add-init-ui">
+                    <div id="box-add" class="form-box">
+                        <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
+                        <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-add')">ENTENDIDO</button>
                     </div>
+                    <button class="btn-deep" style="margin-top: 25px;" onclick="iniciarSesion()">AÑADIR SESIÓN</button>
+                </div>
 
-                    <button class="btn-deep" id="btn-extra-asig" style="display:none; margin-top: 20px;" onclick="crearAsignatura()">AÑADIR ASIGNATURA</button>
+                <div class="content-wrapper" id="add-active-ui" style="display:none; margin-top: auto; margin-bottom: 110px;">
+                    <div id="scroll-container"></div>
+                    <button class="btn-deep" onclick="nuevaAsignatura()">AÑADIR ASIGNATURA</button>
+                    <button class="btn-deep" style="margin-top: 10px;">TERMINAR SESIÓN</button>
                 </div>
             </div>
 
             <div id="sec-notas" class="home-section">
                 <div class="content-wrapper">
                     <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aquí registrarás tus calificaciones.</p>
+                        <p>Estás en <b>"notas"</b>, aquí añadirás tus calificaciones.</p>
                         <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
@@ -211,7 +223,7 @@
     </div>
 
     <script>
-        let uN = "", aN = "";
+        let seg = 0, timerObj = null, isRunning = false, user = "", asig = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -219,24 +231,23 @@
         }
 
         function validarUsuario() {
-            uN = document.getElementById('regName').value;
-            aN = document.getElementById('regAsig').value;
-            if(localStorage.getItem('deep_'+uN)) { 
-                const d = JSON.parse(localStorage.getItem('deep_'+uN));
-                uN = d.n; aN = d.a;
-                upPerfil(); changeScreen(5); 
-            }
-            else { changeScreen(3); }
+            user = document.getElementById('regName').value;
+            asig = document.getElementById('regAsig').value;
+            if(localStorage.getItem('deep_u_'+user)) {
+                const d = JSON.parse(localStorage.getItem('deep_u_'+user));
+                user = d.n; asig = d.a;
+                upPerfil(); changeScreen(5);
+            } else { changeScreen(3); }
         }
 
         function finalizarYHome() {
-            localStorage.setItem('deep_'+uN, JSON.stringify({n:uN, a:aN}));
+            localStorage.setItem('deep_u_'+user, JSON.stringify({n:user, a:asig}));
             upPerfil(); changeScreen(5);
         }
 
         function upPerfil() {
-            document.getElementById('p-nom').innerText = uN.toUpperCase();
-            document.getElementById('p-asig').innerText = aN.toUpperCase();
+            document.getElementById('p-nom').innerText = user.toUpperCase();
+            document.getElementById('p-asig').innerText = asig.toUpperCase();
         }
 
         function nav(id) {
@@ -246,53 +257,59 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        /* LÓGICA DE ASIGNATURAS Y CRONÓMETROS */
-        function activarEstudio() {
+        /* LÓGICA DE TIEMPO */
+        function iniciarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
-            document.getElementById('btn-extra-asig').style.display = 'block';
-            crearAsignatura();
+            document.getElementById('global-timer-box').style.display = 'block';
+            document.getElementById('add-active-ui').style.display = 'flex';
+            isRunning = false; toggleMaster();
+            nuevaAsignatura();
         }
 
-        function crearAsignatura() {
-            const container = document.getElementById('asig-list-container');
+        function toggleMaster() {
+            const btn = document.getElementById('master-pause');
+            if(!isRunning) {
+                timerObj = setInterval(() => {
+                    seg++;
+                    let fmt = Math.floor(seg/3600).toString().padStart(2,'0') + ":" + 
+                              Math.floor((seg%3600)/60).toString().padStart(2,'0') + ":" + 
+                              (seg%60).toString().padStart(2,'0');
+                    document.getElementById('timer-text').innerText = fmt;
+                }, 1000);
+                btn.innerText = "PARAR"; isRunning = true;
+            } else { clearInterval(timerObj); btn.innerText = "REANUDAR"; isRunning = false; }
+        }
+
+        function nuevaAsignatura() {
+            const container = document.getElementById('scroll-container');
             const card = document.createElement('div');
             card.className = 'asig-card';
+            let s = 0, active = true;
             
-            const idTimer = 'timer-' + Date.now();
-            let s = 0, activo = true;
-
             card.innerHTML = `
                 <select><option>MATEMÁTICAS</option><option>HISTORIA</option><option>INGLÉS</option><option>CASTELLANO</option></select>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <span id="${idTimer}" style="font-weight:bold">00:00:00</span>
-                    <button class="pause-btn" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">⏸</button>
-                </div>
-            `;
-
-            container.appendChild(card);
+                    <span class="mini-clock" style="font-weight:bold">00:00:00</span>
+                    <button class="pause-icon" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">⏸</button>
+                </div>`;
             
-            const display = card.querySelector(`#${idTimer}`);
-            const btn = card.querySelector('.pause-btn');
+            container.appendChild(card);
+            const display = card.querySelector('.mini-clock');
+            const btn = card.querySelector('.pause-icon');
 
-            let interval = setInterval(() => {
-                if(activo) {
-                    s++;
-                    let hh = Math.floor(s/3600).toString().padStart(2,'0');
-                    let mm = Math.floor((s%3600)/60).toString().padStart(2,'0');
-                    let ss = (s%60).toString().padStart(2,'0');
-                    display.innerText = `${hh}:${mm}:${ss}`;
-                }
-            }, 1000);
+            setInterval(() => { if(active && isRunning) {
+                s++;
+                display.innerText = Math.floor(s/3600).toString().padStart(2,'0') + ":" + 
+                                    Math.floor((s%3600)/60).toString().padStart(2,'0') + ":" + 
+                                    (s%60).toString().padStart(2,'0');
+            }}, 1000);
 
-            btn.onclick = () => {
-                activo = !activo;
-                btn.innerText = activo ? "⏸" : "▶";
-            };
+            btn.onclick = () => { active = !active; btn.innerText = active ? "⏸" : "▶"; };
         }
 
         (function(){
             const s1=document.getElementById('s1'), s2=document.getElementById('s2');
-            for(let i=1; i<=10; i++) {
+            for(let i=1; i<=10; i++){
                 if(s1) s1.options.add(new Option(i,i));
                 if(s2) s2.options.add(new Option(i,i));
             }
