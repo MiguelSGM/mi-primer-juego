@@ -23,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* Contenedor universal */
         .app-container {
             position: relative;
             width: 100%;
@@ -57,7 +56,7 @@
 
         .screen.active { display: flex; }
 
-        /* --- ESTILOS DE CUADROS Y BOTONES --- */
+        /* --- CUADROS Y BOTONES --- */
         .form-box {
             background-color: var(--blanco);
             padding: 40px;
@@ -87,11 +86,6 @@
 
         .btn-deep:hover { background-color: var(--azul-hover); }
 
-        .btn-entendido {
-            align-self: flex-end; /* Abajo a la derecha */
-            padding: 10px 25px;
-        }
-
         .btn-volver {
             align-self: flex-start;
             background: none;
@@ -101,32 +95,20 @@
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 20px;
-            transition: 0.3s;
         }
-
-        .btn-volver:hover { background-color: var(--azul-oscuro); color: white; }
 
         .floating-quote {
             margin-top: 40px;
             font-size: 1.1rem;
             font-style: italic;
             animation: relax-move 5s ease-in-out infinite;
-            max-width: 80%;
             text-align: center;
+            max-width: 80%;
         }
 
-        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; }
 
-        /* --- HOME PAGE Y NAVBAR (PUNTO 2) --- */
-        .home-content {
-            flex: 1;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
+        /* --- HOME PAGE Y NAVBAR --- */
         .navbar-frame {
             position: absolute;
             bottom: 40px;
@@ -136,7 +118,7 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            gap: 75px; /* ~2cm de distancia */
+            gap: 75px; 
         }
 
         .nav-icon {
@@ -148,11 +130,7 @@
             transition: color 0.3s, transform 0.2s;
         }
 
-        .nav-icon:hover { 
-            color: var(--azul-hover); 
-            transform: scale(1.2); 
-        }
-
+        .nav-icon:hover { color: var(--azul-hover); transform: scale(1.2); }
         .nav-icon.add { font-size: 3.5rem; font-weight: bold; }
 
     </style>
@@ -161,7 +139,7 @@
 
     <div class="app-container">
 
-        <div id="screen-1" class="screen active">
+        <div id="screen-1" class="screen">
             <h1 style="font-size: 6rem; margin: 0; letter-spacing: 10px;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
             <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
@@ -191,7 +169,7 @@
                     <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote" style="font-size: 0.9rem;">“Todo el mundo es un genio. Pero si juzgas a un pez...”</div>
+            <div class="floating-quote" style="font-size: 0.9rem;">“Todo el mundo es un genio...”</div>
         </div>
 
         <div id="screen-4" class="screen">
@@ -203,17 +181,15 @@
                     <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote" style="font-size: 0.9rem;">“¿Qué es, pues, el tiempo? Si nadie me lo pregunta...”</div>
+            <div class="floating-quote" style="font-size: 0.9rem;">“¿Qué es, pues, el tiempo?...”</div>
         </div>
 
         <div id="screen-5" class="screen">
-            <div class="home-content">
-                <div id="welcome-box" class="form-box">
-                    <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
-                        Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
-                    </p>
-                    <button class="btn-deep btn-entendido" onclick="closeWelcome()">ENTENDIDO</button>
-                </div>
+            <div id="welcome-box" class="form-box">
+                <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
+                    Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
+                </p>
+                <button class="btn-deep" style="align-self: flex-end;" onclick="finalizarRegistro()">ENTENDIDO</button>
             </div>
 
             <div class="navbar-frame">
@@ -228,17 +204,32 @@
     </div>
 
     <script>
+        // Al cargar la página, comprobar si ya se completó el registro
+        window.onload = function() {
+            const registroCompletado = localStorage.getItem('deep_registro_finalizado');
+            if (registroCompletado === 'true') {
+                // Ir directo al Home sin animaciones de entrada de otras pantallas
+                document.getElementById('screen-5').classList.add('active');
+                document.getElementById('welcome-box').style.display = 'none'; // Ya lo vio una vez
+            } else {
+                // Mostrar pantalla de inicio normal
+                document.getElementById('screen-1').classList.add('active');
+            }
+            initNotes();
+        };
+
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function closeWelcome() {
+        function finalizarRegistro() {
+            // Guardar en memoria que el usuario ya llegó aquí
+            localStorage.setItem('deep_registro_finalizado', 'true');
             document.getElementById('welcome-box').style.display = 'none';
         }
 
-        // Setup de notas
-        const init = () => {
+        function initNotes() {
             const s1 = document.getElementById('sel1');
             const s2 = document.getElementById('sel2');
             if(s1 && s2) {
@@ -248,7 +239,6 @@
                 }
             }
         }
-        init();
     </script>
 </body>
 </html>
