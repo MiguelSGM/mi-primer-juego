@@ -86,6 +86,11 @@
 
         .btn-deep:hover { background-color: var(--azul-hover); }
 
+        .btn-entendido {
+            align-self: flex-end;
+            padding: 10px 25px;
+        }
+
         .btn-volver {
             align-self: flex-start;
             background: none;
@@ -106,9 +111,18 @@
             max-width: 80%;
         }
 
-        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; }
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
 
         /* --- HOME PAGE Y NAVBAR --- */
+        .home-section {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .home-section.active { display: flex; }
+
         .navbar-frame {
             position: absolute;
             bottom: 40px;
@@ -162,14 +176,11 @@
                 <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
                 <div class="form-box">
                     <label>Nota media / Nota meta</label>
-                    <div style="display: flex; gap: 10px;">
-                        <select id="sel1" style="flex:1"></select>
-                        <select id="sel2" style="flex:1"></select>
-                    </div>
+                    <div style="display: flex; gap: 10px;"><select id="sel1" style="flex:1"></select><select id="sel2" style="flex:1"></select></div>
                     <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote" style="font-size: 0.9rem;">“Todo el mundo es un genio...”</div>
+            <div class="floating-quote">“Todo el mundo es un genio...”</div>
         </div>
 
         <div id="screen-4" class="screen">
@@ -181,20 +192,32 @@
                     <button class="btn-deep" onclick="changeScreen(5)">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote" style="font-size: 0.9rem;">“¿Qué es, pues, el tiempo?...”</div>
+            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
         </div>
 
         <div id="screen-5" class="screen">
-            <div id="welcome-box" class="form-box">
-                <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
-                    Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
-                </p>
-                <button class="btn-deep" style="align-self: flex-end;" onclick="finalizarRegistro()">ENTENDIDO</button>
+            
+            <div id="sec-home" class="home-section active">
+                <div id="welcome-box" class="form-box">
+                    <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
+                        Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.
+                    </p>
+                    <button class="btn-deep btn-entendido" onclick="cerrarCuadro('welcome-box', 'deep_home_visto')">ENTENDIDO</button>
+                </div>
+            </div>
+
+            <div id="sec-stats" class="home-section">
+                <div id="stats-box" class="form-box">
+                    <p style="font-size: 1.2rem; line-height: 1.6; text-align: left; margin: 0;">
+                        Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas más estudiadas... una vez que añadas sesiones de estudio.
+                    </p>
+                    <button class="btn-deep btn-entendido" onclick="cerrarCuadro('stats-box', 'deep_stats_visto')">ENTENDIDO</button>
+                </div>
             </div>
 
             <div class="navbar-frame">
-                <button class="nav-icon">🏠</button>
-                <button class="nav-icon">📊</button>
+                <button class="nav-icon" onclick="showSection('sec-home')">🏠</button>
+                <button class="nav-icon" onclick="showSection('sec-stats')">📊</button>
                 <button class="nav-icon add">⊕</button>
                 <button class="nav-icon">📋</button>
                 <button class="nav-icon">👤</button>
@@ -204,15 +227,13 @@
     </div>
 
     <script>
-        // Al cargar la página, comprobar si ya se completó el registro
         window.onload = function() {
-            const registroCompletado = localStorage.getItem('deep_registro_finalizado');
-            if (registroCompletado === 'true') {
-                // Ir directo al Home sin animaciones de entrada de otras pantallas
+            if (localStorage.getItem('deep_registro_finalizado') === 'true') {
                 document.getElementById('screen-5').classList.add('active');
-                document.getElementById('welcome-box').style.display = 'none'; // Ya lo vio una vez
+                // Ocultar cuadros si ya fueron aceptados anteriormente
+                if(localStorage.getItem('deep_home_visto')) document.getElementById('welcome-box').style.display = 'none';
+                if(localStorage.getItem('deep_stats_visto')) document.getElementById('stats-box').style.display = 'none';
             } else {
-                // Mostrar pantalla de inicio normal
                 document.getElementById('screen-1').classList.add('active');
             }
             initNotes();
@@ -221,23 +242,23 @@
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
+            if(n === 5) localStorage.setItem('deep_registro_finalizado', 'true');
         }
 
-        function finalizarRegistro() {
-            // Guardar en memoria que el usuario ya llegó aquí
-            localStorage.setItem('deep_registro_finalizado', 'true');
-            document.getElementById('welcome-box').style.display = 'none';
+        // Navegación entre secciones del Home
+        function showSection(secId) {
+            document.querySelectorAll('.home-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(secId).classList.add('active');
+        }
+
+        function cerrarCuadro(elementId, storageKey) {
+            document.getElementById(elementId).style.display = 'none';
+            localStorage.setItem(storageKey, 'true');
         }
 
         function initNotes() {
-            const s1 = document.getElementById('sel1');
-            const s2 = document.getElementById('sel2');
-            if(s1 && s2) {
-                for(let i=1; i<=10; i++) {
-                    s1.options.add(new Option(i, i));
-                    s2.options.add(new Option(i, i));
-                }
-            }
+            const s1 = document.getElementById('sel1'), s2 = document.getElementById('sel2');
+            if(s1 && s2) { for(let i=1; i<=10; i++) { s1.options.add(new Option(i, i)); s2.options.add(new Option(i, i)); } }
         }
     </script>
 </body>
