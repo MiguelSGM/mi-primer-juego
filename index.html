@@ -45,6 +45,11 @@
 
         .screen.active { display: flex; }
 
+        .floating-quote {
+            margin-top: 35px; font-size: 1.1rem; font-style: italic;
+            animation: relax-move 5s ease-in-out infinite; text-align: center;
+        }
+
         /* --- COMPONENTES --- */
         .content-wrapper { width: var(--ancho-interfaz); display: flex; flex-direction: column; position: relative; }
         
@@ -67,21 +72,16 @@
             cursor: pointer; margin-bottom: 2px; font-size: 0.8rem;
         }
 
-        .floating-quote {
-            margin-top: 35px; font-size: 1.1rem; font-style: italic;
-            animation: relax-move 5s ease-in-out infinite; text-align: center;
-        }
-
         /* --- CRONÓMETROS --- */
-        #cronometro-main {
+        #cronometro-main-ui {
             display: none; position: absolute;
-            top: 20%; width: var(--ancho-interfaz); text-align: right;
+            top: 22%; width: var(--ancho-interfaz); text-align: right;
         }
-        #tiempo-txt { font-size: 4rem; font-weight: bold; }
+        #tiempo-txt { font-size: 3.8rem; font-weight: bold; margin-bottom: 5px; }
 
-        .asig-row-box {
+        .asig-selector-box {
             display: none; background: var(--blanco); padding: 15px 25px;
-            border-radius: 12px; margin-bottom: 20px;
+            border-radius: 12px; margin-bottom: 25px;
             justify-content: space-between; align-items: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
@@ -95,13 +95,11 @@
         }
         .nav-icon { background: none; border: none; color: var(--azul-oscuro); font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
         .nav-icon:hover { color: var(--azul-hover); }
-        .nav-icon.add-main { font-size: 3rem; font-weight: bold; }
 
         .home-section { display: none; width: 100%; flex-direction: column; align-items: center; }
         .home-section.active { display: flex; }
 
-        select { padding: 8px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-weight: bold; color: var(--azul-oscuro); }
-        input { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; }
+        select, input { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -130,11 +128,12 @@
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
                 <div class="form-box">
-                    <label>Nota examen / Nota objetivo</label>
+                    <label style="font-weight: bold;">Nota examen / Nota objetivo</label>
                     <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
                     <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
             </div>
+            <div class="floating-quote">“Todo el mundo es un genio...”</div>
         </div>
 
         <div id="screen-4" class="screen">
@@ -142,9 +141,10 @@
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
                     <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <button class="btn-deep" onclick="finalizarRegistro()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
                 </div>
             </div>
+            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
         </div>
 
         <div id="screen-5" class="screen">
@@ -153,7 +153,7 @@
                 <div class="content-wrapper">
                     <div id="box-home" class="form-box">
                         <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal.</p>
-                        <button class="btn-deep" style="align-self: flex-end;" onclick="cerrar('box-home')">ENTENDIDO</button>
+                        <button class="btn-deep" style="align-self: flex-end; padding: 10px 20px;" onclick="cerrar('box-home')">ENTENDIDO</button>
                     </div>
                 </div>
             </div>
@@ -162,37 +162,37 @@
                 <div class="content-wrapper">
                     <div id="box-stats" class="form-box">
                         <p>Estas en <b>"Estadísticas"</b>, aquí verás tu progreso.</p>
-                        <button class="btn-deep" style="align-self: flex-end;" onclick="cerrar('box-stats')">ENTENDIDO</button>
+                        <button class="btn-deep" style="align-self: flex-end; padding: 10px 20px;" onclick="cerrar('box-stats')">ENTENDIDO</button>
                     </div>
                 </div>
             </div>
 
             <div id="sec-add" class="home-section">
-                <div id="cronometro-main">
+                <div id="cronometro-main-ui">
                     <div id="tiempo-txt">00:00:00</div>
-                    <button id="btn-master" class="btn-deep" style="padding: 5px 15px;" onclick="toggleReloj()">PARAR</button>
+                    <button id="btn-master-timer" class="btn-deep" style="padding: 5px 15px;" onclick="toggleCronometro()">PARAR</button>
                 </div>
 
                 <div class="content-wrapper" id="add-init-ui">
                     <div id="box-add" class="form-box">
                         <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio.</p>
-                        <button class="btn-deep" style="align-self: flex-end;" onclick="cerrar('box-add')">ENTENDIDO</button>
+                        <button class="btn-deep" style="align-self: flex-end; padding: 10px 20px;" onclick="cerrar('box-add')">ENTENDIDO</button>
                     </div>
-                    <button class="btn-deep" style="margin-top: 25px;" onclick="iniciarEstudio()">AÑADIR SESIÓN</button>
+                    <button class="btn-deep" style="margin-top: 25px;" onclick="activarEstudio()">AÑADIR SESIÓN</button>
                 </div>
 
-                <div class="content-wrapper" id="session-active-ui" style="display:none; margin-top: auto; margin-bottom: 110px;">
-                    <div id="row-asig" class="asig-row-box">
+                <div class="content-wrapper" id="active-session-ui" style="display:none; margin-top: auto; margin-bottom: 120px;">
+                    <div id="row-asignatura" class="asig-selector-box">
                         <select>
                             <option>MATEMÁTICAS</option><option>HISTORIA</option>
                             <option>INGLÉS</option><option>CASTELLANO</option>
                         </select>
                         <div style="display: flex; align-items: center; gap: 15px;">
                             <span id="mini-timer" style="font-weight: bold; font-size: 1.2rem;">00:00:00</span>
-                            <button onclick="toggleReloj()" style="background:none; border:none; cursor:pointer; font-size: 1.5rem;">⏸</button>
+                            <button id="btn-mini-pause" onclick="toggleCronometro()" style="background:none; border:none; cursor:pointer; font-size: 1.5rem;">⏸</button>
                         </div>
                     </div>
-                    <button class="btn-deep" onclick="document.getElementById('row-asig').style.display='flex'">AÑADIR ASIGNATURA</button>
+                    <button class="btn-deep" onclick="document.getElementById('row-asignatura').style.display='flex'">AÑADIR ASIGNATURA</button>
                 </div>
             </div>
 
@@ -200,7 +200,7 @@
                 <div class="content-wrapper">
                     <div id="box-notas" class="form-box">
                         <p>Estás en <b>"notas"</b>, aquí registrarás tus calificaciones.</p>
-                        <button class="btn-deep" style="align-self: flex-end;" onclick="cerrar('box-notas')">ENTENDIDO</button>
+                        <button class="btn-deep" style="align-self: flex-end; padding: 10px 20px;" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
                 </div>
@@ -209,7 +209,7 @@
             <div id="sec-perfil" class="home-section">
                 <div class="content-wrapper">
                     <div class="form-box">
-                        <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
+                        <p><b>NOMBRE:</b> <span id="p-nombre"></span></p>
                         <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                     </div>
                 </div>
@@ -226,7 +226,8 @@
     </div>
 
     <script>
-        let seg = 0, tObj = null, running = false, uN = "", aN = "";
+        let segundos = 0, timerID = null, activo = false;
+        let userLocal = "", asigLocal = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -234,20 +235,23 @@
         }
 
         function validarUsuario() {
-            uN = document.getElementById('regName').value;
-            aN = document.getElementById('regAsig').value;
-            if(localStorage.getItem('deep_'+uN)) { changeScreen(5); upPerfil(); }
-            else { changeScreen(3); }
+            userLocal = document.getElementById('regName').value;
+            asigLocal = document.getElementById('regAsig').value;
+            if(localStorage.getItem('deep_u_'+userLocal)) {
+                const p = JSON.parse(localStorage.getItem('deep_u_'+userLocal));
+                userLocal = p.n; asigLocal = p.a;
+                refrescarPerfil(); changeScreen(5);
+            } else { changeScreen(3); }
         }
 
-        function finalizarRegistro() {
-            localStorage.setItem('deep_'+uN, JSON.stringify({n:uN, a:aN}));
-            upPerfil(); changeScreen(5);
+        function guardarYHome() {
+            localStorage.setItem('deep_u_'+userLocal, JSON.stringify({n:userLocal, a:asigLocal}));
+            refrescarPerfil(); changeScreen(5);
         }
 
-        function upPerfil() {
-            document.getElementById('p-nom').innerText = uN.toUpperCase();
-            document.getElementById('p-asig').innerText = aN.toUpperCase();
+        function refrescarPerfil() {
+            document.getElementById('p-nombre').innerText = userLocal.toUpperCase();
+            document.getElementById('p-asig').innerText = asigLocal.toUpperCase();
         }
 
         function nav(id) {
@@ -257,27 +261,33 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        function iniciarEstudio() {
+        function activarEstudio() {
             document.getElementById('add-init-ui').style.display = 'none';
-            document.getElementById('cronometro-main').style.display = 'block';
-            document.getElementById('session-active-ui').style.display = 'flex';
-            running = false; toggleReloj();
+            document.getElementById('cronometro-main-ui').style.display = 'block';
+            document.getElementById('active-session-ui').style.display = 'flex';
+            activo = false; toggleCronometro();
         }
 
-        function toggleReloj() {
-            const btn = document.getElementById('btn-master');
-            if(!running) {
-                tObj = setInterval(() => {
-                    seg++;
-                    let h = Math.floor(seg/3600).toString().padStart(2,'0');
-                    let m = Math.floor((seg%3600)/60).toString().padStart(2,'0');
-                    let s = (seg%60).toString().padStart(2,'0');
+        function toggleCronometro() {
+            const btnMaster = document.getElementById('btn-master-timer');
+            const btnMini = document.getElementById('btn-mini-pause');
+            if(!activo) {
+                timerID = setInterval(() => {
+                    segundos++;
+                    let h = Math.floor(segundos/3600).toString().padStart(2,'0');
+                    let m = Math.floor((segundos%3600)/60).toString().padStart(2,'0');
+                    let s = (segundos%60).toString().padStart(2,'0');
                     document.getElementById('tiempo-txt').innerText = `${h}:${m}:${s}`;
                     document.getElementById('mini-timer').innerText = `${h}:${m}:${s}`;
                 }, 1000);
-                btn.innerText = "PARAR"; running = true;
+                btnMaster.innerText = "PARAR";
+                btnMini.innerText = "⏸";
+                activo = true;
             } else {
-                clearInterval(tObj); btn.innerText = "REANUDAR"; running = false;
+                clearInterval(timerID);
+                btnMaster.innerText = "REANUDAR";
+                btnMini.innerText = "▶";
+                activo = false;
             }
         }
 
