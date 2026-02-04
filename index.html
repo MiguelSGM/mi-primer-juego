@@ -88,6 +88,7 @@
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
+            text-align: center;
         }
 
         .btn-deep:hover { background-color: var(--azul-hover); }
@@ -114,11 +115,11 @@
             text-align: center;
         }
 
-        /* --- CRONÓMETRO (Alineado arriba a la derecha) --- */
+        /* --- CRONÓMETRO (Alineado arriba a la derecha entre margen y mitad) --- */
         #cronometro-container {
             display: none;
             position: absolute;
-            top: 40%; /* Un poco por encima de la mitad */
+            top: 25%; /* Entre margen de arriba y la mitad, tirando hacia arriba */
             width: var(--ancho-interfaz);
             text-align: right;
         }
@@ -137,14 +138,6 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-        }
-
-        /* --- BOTÓN AÑADIR ASIGNATURA --- */
-        .btn-add-asig {
-            position: absolute;
-            bottom: 120px; /* Encima de los iconos */
-            width: var(--ancho-interfaz);
-            z-index: 5;
         }
 
         /* --- NAVBAR INFERIOR --- */
@@ -260,12 +253,16 @@
                     </div>
                     <button class="btn-deep" style="margin-top: 25px;" onclick="empezarSesion()">AÑADIR SESIÓN</button>
                 </div>
+
+                <div id="asig-extra-ui" style="display:none; position: absolute; bottom: 120px; width: var(--ancho-interfaz);">
+                    <button class="btn-deep" style="width: 100%;">AÑADIR ASIGNATURA</button>
+                </div>
             </div>
 
             <div id="sec-notas" class="home-section">
                 <div class="content-wrapper">
                     <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones.</p>
+                        <p>Estás en <b>"notas"</b>, aquí podrás añadir tus calificaciones.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px; width: 100%;">AÑADIR NOTA</button>
@@ -279,10 +276,6 @@
                         <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                     </div>
                 </div>
-            </div>
-
-            <div class="btn-add-asig">
-                <button class="btn-deep" style="width: 100%;">AÑADIR ASIGNATURA</button>
             </div>
 
             <div class="navbar-frame">
@@ -339,6 +332,7 @@
         function empezarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
             document.getElementById('cronometro-container').style.display = 'block';
+            document.getElementById('asig-extra-ui').style.display = 'block';
             segundos = 0;
             isRunning = false;
             gestionarReloj();
