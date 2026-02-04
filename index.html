@@ -63,7 +63,6 @@
             background-color: var(--azul-oscuro); color: var(--blanco);
             border: none; padding: 15px 40px; font-weight: bold;
             cursor: pointer; transition: 0.3s; text-transform: uppercase;
-            text-align: center;
         }
         .btn-deep:hover { background-color: var(--azul-hover); }
 
@@ -99,7 +98,7 @@
         .home-section { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .home-section.active { display: flex; }
 
-        select, input { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
+        input { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -116,34 +115,12 @@
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
                 <div class="form-box">
-                    <p style="margin:0; font-weight: bold;">¡Cuentanos sobre ti!</p>
+                    <input type="text" id="regName" placeholder="Tu nombre">
                     <input type="text" id="regAsig" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
-                </div>
-            </div>
-            <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
-        </div>
-
-        <div id="screen-3" class="screen">
-            <div class="content-wrapper">
-                <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
-                <div class="form-box">
-                    <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
-                    <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
-                </div>
-            </div>
-            <div class="floating-quote">“Todo el mundo es un genio...”</div>
-        </div>
-
-        <div id="screen-4" class="screen">
-            <div class="content-wrapper">
-                <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
-                <div class="form-box">
-                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
                     <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
                 </div>
             </div>
-            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
+            <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
         </div>
 
         <div id="screen-5" class="screen">
@@ -198,6 +175,7 @@
 
             <div id="sec-perfil" class="home-section">
                 <div class="content-wrapper"><div class="form-box">
+                    <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
                     <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                 </div></div>
             </div>
@@ -213,15 +191,14 @@
     </div>
 
     <script>
-        // Al cargar, verificar si el registro general está hecho
         window.onload = function() {
-            if (localStorage.getItem('deep_registro_hecho') === 'true') {
+            if (localStorage.getItem('deep_reg_done') === 'true') {
+                document.getElementById('p-nom').innerText = (localStorage.getItem('deep_name') || "").toUpperCase();
                 document.getElementById('p-asig').innerText = (localStorage.getItem('deep_asig') || "").toUpperCase();
                 changeScreen(5);
             } else {
                 changeScreen(1);
             }
-            initOptions();
         };
 
         function changeScreen(n) {
@@ -230,9 +207,12 @@
         }
 
         function guardarYHome() {
+            const nom = document.getElementById('regName').value.trim();
             const asig = document.getElementById('regAsig').value.trim();
-            localStorage.setItem('deep_registro_hecho', 'true');
+            localStorage.setItem('deep_reg_done', 'true');
+            localStorage.setItem('deep_name', nom);
             localStorage.setItem('deep_asig', asig);
+            document.getElementById('p-nom').innerText = nom.toUpperCase();
             document.getElementById('p-asig').innerText = asig.toUpperCase();
             changeScreen(5);
         }
@@ -244,7 +224,6 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        /* LÓGICA SESIÓN */
         function iniciarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
             document.getElementById('active-controls').style.display = 'flex';
@@ -298,14 +277,6 @@
             document.getElementById('resumen-final').innerHTML = `<b>TIEMPO TOTAL:</b> ${total}s<br><b>MÁS ESTUDIADA:</b> ${winner}`;
             document.getElementById('congrats-ui').style.display = 'flex';
             document.getElementById('btn-final-cont').style.display = 'block';
-        }
-
-        function initOptions() {
-            const s1=document.getElementById('s1'), s2=document.getElementById('s2');
-            for(let i=1; i<=10; i++){
-                if(s1) s1.options.add(new Option(i,i)); 
-                if(s2) s2.options.add(new Option(i,i));
-            }
         }
     </script>
 </body>
