@@ -32,15 +32,15 @@
             50% { transform: translateX(10px); }
         }
 
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         .screen {
             display: none; width: 100%; height: 100%;
             flex-direction: column; justify-content: center; align-items: center;
             animation: slideIn 0.6s ease-out forwards;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
         }
 
         .screen.active { display: flex; }
@@ -63,6 +63,7 @@
             background-color: var(--azul-oscuro); color: var(--blanco);
             border: none; padding: 15px 40px; font-weight: bold;
             cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            text-align: center;
         }
         .btn-deep:hover { background-color: var(--azul-hover); }
 
@@ -72,11 +73,11 @@
             cursor: pointer; margin-bottom: 2px; font-size: 0.8rem;
         }
 
-        /* --- SISTEMA AÑADIR (NUEVO ABAJO) --- */
+        /* --- SISTEMA AÑADIR --- */
         #session-scroll-area {
-            max-height: 45vh; overflow-y: auto; width: 100%;
+            max-height: 40vh; overflow-y: auto; width: 100%;
             padding: 10px; margin-bottom: 20px;
-            display: flex; flex-direction: column; gap: 15px; /* Column normal: nuevo abajo */
+            display: flex; flex-direction: column; gap: 15px;
         }
 
         .asig-card {
@@ -117,7 +118,7 @@
                 <div class="form-box">
                     <input type="text" id="regName" placeholder="Tu nombre">
                     <input type="text" id="regAsig" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="checkPedro()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="validarPedro()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
@@ -139,7 +140,7 @@
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
                     <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="guardarFinal()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
@@ -148,45 +149,58 @@
         <div id="screen-5" class="screen">
             
             <div id="sec-home" class="home-section active">
-                <div class="content-wrapper">
-                    <div id="box-home" class="form-box">
-                        <p>Bienvenido a <b>Deep</b>, ahora estás en la página principal.</p>
-                        <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-home')">ENTENDIDO</button>
-                    </div>
-                </div>
+                <div class="content-wrapper"><div id="box-home" class="form-box">
+                    <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.</p>
+                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-home')">ENTENDIDO</button>
+                </div></div>
+            </div>
+
+            <div id="sec-stats" class="home-section">
+                <div class="content-wrapper"><div id="box-stats" class="form-box">
+                    <p>Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas mas estudiadas... una vez que añadas sesiones de estudio</p>
+                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-stats')">ENTENDIDO</button>
+                </div></div>
             </div>
 
             <div id="sec-add" class="home-section">
                 <div class="content-wrapper">
                     <div id="session-scroll-area"></div>
-
                     <div id="add-init-ui">
                         <div id="box-add" class="form-box">
-                            <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
+                            <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio, añade tu primera sesion pulsando el boton que ves aqui debajo.</p>
                             <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-add')">ENTENDIDO</button>
                         </div>
-                        <button class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="iniciarEstudio()">EMPEZAR SESIÓN</button>
+                        <button class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="iniciarSesion()">EMPEZAR SESIÓN</button>
                     </div>
 
                     <div id="active-controls" style="display:none; flex-direction: column; gap: 10px;">
                         <button class="btn-deep" onclick="nuevaAsignatura()">AÑADIR ASIGNATURA</button>
-                        <button class="btn-deep" onclick="terminarEstudio()">TERMINAR SESIÓN</button>
+                        <button class="btn-deep" onclick="terminarSesion()">TERMINAR SESIÓN</button>
                     </div>
 
                     <div id="congrats-ui" class="form-box" style="display:none;">
                         <h1 style="margin:0">¡FELICIDADES!</h1>
                         <p id="resumen-final"></p>
                     </div>
+                    <button id="btn-final-cont" class="btn-deep" style="display:none; margin-top: 20px;">CONTINUAR</button>
+                </div>
+            </div>
+
+            <div id="sec-notas" class="home-section">
+                <div class="content-wrapper">
+                    <div id="box-notas" class="form-box">
+                        <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones para conocer mejor tu progreso en Deep.</p>
+                        <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-notas')">ENTENDIDO</button>
+                    </div>
+                    <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
                 </div>
             </div>
 
             <div id="sec-perfil" class="home-section">
-                <div class="content-wrapper">
-                    <div class="form-box">
-                        <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
-                        <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
-                    </div>
-                </div>
+                <div class="content-wrapper"><div class="form-box">
+                    <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
+                    <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
+                </div></div>
             </div>
 
             <div class="navbar-frame">
@@ -207,20 +221,20 @@
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function checkPedro() {
+        function validarPedro() {
             uN = document.getElementById('regName').value.trim();
             aN = document.getElementById('regAsig').value.trim();
             if(!uN) return;
-            // Si Pedro ya existe, igual pasamos por Notas y Tiempo para asegurar datos
+            // Registro obligatorio aunque se llame Pedro
             changeScreen(3);
         }
 
-        function guardarYHome() {
-            localStorage.setItem('deep_user_'+uN, JSON.stringify({n:uN, a:aN}));
-            upPerfil(); changeScreen(5);
+        function guardarFinal() {
+            localStorage.setItem('deep_u_'+uN, JSON.stringify({n:uN, a:aN}));
+            actualizarPerfil(); changeScreen(5);
         }
 
-        function upPerfil() {
+        function actualizarPerfil() {
             document.getElementById('p-nom').innerText = uN.toUpperCase();
             document.getElementById('p-asig').innerText = aN.toUpperCase();
         }
@@ -232,8 +246,8 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        /* LÓGICA DE AÑADIR */
-        function iniciarEstudio() {
+        /* LÓGICA SESIÓN */
+        function iniciarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
             document.getElementById('active-controls').style.display = 'flex';
         }
@@ -251,9 +265,7 @@
                     <button class="p-btn" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">⏸</button>
                 </div>`;
             
-            // Añadir al final (abajo)
             container.appendChild(card);
-            // Scroll automático al último añadido
             container.scrollTop = container.scrollHeight;
 
             const display = card.querySelector('.clk');
@@ -274,7 +286,7 @@
             card.dataset.timerId = timer;
         }
 
-        function terminarEstudio() {
+        function terminarSesion() {
             const cards = document.querySelectorAll('.asig-card');
             let maxS = -1, total = 0, winner = "";
             cards.forEach(c => {
@@ -285,8 +297,14 @@
             });
             document.getElementById('session-scroll-area').style.display = 'none';
             document.getElementById('active-controls').style.display = 'none';
-            document.getElementById('resumen-final').innerHTML = `<b>TIEMPO TOTAL:</b> ${total}s<br><b>MÁS ESTUDIADA:</b> ${winner}`;
+            
+            let fmtTotal = Math.floor(total/3600).toString().padStart(2,'0') + ":" + 
+                           Math.floor((total%3600)/60).toString().padStart(2,'0') + ":" + 
+                           (total%60).toString().padStart(2,'0');
+
+            document.getElementById('resumen-final').innerHTML = `<b>TIEMPO DE ESTUDIO:</b> ${fmtTotal}<br><b>ASIGNATURA MÁS ESTUDIADA:</b> ${winner}`;
             document.getElementById('congrats-ui').style.display = 'flex';
+            document.getElementById('btn-final-cont').style.display = 'block';
         }
 
         (function(){
