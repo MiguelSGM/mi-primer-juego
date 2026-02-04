@@ -106,7 +106,7 @@
 
     <div class="app-container">
 
-        <div id="screen-1" class="screen active">
+        <div id="screen-1" class="screen">
             <h1 style="font-size: 6rem; margin: 0; letter-spacing: 10px;">DEEP</h1>
             <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
             <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
@@ -116,9 +116,9 @@
             <div class="content-wrapper">
                 <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
                 <div class="form-box">
-                    <input type="text" id="regName" placeholder="Tu nombre">
+                    <p style="margin:0; font-weight: bold;">¡Cuentanos sobre ti!</p>
                     <input type="text" id="regAsig" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="validarPedro()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="changeScreen(3)">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
@@ -140,7 +140,7 @@
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
                     <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <button class="btn-deep" onclick="guardarFinal()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
@@ -150,14 +150,14 @@
             
             <div id="sec-home" class="home-section active">
                 <div class="content-wrapper"><div id="box-home" class="form-box">
-                    <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal, aquí verás tus sesiones de estudio una vez las añadas.</p>
+                    <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal.</p>
                     <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-home')">ENTENDIDO</button>
                 </div></div>
             </div>
 
             <div id="sec-stats" class="home-section">
                 <div class="content-wrapper"><div id="box-stats" class="form-box">
-                    <p>Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas mas estudiadas... una vez que añadas sesiones de estudio</p>
+                    <p>Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas mas estudiadas...</p>
                     <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-stats')">ENTENDIDO</button>
                 </div></div>
             </div>
@@ -167,7 +167,7 @@
                     <div id="session-scroll-area"></div>
                     <div id="add-init-ui">
                         <div id="box-add" class="form-box">
-                            <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio, añade tu primera sesion pulsando el boton que ves aqui debajo.</p>
+                            <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
                             <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-add')">ENTENDIDO</button>
                         </div>
                         <button class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="iniciarSesion()">EMPEZAR SESIÓN</button>
@@ -189,7 +189,7 @@
             <div id="sec-notas" class="home-section">
                 <div class="content-wrapper">
                     <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones para conocer mejor tu progreso en Deep.</p>
+                        <p>Estás en <b>"notas"</b>, aquí registrarás tus calificaciones.</p>
                         <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
@@ -198,7 +198,6 @@
 
             <div id="sec-perfil" class="home-section">
                 <div class="content-wrapper"><div class="form-box">
-                    <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
                     <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                 </div></div>
             </div>
@@ -214,29 +213,28 @@
     </div>
 
     <script>
-        let uN = "", aN = "";
+        // Al cargar, verificar si el registro general está hecho
+        window.onload = function() {
+            if (localStorage.getItem('deep_registro_hecho') === 'true') {
+                document.getElementById('p-asig').innerText = (localStorage.getItem('deep_asig') || "").toUpperCase();
+                changeScreen(5);
+            } else {
+                changeScreen(1);
+            }
+            initOptions();
+        };
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function validarPedro() {
-            uN = document.getElementById('regName').value.trim();
-            aN = document.getElementById('regAsig').value.trim();
-            if(!uN) return;
-            // Registro obligatorio aunque se llame Pedro
-            changeScreen(3);
-        }
-
-        function guardarFinal() {
-            localStorage.setItem('deep_u_'+uN, JSON.stringify({n:uN, a:aN}));
-            actualizarPerfil(); changeScreen(5);
-        }
-
-        function actualizarPerfil() {
-            document.getElementById('p-nom').innerText = uN.toUpperCase();
-            document.getElementById('p-asig').innerText = aN.toUpperCase();
+        function guardarYHome() {
+            const asig = document.getElementById('regAsig').value.trim();
+            localStorage.setItem('deep_registro_hecho', 'true');
+            localStorage.setItem('deep_asig', asig);
+            document.getElementById('p-asig').innerText = asig.toUpperCase();
+            changeScreen(5);
         }
 
         function nav(id) {
@@ -297,22 +295,18 @@
             });
             document.getElementById('session-scroll-area').style.display = 'none';
             document.getElementById('active-controls').style.display = 'none';
-            
-            let fmtTotal = Math.floor(total/3600).toString().padStart(2,'0') + ":" + 
-                           Math.floor((total%3600)/60).toString().padStart(2,'0') + ":" + 
-                           (total%60).toString().padStart(2,'0');
-
-            document.getElementById('resumen-final').innerHTML = `<b>TIEMPO DE ESTUDIO:</b> ${fmtTotal}<br><b>ASIGNATURA MÁS ESTUDIADA:</b> ${winner}`;
+            document.getElementById('resumen-final').innerHTML = `<b>TIEMPO TOTAL:</b> ${total}s<br><b>MÁS ESTUDIADA:</b> ${winner}`;
             document.getElementById('congrats-ui').style.display = 'flex';
             document.getElementById('btn-final-cont').style.display = 'block';
         }
 
-        (function(){
+        function initOptions() {
             const s1=document.getElementById('s1'), s2=document.getElementById('s2');
             for(let i=1; i<=10; i++){
-                s1.options.add(new Option(i,i)); s2.options.add(new Option(i,i));
+                if(s1) s1.options.add(new Option(i,i)); 
+                if(s2) s2.options.add(new Option(i,i));
             }
-        })();
+        }
     </script>
 </body>
 </html>
