@@ -14,10 +14,7 @@
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
+            margin: 0; padding: 0; height: 100%; width: 100%;
             background-color: var(--azul-claro);
             font-family: 'Segoe UI', sans-serif;
             color: var(--azul-oscuro);
@@ -25,19 +22,14 @@
         }
 
         .app-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
         }
 
         /* --- ANIMACIONES --- */
         @keyframes relax-move {
-            0% { transform: translateX(-10px); }
+            0%, 100% { transform: translateX(-10px); }
             50% { transform: translateX(10px); }
-            100% { transform: translateX(-10px); }
         }
 
         @keyframes slideIn {
@@ -46,125 +38,64 @@
         }
 
         .screen {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            display: none; width: 100%; height: 100%;
+            flex-direction: column; justify-content: center; align-items: center;
             animation: slideIn 0.7s ease-out forwards;
         }
 
         .screen.active { display: flex; }
 
-        /* --- ESTRUCTURA DE CONTENIDO --- */
-        .content-wrapper {
-            width: var(--ancho-interfaz);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
+        /* --- CUADROS Y BOTONES --- */
+        .content-wrapper { width: var(--ancho-interfaz); display: flex; flex-direction: column; position: relative; }
+        
         .form-box {
-            background-color: var(--blanco);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            box-sizing: border-box;
+            background-color: var(--blanco); padding: 40px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%;
+            display: flex; flex-direction: column; gap: 20px; box-sizing: border-box;
         }
 
-        /* --- BOTONES --- */
         .btn-deep {
-            background-color: var(--azul-oscuro);
-            color: var(--blanco);
-            border: none;
-            padding: 15px 40px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            text-align: center;
+            background-color: var(--azul-oscuro); color: var(--blanco);
+            border: none; padding: 15px 40px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
-
         .btn-deep:hover { background-color: var(--azul-hover); }
 
-        .btn-entendido { align-self: flex-end; padding: 10px 25px; }
+        .btn-entendido { align-self: flex-end; padding: 10px 25px; font-size: 0.9rem; }
 
         .btn-volver {
-            align-self: flex-start;
-            background: none;
-            border: 2px solid var(--azul-oscuro);
-            color: var(--azul-oscuro);
-            padding: 4px 10px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 2px;
-            font-size: 0.8rem;
+            align-self: flex-start; background: none; border: 2px solid var(--azul-oscuro);
+            color: var(--azul-oscuro); padding: 4px 10px; font-weight: bold;
+            cursor: pointer; margin-bottom: 2px; font-size: 0.8rem;
         }
 
         .floating-quote {
-            margin-top: 35px;
-            font-size: 1.1rem;
-            font-style: italic;
-            animation: relax-move 5s ease-in-out infinite;
-            text-align: center;
+            margin-top: 35px; font-size: 1.1rem; font-style: italic;
+            animation: relax-move 5s ease-in-out infinite; text-align: center;
         }
 
-        /* --- CRONÓMETRO (Alineado arriba a la derecha entre margen y mitad) --- */
-        #cronometro-container {
-            display: none;
-            position: absolute;
-            top: 25%; /* Entre margen de arriba y la mitad, tirando hacia arriba */
-            width: var(--ancho-interfaz);
-            text-align: right;
+        /* --- CRONÓMETRO Y SECCIONES --- */
+        #cronometro-main {
+            display: none; position: absolute;
+            top: 25%; width: var(--ancho-interfaz); text-align: right;
+        }
+        #tiempo-txt { font-size: 3.5rem; font-weight: bold; }
+
+        .asig-box {
+            display: none; background: var(--blanco); padding: 20px;
+            border-radius: 12px; margin-bottom: 20px;
+            justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
-        #tiempo-txt {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .btn-timer-control {
-            background: none;
-            border: 2px solid var(--azul-oscuro);
-            color: var(--azul-oscuro);
-            padding: 5px 15px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        /* --- NAVBAR INFERIOR --- */
+        /* --- NAVBAR --- */
         .navbar-frame {
-            position: absolute;
-            bottom: 40px;
-            background-color: var(--blanco);
-            width: var(--ancho-interfaz);
-            padding: 12px 0;
-            border-radius: 60px;
+            position: absolute; bottom: 40px; background-color: var(--blanco);
+            width: var(--ancho-interfaz); padding: 12px 0; border-radius: 60px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 55px;
-            box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center; gap: 55px;
         }
-
-        .nav-icon {
-            background: none;
-            border: none;
-            color: var(--azul-oscuro);
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
+        .nav-icon { background: none; border: none; color: var(--azul-oscuro); font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
         .nav-icon:hover { color: var(--azul-hover); }
         .nav-icon.add-main { font-size: 3rem; font-weight: bold; }
 
@@ -196,76 +127,46 @@
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
         </div>
 
-        <div id="screen-3" class="screen">
-            <div class="content-wrapper">
-                <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
-                <div class="form-box">
-                    <label>Nota examen / Nota objetivo</label>
-                    <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
-                    <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
-                </div>
-            </div>
-            <div class="floating-quote">“Todo el mundo es un genio...”</div>
-        </div>
-
-        <div id="screen-4" class="screen">
-            <div class="content-wrapper">
-                <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
-                <div class="form-box">
-                    <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <select><option disabled selected>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
-                    <button class="btn-deep" onclick="finalizarYHome()">CONTINUAR</button>
-                </div>
-            </div>
-            <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
-        </div>
+        <div id="screen-3" class="screen"><button class="btn-deep" onclick="changeScreen(4)">CONTINUAR NOTAS</button></div>
+        <div id="screen-4" class="screen"><button class="btn-deep" onclick="finalizarYHome()">CONTINUAR TIEMPO</button></div>
 
         <div id="screen-5" class="screen">
             
             <div id="sec-home" class="home-section active">
                 <div class="content-wrapper">
                     <div id="box-home" class="form-box">
-                        <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal.</p>
+                        <p>Bienvenido a <b>Deep</b>, esta es la página principal.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-home')">ENTENDIDO</button>
                     </div>
                 </div>
             </div>
 
-            <div id="sec-stats" class="home-section">
-                <div class="content-wrapper">
-                    <div id="box-stats" class="form-box">
-                        <p>Estas en <b>"Estadísticas"</b>, aquí verás tu progreso.</p>
-                        <button class="btn-deep btn-entendido" onclick="cerrar('box-stats')">ENTENDIDO</button>
-                    </div>
-                </div>
-            </div>
-
             <div id="sec-add" class="home-section">
-                <div id="cronometro-container">
+                <div id="cronometro-main">
                     <div id="tiempo-txt">00:00:00</div>
-                    <button id="btn-timer-action" class="btn-timer-control" onclick="gestionarReloj()">PARAR</button>
+                    <button id="btn-master-timer" class="btn-deep" style="padding: 5px 15px;" onclick="toggleMaster()">PARAR</button>
                 </div>
 
-                <div class="content-wrapper" id="add-init-ui">
+                <div class="content-wrapper" id="add-init-ui" style="margin-top: 50px;">
                     <div id="box-add" class="form-box">
-                        <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio.</p>
+                        <p>Estás en <b>"añadir"</b>. Pulsa el botón para empezar.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-add')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px;" onclick="empezarSesion()">AÑADIR SESIÓN</button>
                 </div>
 
-                <div id="asig-extra-ui" style="display:none; position: absolute; bottom: 120px; width: var(--ancho-interfaz);">
-                    <button class="btn-deep" style="width: 100%;">AÑADIR ASIGNATURA</button>
-                </div>
-            </div>
-
-            <div id="sec-notas" class="home-section">
-                <div class="content-wrapper">
-                    <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aquí podrás añadir tus calificaciones.</p>
-                        <button class="btn-deep btn-entendido" onclick="cerrar('box-notas')">ENTENDIDO</button>
+                <div class="content-wrapper" id="session-active-ui" style="display:none; margin-top: auto; margin-bottom: 120px;">
+                    <div id="box-asig-selector" class="asig-box">
+                        <select style="border: none; font-weight: bold;">
+                            <option>MATEMÁTICAS</option>
+                            <option>HISTORIA</option>
+                        </select>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span id="mini-timer">00:00:00</span>
+                            <button onclick="toggleMaster()" style="background:none; border:none; cursor:pointer; font-size: 1.2rem;">⏸</button>
+                        </div>
                     </div>
-                    <button class="btn-deep" style="margin-top: 25px; width: 100%;">AÑADIR NOTA</button>
+                    <button class="btn-deep" onclick="document.getElementById('box-asig-selector').style.display='flex'">AÑADIR ASIGNATURA</button>
                 </div>
             </div>
 
@@ -298,28 +199,20 @@
         }
 
         function validarUsuario() {
-            const n = document.getElementById('regName').value.trim();
-            const a = document.getElementById('regAsig').value.trim();
-            if(!n) return;
-            uN = n; aN = a;
-            const data = localStorage.getItem('deep_u_'+n);
-            if(data) {
-                const p = JSON.parse(data);
-                uN = p.nombre; aN = p.asig;
-                refrescarPerfil();
-                changeScreen(5);
-            } else { changeScreen(3); }
+            uN = document.getElementById('regName').value;
+            aN = document.getElementById('regAsig').value;
+            if(localStorage.getItem('deep_'+uN)) { changeScreen(5); refrescarPerfil(); }
+            else { changeScreen(3); }
         }
 
         function finalizarYHome() {
-            localStorage.setItem('deep_u_'+uN, JSON.stringify({nombre: uN, asig: aN}));
-            refrescarPerfil();
-            changeScreen(5);
+            localStorage.setItem('deep_'+uN, JSON.stringify({n:uN, a:aN}));
+            refrescarPerfil(); changeScreen(5);
         }
 
         function refrescarPerfil() {
-            document.getElementById('p-nombre').innerText = uN;
-            document.getElementById('p-asig').innerText = aN;
+            document.getElementById('p-nombre').innerText = uN.toUpperCase();
+            document.getElementById('p-asig').innerText = aN.toUpperCase();
         }
 
         function nav(id) {
@@ -331,39 +224,27 @@
 
         function empezarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
-            document.getElementById('cronometro-container').style.display = 'block';
-            document.getElementById('asig-extra-ui').style.display = 'block';
-            segundos = 0;
-            isRunning = false;
-            gestionarReloj();
+            document.getElementById('cronometro-main').style.display = 'block';
+            document.getElementById('session-active-ui').style.display = 'flex';
+            isRunning = false; toggleMaster();
         }
 
-        function gestionarReloj() {
-            const btn = document.getElementById('btn-timer-action');
+        function toggleMaster() {
+            const btn = document.getElementById('btn-master-timer');
             if(!isRunning) {
                 timerObj = setInterval(() => {
                     segundos++;
-                    const h = Math.floor(segundos / 3600).toString().padStart(2, '0');
-                    const m = Math.floor((segundos % 3600) / 60).toString().padStart(2, '0');
-                    const s = (segundos % 60).toString().padStart(2, '0');
+                    let h = Math.floor(segundos/3600).toString().padStart(2,'0');
+                    let m = Math.floor((segundos%3600)/60).toString().padStart(2,'0');
+                    let s = (segundos%60).toString().padStart(2,'0');
                     document.getElementById('tiempo-txt').innerText = `${h}:${m}:${s}`;
+                    document.getElementById('mini-timer').innerText = `${h}:${m}:${s}`;
                 }, 1000);
-                btn.innerText = "PARAR";
-                isRunning = true;
+                btn.innerText = "PARAR"; isRunning = true;
             } else {
-                clearInterval(timerObj);
-                btn.innerText = "REANUDAR";
-                isRunning = false;
+                clearInterval(timerObj); btn.innerText = "REANUDAR"; isRunning = false;
             }
         }
-
-        (function(){
-            const s1=document.getElementById('s1'), s2=document.getElementById('s2');
-            for(let i=1; i<=10; i++){
-                if(s1) s1.options.add(new Option(i,i));
-                if(s2) s2.options.add(new Option(i,i));
-            }
-        })();
     </script>
 </body>
 </html>
