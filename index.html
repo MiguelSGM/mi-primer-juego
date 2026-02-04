@@ -57,7 +57,7 @@
 
         .screen.active { display: flex; }
 
-        /* --- ESTRUCTURA DE CUADROS --- */
+        /* --- ESTRUCTURA DE CONTENIDO --- */
         .content-wrapper {
             width: var(--ancho-interfaz);
             display: flex;
@@ -102,7 +102,7 @@
             padding: 4px 10px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 2px; /* Pegado casi al límite */
+            margin-bottom: 2px;
             font-size: 0.8rem;
         }
 
@@ -114,21 +114,32 @@
             text-align: center;
         }
 
-        /* --- CRONÓMETRO --- */
-        #timer-display-container {
+        /* --- CRONÓMETRO (Alineado a los márgenes) --- */
+        #cronometro-container {
             display: none;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 50px;
+            position: absolute;
+            top: 40px;
+            width: var(--ancho-interfaz);
+            text-align: left; /* Alineado a la izquierda */
         }
 
-        #timer-text {
-            font-size: 4rem;
+        #tiempo-txt {
+            font-size: 3.5rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
 
-        /* --- NAVBAR --- */
+        .btn-timer-control {
+            background: none;
+            border: 2px solid var(--azul-oscuro);
+            color: var(--azul-oscuro);
+            padding: 5px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* --- NAVBAR INFERIOR --- */
         .navbar-frame {
             position: absolute;
             bottom: 40px;
@@ -158,6 +169,8 @@
 
         .home-section { display: none; width: 100%; flex-direction: column; align-items: center; }
         .home-section.active { display: flex; }
+
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -176,7 +189,7 @@
                 <div class="form-box">
                     <input type="text" id="regName" placeholder="Tu nombre">
                     <input type="text" id="regAsig" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="validarOEntrar()">CONTINUAR</button>
+                    <button class="btn-deep" onclick="validarUsuario()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
@@ -187,7 +200,7 @@
                 <button class="btn-volver" onclick="changeScreen(2)">← VOLVER</button>
                 <div class="form-box">
                     <label>Nota examen / Nota objetivo</label>
-                    <div style="display: flex; gap: 10px;"><select id="sel1" style="flex:1"></select><select id="sel2" style="flex:1"></select></div>
+                    <div style="display: flex; gap: 10px;"><select id="s1" style="flex:1"></select><select id="s2" style="flex:1"></select></div>
                     <button class="btn-deep" onclick="changeScreen(4)">CONTINUAR</button>
                 </div>
             </div>
@@ -199,8 +212,8 @@
                 <button class="btn-volver" onclick="changeScreen(3)">← VOLVER</button>
                 <div class="form-box">
                     <input type="text" placeholder="¿Cuánto tiempo sueles estudiar?">
-                    <select><option>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
-                    <button class="btn-deep" onclick="guardarYFinalizar()">CONTINUAR</button>
+                    <select><option disabled selected>¿Es suficiente?</option><option>Sí</option><option>No</option></select>
+                    <button class="btn-deep" onclick="finalizarYHome()">CONTINUAR</button>
                 </div>
             </div>
             <div class="floating-quote">“¿Qué es, pues, el tiempo?...”</div>
@@ -227,24 +240,24 @@
             </div>
 
             <div id="sec-add" class="home-section">
-                <div id="timer-display-container">
-                    <div id="timer-text">00:00:00</div>
-                    <button id="btn-timer-toggle" class="btn-deep" onclick="toggleReloj()">PARAR</button>
+                <div id="cronometro-container">
+                    <div id="tiempo-txt">00:00:00</div>
+                    <button id="btn-timer-action" class="btn-timer-control" onclick="gestionarReloj()">PARAR</button>
                 </div>
 
-                <div class="content-wrapper" id="add-controls">
+                <div class="content-wrapper" id="add-init-ui">
                     <div id="box-add" class="form-box">
                         <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones de estudio.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-add')">ENTENDIDO</button>
                     </div>
-                    <button class="btn-deep" style="margin-top: 25px;" onclick="iniciarCronometro()">AÑADIR SESIÓN</button>
+                    <button class="btn-deep" style="margin-top: 25px;" onclick="empezarSesion()">AÑADIR SESIÓN</button>
                 </div>
             </div>
 
             <div id="sec-notas" class="home-section">
                 <div class="content-wrapper">
                     <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aquí podrás añadir tus calificaciones.</p>
+                        <p>Estás en <b>"notas"</b>, aqui podras añadir tus calificaciones.</p>
                         <button class="btn-deep btn-entendido" onclick="cerrar('box-notas')">ENTENDIDO</button>
                     </div>
                     <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
@@ -254,8 +267,8 @@
             <div id="sec-perfil" class="home-section">
                 <div class="content-wrapper">
                     <div class="form-box">
-                        <p><b>NOMBRE:</b> <span id="display-name"></span></p>
-                        <p><b>ASIGNATURA FAVORITA:</b> <span id="display-asig"></span></p>
+                        <p><b>NOMBRE:</b> <span id="p-nombre"></span></p>
+                        <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
                     </div>
                 </div>
             </div>
@@ -268,41 +281,40 @@
                 <button class="nav-icon" onclick="nav('sec-perfil')">👤</button>
             </div>
         </div>
-
     </div>
 
     <script>
-        let segundos = 0, clock = null, isRunning = false;
-        let userN = "", asigN = "";
+        let segundos = 0, timerObj = null, isRunning = false;
+        let uN = "", aN = "";
 
         function changeScreen(n) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${n}`).classList.add('active');
         }
 
-        function validarOEntrar() {
+        function validarUsuario() {
             const n = document.getElementById('regName').value.trim();
             const a = document.getElementById('regAsig').value.trim();
             if(!n) return;
-            userN = n; asigN = a;
+            uN = n; aN = a;
             const data = localStorage.getItem('deep_u_'+n);
             if(data) {
                 const p = JSON.parse(data);
-                userN = p.nombre; asigN = p.asig;
+                uN = p.nombre; aN = p.asig;
                 refrescarPerfil();
                 changeScreen(5);
             } else { changeScreen(3); }
         }
 
-        function guardarYFinalizar() {
-            localStorage.setItem('deep_u_'+userN, JSON.stringify({nombre: userN, asig: asigN}));
+        function finalizarYHome() {
+            localStorage.setItem('deep_u_'+uN, JSON.stringify({nombre: uN, asig: aN}));
             refrescarPerfil();
             changeScreen(5);
         }
 
         function refrescarPerfil() {
-            document.getElementById('display-name').innerText = userN;
-            document.getElementById('display-asig').innerText = asigN;
+            document.getElementById('p-nombre').innerText = uN;
+            document.getElementById('p-asig').innerText = aN;
         }
 
         function nav(id) {
@@ -312,35 +324,36 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
-        /* CRONÓMETRO */
-        function iniciarCronometro() {
-            document.getElementById('add-controls').style.display = 'none';
-            document.getElementById('timer-display-container').style.display = 'flex';
+        /* LÓGICA DEL CRONÓMETRO */
+        function empezarSesion() {
+            document.getElementById('add-init-ui').style.display = 'none';
+            document.getElementById('cronometro-container').style.display = 'block';
+            segundos = 0;
             isRunning = false;
-            toggleReloj();
+            gestionarReloj();
         }
 
-        function toggleReloj() {
-            const btn = document.getElementById('btn-timer-toggle');
+        function gestionarReloj() {
+            const btn = document.getElementById('btn-timer-action');
             if(!isRunning) {
-                clock = setInterval(() => {
+                timerObj = setInterval(() => {
                     segundos++;
                     const h = Math.floor(segundos / 3600).toString().padStart(2, '0');
                     const m = Math.floor((segundos % 3600) / 60).toString().padStart(2, '0');
                     const s = (segundos % 60).toString().padStart(2, '0');
-                    document.getElementById('timer-text').innerText = `${h}:${m}:${s}`;
+                    document.getElementById('tiempo-txt').innerText = `${h}:${m}:${s}`;
                 }, 1000);
                 btn.innerText = "PARAR";
                 isRunning = true;
             } else {
-                clearInterval(clock);
+                clearInterval(timerObj);
                 btn.innerText = "REANUDAR";
                 isRunning = false;
             }
         }
 
         (function(){
-            const s1=document.getElementById('sel1'), s2=document.getElementById('sel2');
+            const s1=document.getElementById('s1'), s2=document.getElementById('s2');
             for(let i=1; i<=10; i++){
                 if(s1) s1.options.add(new Option(i,i));
                 if(s2) s2.options.add(new Option(i,i));
