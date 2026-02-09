@@ -63,6 +63,7 @@
             background-color: var(--azul-oscuro); color: var(--blanco);
             border: none; padding: 15px 40px; font-weight: bold;
             cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            text-align: center;
         }
         .btn-deep:hover { background-color: var(--azul-hover); }
 
@@ -98,7 +99,7 @@
         .home-section { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .home-section.active { display: flex; }
 
-        input { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
+        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -133,15 +134,19 @@
             </div>
 
             <div id="sec-stats" class="home-section">
-                <div class="content-wrapper"><div id="box-stats" class="form-box">
-                    <p>Estas en <b>"Estadísticas"</b>, aquí verás tus rachas, sesiones, asignaturas mas estudiadas...</p>
-                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-stats')">ENTENDIDO</button>
-                </div></div>
+                <div class="content-wrapper">
+                    <div id="box-stats" class="form-box">
+                        <p>Estas en <b>"Estadísticas"</b>.</p>
+                        <p id="stat-counter" style="font-weight: bold; font-size: 1.2rem;">Has completado 0 sesiones de estudio.</p>
+                        <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-stats')">ENTENDIDO</button>
+                    </div>
+                </div>
             </div>
 
             <div id="sec-add" class="home-section">
                 <div class="content-wrapper">
                     <div id="session-scroll-area"></div>
+
                     <div id="add-init-ui">
                         <div id="box-add" class="form-box">
                             <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
@@ -159,7 +164,7 @@
                         <h1 style="margin:0">¡FELICIDADES!</h1>
                         <p id="resumen-final"></p>
                     </div>
-                    <button id="btn-final-cont" class="btn-deep" style="display:none; margin-top: 20px;">CONTINUAR</button>
+                    <button id="btn-final-cont" class="btn-deep" style="display:none; margin-top: 20px;" onclick="reiniciarInterfazEstudio()">CONTINUAR</button>
                 </div>
             </div>
 
@@ -183,7 +188,7 @@
             <div class="navbar-frame">
                 <button class="nav-icon" onclick="nav('sec-home')">🏠</button>
                 <button class="nav-icon" onclick="nav('sec-stats')">📊</button>
-                <button class="nav-icon add-main" onclick="nav('sec-add')" style="font-size: 2.5rem;">⊕</button>
+                <button class="nav-icon" onclick="nav('sec-add')" style="font-size: 2.5rem;">⊕</button>
                 <button class="nav-icon" onclick="nav('sec-notas')">📋</button>
                 <button class="nav-icon" onclick="nav('sec-perfil')">👤</button>
             </div>
@@ -195,6 +200,7 @@
             if (localStorage.getItem('deep_reg_done') === 'true') {
                 document.getElementById('p-nom').innerText = (localStorage.getItem('deep_name') || "").toUpperCase();
                 document.getElementById('p-asig').innerText = (localStorage.getItem('deep_asig') || "").toUpperCase();
+                actualizarContadorStats();
                 changeScreen(5);
             } else {
                 changeScreen(1);
@@ -214,6 +220,7 @@
             localStorage.setItem('deep_asig', asig);
             document.getElementById('p-nom').innerText = nom.toUpperCase();
             document.getElementById('p-asig').innerText = asig.toUpperCase();
+            actualizarContadorStats();
             changeScreen(5);
         }
 
@@ -224,9 +231,11 @@
 
         function cerrar(id) { document.getElementById(id).style.display = 'none'; }
 
+        /* --- LÓGICA DE LA SESIÓN DE ESTUDIO --- */
         function iniciarSesion() {
             document.getElementById('add-init-ui').style.display = 'none';
             document.getElementById('active-controls').style.display = 'flex';
+            document.getElementById('session-scroll-area').style.display = 'flex';
         }
 
         function nuevaAsignatura() {
@@ -265,6 +274,8 @@
 
         function terminarSesion() {
             const cards = document.querySelectorAll('.asig-card');
+            if(cards.length === 0) return reiniciarInterfazEstudio();
+
             let maxS = -1, total = 0, winner = "";
             cards.forEach(c => {
                 let s = parseInt(c.dataset.seconds || 0);
@@ -272,11 +283,35 @@
                 if(s > maxS) { maxS = s; winner = c.querySelector('select').value; }
                 clearInterval(c.dataset.timerId);
             });
+
+            // Guardar en estadísticas
+            let totalSesiones = parseInt(localStorage.getItem('deep_sesiones_total') || 0);
+            localStorage.setItem('deep_sesiones_total', totalSesiones + 1);
+            actualizarContadorStats();
+
             document.getElementById('session-scroll-area').style.display = 'none';
             document.getElementById('active-controls').style.display = 'none';
+            
             document.getElementById('resumen-final').innerHTML = `<b>TIEMPO TOTAL:</b> ${total}s<br><b>MÁS ESTUDIADA:</b> ${winner}`;
             document.getElementById('congrats-ui').style.display = 'flex';
             document.getElementById('btn-final-cont').style.display = 'block';
+        }
+
+        function reiniciarInterfazEstudio() {
+            // Limpiar todo
+            document.getElementById('session-scroll-area').innerHTML = "";
+            document.getElementById('congrats-ui').style.display = 'none';
+            document.getElementById('btn-final-cont').style.display = 'none';
+            
+            // Volver al estado inicial
+            document.getElementById('add-init-ui').style.display = 'block';
+            document.getElementById('active-controls').style.display = 'none';
+        }
+
+        function actualizarContadorStats() {
+            const total = localStorage.getItem('deep_sesiones_total') || 0;
+            const el = document.getElementById('stat-counter');
+            if(el) el.innerText = `Has completado ${total} sesiones de estudio.`;
         }
     </script>
 </body>
