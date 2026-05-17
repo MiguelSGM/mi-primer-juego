@@ -3,316 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep - App de Estudio</title>
+    <title>Movie Hangman: Fight Club</title>
     <style>
-        :root {
-            --azul-claro: #D1E4F9;
-            --azul-oscuro: #1A1A40;
-            --azul-hover: #4A4A8F;
-            --blanco: #FFFFFF;
-            --ancho-interfaz: 480px;
+        /* Estilos visuales del juego */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
 
-        body, html {
-            margin: 0; padding: 0; height: 100%; width: 100%;
-            background-color: var(--azul-claro);
-            font-family: 'Segoe UI', sans-serif;
-            color: var(--azul-oscuro);
-            overflow: hidden;
+        h1 {
+            color: #ff4757;
+            margin-bottom: 10px;
         }
 
-        .app-container {
-            position: relative; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
+        .category {
+            font-style: italic;
+            color: #a4b0be;
+            margin-bottom: 30px;
         }
 
-        /* --- ANIMACIONES --- */
-        @keyframes relax-move {
-            0%, 100% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
+        #word-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 5px;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .screen {
-            display: none; width: 100%; height: 100%;
-            flex-direction: column; justify-content: center; align-items: center;
-            animation: slideIn 0.6s ease-out forwards;
-        }
-
-        .screen.active { display: flex; }
-
-        .floating-quote {
-            margin-top: 30px; font-size: 1.1rem; font-style: italic;
-            animation: relax-move 5s ease-in-out infinite; text-align: center;
-        }
-
-        /* --- CUADROS --- */
-        .content-wrapper { width: var(--ancho-interfaz); display: flex; flex-direction: column; position: relative; }
-        
-        .form-box {
-            background-color: var(--blanco); padding: 40px; border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%;
-            display: flex; flex-direction: column; gap: 20px; box-sizing: border-box;
-        }
-
-        .btn-deep {
-            background-color: var(--azul-oscuro); color: var(--blanco);
-            border: none; padding: 15px 40px; font-weight: bold;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        .letter-space {
+            border-bottom: 4px solid #ffffff;
+            width: 30px;
             text-align: center;
-        }
-        .btn-deep:hover { background-color: var(--azul-hover); }
-
-        .btn-volver {
-            align-self: flex-start; background: none; border: 2px solid var(--azul-oscuro);
-            color: var(--azul-oscuro); padding: 4px 10px; font-weight: bold;
-            cursor: pointer; margin-bottom: 2px; font-size: 0.8rem;
+            min-height: 40px;
         }
 
-        /* --- SISTEMA AÑADIR --- */
-        #session-scroll-area {
-            max-height: 40vh; overflow-y: auto; width: 100%;
-            padding: 10px; margin-bottom: 20px;
-            display: flex; flex-direction: column; gap: 15px;
+        .space {
+            width: 20px;
+            border-bottom: none;
         }
 
-        .asig-card {
-            background: var(--blanco); padding: 20px; border-radius: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;
+        #guesses-left {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #ffa502;
         }
 
-        /* --- NAVBAR --- */
-        .navbar-frame {
-            position: absolute; bottom: 30px; background-color: var(--blanco);
-            width: var(--ancho-interfaz); padding: 12px 0; border-radius: 60px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: flex; align-items: center; justify-content: center; gap: 55px;
+        #keyboard {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            max-width: 600px;
+            width: 100%;
         }
-        .nav-icon { background: none; border: none; color: var(--azul-oscuro); font-size: 1.8rem; cursor: pointer; transition: 0.3s; }
-        .nav-icon:hover { color: var(--azul-hover); }
 
-        .home-section { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
-        .home-section.active { display: flex; }
+        button {
+            background-color: #2f3542;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
 
-        input, select { padding: 12px; border: 2px solid var(--azul-oscuro); border-radius: 8px; font-size: 1rem; }
+        button:hover:not(:disabled) {
+            background-color: #57606f;
+        }
+
+        button:disabled {
+            background-color: #747d8c;
+            color: #a4b0be;
+            cursor: not-allowed;
+        }
+
+        #message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            height: 30px;
+        }
+
+        .win { color: #2ed573; }
+        .lose { color: #ff4757; }
+
+        #reset-btn {
+            margin-top: 20px;
+            background-color: #ff4757;
+            padding: 10px 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <h1>Movie Hangman</h1>
+    <div class="category">Categoría: Película (Título en inglés)</div>
 
-        <div id="screen-1" class="screen">
-            <h1 style="font-size: 6rem; margin: 0; letter-spacing: 10px;">DEEP</h1>
-            <button class="btn-deep" onclick="changeScreen(2)">¡EMPECEMOS!</button>
-            <div class="floating-quote">“El conocimiento es poder”<br><small>- Francis Bacon -</small></div>
-        </div>
+    <!-- Contenedor donde se mostrarán las letras ocultas -->
+    <div id="word-container"></div>
 
-        <div id="screen-2" class="screen">
-            <div class="content-wrapper">
-                <button class="btn-volver" onclick="changeScreen(1)">← VOLVER</button>
-                <div class="form-box">
-                    <input type="text" id="regName" placeholder="Tu nombre">
-                    <input type="text" id="regAsig" placeholder="Asignatura favorita">
-                    <button class="btn-deep" onclick="guardarYHome()">CONTINUAR</button>
-                </div>
-            </div>
-            <div class="floating-quote">“El nombre es la herencia espiritual del lenguaje”</div>
-        </div>
+    <!-- Contador de vidas -->
+    <div id="guesses-left">Intentos restantes: <span id="lives">6</span></div>
 
-        <div id="screen-5" class="screen">
-            
-            <div id="sec-home" class="home-section active">
-                <div class="content-wrapper"><div id="box-home" class="form-box">
-                    <p>Bienvenido a <b>Deep</b>, ahora te encuentras en la página principal.</p>
-                    <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-home')">ENTENDIDO</button>
-                </div></div>
-            </div>
+    <!-- Teclado virtual -->
+    <div id="keyboard"></div>
 
-            <div id="sec-stats" class="home-section">
-                <div class="content-wrapper">
-                    <div id="box-stats" class="form-box">
-                        <p>Estas en <b>"Estadísticas"</b>.</p>
-                        <p id="stat-counter" style="font-weight: bold; font-size: 1.2rem;">Has completado 0 sesiones de estudio.</p>
-                        <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-stats')">ENTENDIDO</button>
-                    </div>
-                </div>
-            </div>
+    <!-- Mensaje de resultado (Ganar/Perder) -->
+    <div id="message"></div>
 
-            <div id="sec-add" class="home-section">
-                <div class="content-wrapper">
-                    <div id="session-scroll-area"></div>
-
-                    <div id="add-init-ui">
-                        <div id="box-add" class="form-box">
-                            <p>Estas en <b>"añadir"</b>, aqui podras añadir tus sesiones.</p>
-                            <button class="btn-deep" style="align-self: flex-end; padding: 10px;" onclick="cerrar('box-add')">ENTENDIDO</button>
-                        </div>
-                        <button class="btn-deep" style="margin-top: 25px; width: 100%;" onclick="iniciarSesion()">EMPEZAR SESIÓN</button>
-                    </div>
-
-                    <div id="active-controls" style="display:none; flex-direction: column; gap: 10px;">
-                        <button class="btn-deep" onclick="nuevaAsignatura()">AÑADIR ASIGNATURA</button>
-                        <button class="btn-deep" onclick="terminarSesion()">TERMINAR SESIÓN</button>
-                    </div>
-
-                    <div id="congrats-ui" class="form-box" style="display:none;">
-                        <h1 style="margin:0">¡FELICIDADES!</h1>
-                        <p id="resumen-final"></p>
-                    </div>
-                    <button id="btn-final-cont" class="btn-deep" style="display:none; margin-top: 20px;" onclick="reiniciarInterfazEstudio()">CONTINUAR</button>
-                </div>
-            </div>
-
-            <div id="sec-notas" class="home-section">
-                <div class="content-wrapper">
-                    <div id="box-notas" class="form-box">
-                        <p>Estás en <b>"notas"</b>, aquí registrarás tus calificaciones.</p>
-                        <button class="btn-deep" style="align-self: flex-end; padding:10px" onclick="cerrar('box-notas')">ENTENDIDO</button>
-                    </div>
-                    <button class="btn-deep" style="margin-top: 25px;">AÑADIR NOTA</button>
-                </div>
-            </div>
-
-            <div id="sec-perfil" class="home-section">
-                <div class="content-wrapper"><div class="form-box">
-                    <p><b>NOMBRE:</b> <span id="p-nom"></span></p>
-                    <p><b>ASIGNATURA FAVORITA:</b> <span id="p-asig"></span></p>
-                </div></div>
-            </div>
-
-            <div class="navbar-frame">
-                <button class="nav-icon" onclick="nav('sec-home')">🏠</button>
-                <button class="nav-icon" onclick="nav('sec-stats')">📊</button>
-                <button class="nav-icon" onclick="nav('sec-add')" style="font-size: 2.5rem;">⊕</button>
-                <button class="nav-icon" onclick="nav('sec-notas')">📋</button>
-                <button class="nav-icon" onclick="nav('sec-perfil')">👤</button>
-            </div>
-        </div>
-    </div>
+    <!-- Botón para reiniciar la partida -->
+    <button id="reset-btn" onclick="initGame()">Jugar de nuevo</button>
 
     <script>
-        window.onload = function() {
-            if (localStorage.getItem('deep_reg_done') === 'true') {
-                document.getElementById('p-nom').innerText = (localStorage.getItem('deep_name') || "").toUpperCase();
-                document.getElementById('p-asig').innerText = (localStorage.getItem('deep_asig') || "").toUpperCase();
-                actualizarContadorStats();
-                changeScreen(5);
-            } else {
-                changeScreen(1);
-            }
-        };
+        // Lógica del juego en JavaScript
+        const movie = "FIGHT CLUB";
+        let guessedLetters = [];
+        let lives = 6;
 
-        function changeScreen(n) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(`screen-${n}`).classList.add('active');
-        }
+        const wordContainer = document.getElementById('word-container');
+        const keyboardContainer = document.getElementById('keyboard');
+        const livesDisplay = document.getElementById('lives');
+        const messageDisplay = document.getElementById('message');
+        const resetBtn = document.getElementById('reset-btn');
 
-        function guardarYHome() {
-            const nom = document.getElementById('regName').value.trim();
-            const asig = document.getElementById('regAsig').value.trim();
-            localStorage.setItem('deep_reg_done', 'true');
-            localStorage.setItem('deep_name', nom);
-            localStorage.setItem('deep_asig', asig);
-            document.getElementById('p-nom').innerText = nom.toUpperCase();
-            document.getElementById('p-asig').innerText = asig.toUpperCase();
-            actualizarContadorStats();
-            changeScreen(5);
-        }
-
-        function nav(id) {
-            document.querySelectorAll('.home-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function cerrar(id) { document.getElementById(id).style.display = 'none'; }
-
-        /* --- LÓGICA DE LA SESIÓN DE ESTUDIO --- */
-        function iniciarSesion() {
-            document.getElementById('add-init-ui').style.display = 'none';
-            document.getElementById('active-controls').style.display = 'flex';
-            document.getElementById('session-scroll-area').style.display = 'flex';
-        }
-
-        function nuevaAsignatura() {
-            const container = document.getElementById('session-scroll-area');
-            const card = document.createElement('div');
-            card.className = 'asig-card';
-            let s = 0, activo = true;
+        // Inicializar o reiniciar el juego
+        function initGame() {
+            guessedLetters = [];
+            lives = 6;
+            messageDisplay.textContent = "";
+            messageDisplay.className = "";
+            resetBtn.style.display = "none";
+            livesDisplay.textContent = lives;
             
-            card.innerHTML = `
-                <select><option>MATEMÁTICAS</option><option>HISTORIA</option><option>INGLÉS</option><option>CASTELLANO</option></select>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="clk" style="font-weight:bold">00:00:00</span>
-                    <button class="p-btn" style="background:none; border:none; cursor:pointer; font-size:1.5rem;">⏸</button>
-                </div>`;
-            
-            container.appendChild(card);
-            container.scrollTop = container.scrollHeight;
+            renderWord();
+            renderKeyboard();
+        }
 
-            const display = card.querySelector('.clk');
-            const btn = card.querySelector('.p-btn');
-
-            let timer = setInterval(() => {
-                if(activo) {
-                    s++;
-                    let fmt = Math.floor(s/3600).toString().padStart(2,'0') + ":" + 
-                              Math.floor((s%3600)/60).toString().padStart(2,'0') + ":" + 
-                              (s%60).toString().padStart(2,'0');
-                    display.innerText = fmt;
-                    card.dataset.seconds = s;
+        // Dibujar los espacios de la película en la pantalla
+        function renderWord() {
+            wordContainer.innerHTML = "";
+            for (let char of movie) {
+                const charElement = document.createElement('div');
+                if (char === " ") {
+                    charElement.className = "space";
+                } else {
+                    charElement.className = "letter-space";
+                    // Si la letra ha sido adivinada, la muestra; si no, queda vacía
+                    if (guessedLetters.includes(char)) {
+                        charElement.textContent = char;
+                    }
                 }
-            }, 1000);
-
-            btn.onclick = () => { activo = !activo; btn.innerText = activo ? "⏸" : "▶"; };
-            card.dataset.timerId = timer;
+                wordContainer.appendChild(charElement);
+            }
         }
 
-        function terminarSesion() {
-            const cards = document.querySelectorAll('.asig-card');
-            if(cards.length === 0) return reiniciarInterfazEstudio();
-
-            let maxS = -1, total = 0, winner = "";
-            cards.forEach(c => {
-                let s = parseInt(c.dataset.seconds || 0);
-                total += s;
-                if(s > maxS) { maxS = s; winner = c.querySelector('select').value; }
-                clearInterval(c.dataset.timerId);
-            });
-
-            // Guardar en estadísticas
-            let totalSesiones = parseInt(localStorage.getItem('deep_sesiones_total') || 0);
-            localStorage.setItem('deep_sesiones_total', totalSesiones + 1);
-            actualizarContadorStats();
-
-            document.getElementById('session-scroll-area').style.display = 'none';
-            document.getElementById('active-controls').style.display = 'none';
+        // Dibujar el teclado de la A a la Z
+        function renderKeyboard() {
+            keyboardContainer.innerHTML = "";
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             
-            document.getElementById('resumen-final').innerHTML = `<b>TIEMPO TOTAL:</b> ${total}s<br><b>MÁS ESTUDIADA:</b> ${winner}`;
-            document.getElementById('congrats-ui').style.display = 'flex';
-            document.getElementById('btn-final-cont').style.display = 'block';
+            for (let letter of alphabet) {
+                const button = document.createElement('button');
+                button.textContent = letter;
+                button.addEventListener('click', () => handleGuess(letter, button));
+                keyboardContainer.appendChild(button);
+            }
         }
 
-        function reiniciarInterfazEstudio() {
-            // Limpiar todo
-            document.getElementById('session-scroll-area').innerHTML = "";
-            document.getElementById('congrats-ui').style.display = 'none';
-            document.getElementById('btn-final-cont').style.display = 'none';
+        // Manejar la pulsación de una letra
+        function handleGuess(letter, button) {
+            button.disabled = true; // Deshabilitar botón para no pulsar la misma letra
             
-            // Volver al estado inicial
-            document.getElementById('add-init-ui').style.display = 'block';
-            document.getElementById('active-controls').style.display = 'none';
+            if (movie.includes(letter)) {
+                guessedLetters.push(letter);
+                renderWord();
+                checkWin();
+            } else {
+                lives--;
+                livesDisplay.textContent = lives;
+                checkLose();
+            }
         }
 
-        function actualizarContadorStats() {
-            const total = localStorage.getItem('deep_sesiones_total') || 0;
-            const el = document.getElementById('stat-counter');
-            if(el) el.innerText = `Has completado ${total} sesiones de estudio.`;
+        // Comprobar si el jugador ha ganado
+        function checkWin() {
+            // Quita los espacios y comprueba si todas las letras de la película están en las adivinadas
+            const movieLetters = movie.replace(/\s/g, '').split('');
+            const hasWon = movieLetters.every(letter => guessedLetters.includes(letter));
+            
+            if (hasWon) {
+                messageDisplay.textContent = "¡Has ganado! 🎬";
+                messageDisplay.className = "win";
+                disableAllButtons();
+                resetBtn.style.display = "block";
+            }
         }
+
+        // Comprobar si el jugador ha perdido
+        function checkLose() {
+            if (lives <= 0) {
+                messageDisplay.textContent = `Game Over. La película era: ${movie}`;
+                messageDisplay.className = "lose";
+                disableAllButtons();
+                resetBtn.style.display = "block";
+                
+                // Revelar la palabra correcta al perder
+                guessedLetters = movie.split('');
+                renderWord();
+            }
+        }
+
+        // Deshabilitar todo el teclado al terminar la partida
+        function disableAllButtons() {
+            const buttons = keyboardContainer.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        // Arrancar el juego por primera vez al cargar la página
+        initGame();
     </script>
 </body>
 </html>
